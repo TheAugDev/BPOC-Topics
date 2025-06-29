@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide to the Texas Court System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Slate Blue & Cool Gray -->
+    <!-- Application Structure Plan: A single-page application using a vertical, hierarchical layout to mirror the Texas court structure. The design flows from the highest appellate courts at the top down to the local trial courts. This is intuitive as it reflects the path of appeals. Each court level is an interactive, collapsible section, allowing users to drill down for more detail without being overwhelmed. Arrows and connecting lines guide the user's eye, clarifying the relationships between the courts. -->
+    <!-- Visualization & Content Choices: 
+        - Court Hierarchy: Report Info -> A complex flowchart diagram. Goal -> Organize & Explain Structure. Viz -> A custom, responsive hierarchy built with HTML/Tailwind flexbox and grid. Justification -> This is more accessible and mobile-friendly than a static image and allows for interactive elements.
+        - Jurisdictional Details: Report Info -> Text annotations on the chart. Goal -> Inform. Viz -> Bulleted lists within each court's collapsible section. Interaction -> Clicking a court level reveals its specific duties (e.g., felony jurisdiction, civil amount limits). Justification -> Hiding details until requested (progressive disclosure) prevents information overload and makes the complex system easier to learn piece by piece.
+        - Appeal Paths: Report Info -> Lines connecting courts. Goal -> Show Flow. Viz -> CSS borders and pseudo-elements to create visual connectors between the court cards. Justification -> Visually reinforces the path a case takes through the court system, from trial to appeal.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        details > summary { 
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        details[open] > summary {
+            background-color: #f0f4f8; /* A light blue-gray for open state */
+        }
+        .court-card {
+            border: 2px solid #cbd5e1;
+            transition: box-shadow 0.2s;
+        }
+        .court-card:hover {
+             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .connector {
+            width: 2px;
+            background-color: #94a3b8;
+            margin: 0 auto;
+        }
+        .connector-h {
+            height: 2px;
+            background-color: #94a3b8;
+            width: 100%;
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem !important;
+            }
+            
+            h1 {
+                font-size: 2rem !important;
+            }
+            
+            h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            h3 {
+                font-size: 1.25rem !important;
+            }
+            
+            /* Improve touch targets for mobile */
+            details > summary {
+                padding: 1rem;
+                font-size: 1.1rem;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+                border-radius: 0.5rem;
+            }
+            
+            /* Better spacing for mobile */
+            .space-y-8 > * + * {
+                margin-top: 1.5rem !important;
+            }
+            
+            .space-y-6 > * + * {
+                margin-top: 1.25rem !important;
+            }
+            
+            .space-y-4 > * + * {
+                margin-top: 1rem !important;
+            }
+            
+            /* Improve readability on mobile */
+            p, li {
+                line-height: 1.6;
+            }
+            
+            .text-sm {
+                font-size: 0.9rem !important;
+            }
+            
+            /* Grid adjustments for mobile */
+            .grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            /* Court card adjustments */
+            .court-card {
+                padding: 1rem !important;
+                margin: 0.5rem 0 !important;
+            }
+            
+            /* Connector adjustments for mobile */
+            .connector {
+                width: 1px;
+                height: 1rem;
+            }
+            
+            .connector-h {
+                height: 1px;
+                margin: 0.5rem 0;
+            }
+            
+            /* Flex adjustments */
+            .flex {
+                flex-direction: column !important;
+            }
+            
+            .md\\:flex-row {
+                flex-direction: column !important;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.5rem !important;
+            }
+            
+            h1 {
+                font-size: 1.75rem !important;
+            }
+            
+            .court-card {
+                padding: 0.75rem !important;
+                border-radius: 0.5rem;
+            }
+            
+            details > summary {
+                padding: 0.75rem;
+                font-size: 1rem;
+            }
+        }
+        
+        /* Landscape mobile orientation */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .container {
+                padding: 0.5rem !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+        <header class="text-center mb-10">
+            <div class="mb-4">
+                <a href="../index.html" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                    <span class="mr-2">←</span> Back to Main
+                </a>
+            </div>
+            <h1 class="text-4xl font-bold text-slate-800">The Court Structure of Texas</h1>
+            <p class="text-slate-600 mt-2">An Interactive Guide to the Judicial System</p>
+        </header>
+
+        <main class="flex flex-col items-center">
+
+            <!-- Highest Appellate Courts -->
+            <div class="w-full">
+                <div class="text-center mb-2">
+                    <span class="text-sm font-semibold uppercase text-slate-500 tracking-wider">State Highest Appellate Courts</span>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Supreme Court -->
+                    <details class="court-card bg-white p-4 rounded-lg">
+                        <summary class="font-bold text-lg text-blue-800">Supreme Court</summary>
+                        <div class="mt-4 pt-4 border-t border-slate-200 text-sm space-y-2">
+                            <p><strong>Composition:</strong> 1 Court – 9 Justices</p>
+                            <p class="font-semibold text-blue-700">Jurisdiction:</p>
+                            <ul class="list-disc list-inside ml-4">
+                                <li>Final appellate jurisdiction in civil and juvenile cases.</li>
+                            </ul>
+                            <p class="font-semibold text-blue-700 mt-2">Typical Scenario:</p>
+                            <p class="ml-4 italic">A large corporation loses a multi-million dollar patent infringement lawsuit at the Court of Appeals and petitions the Supreme Court for a final review.</p>
+                        </div>
+                    </details>
+                    <!-- Court of Criminal Appeals -->
+                    <details class="court-card bg-white p-4 rounded-lg">
+                        <summary class="font-bold text-lg text-red-800">Court of Criminal Appeals</summary>
+                         <div class="mt-4 pt-4 border-t border-slate-200 text-sm space-y-2">
+                            <p><strong>Composition:</strong> 1 Court – 9 Justices</p>
+                            <p class="font-semibold text-red-700">Jurisdiction:</p>
+                            <ul class="list-disc list-inside ml-4">
+                                <li>Final appellate jurisdiction in all criminal cases.</li>
+                                <li>Appeals of Death Sentences are sent directly here.</li>
+                            </ul>
+                             <p class="font-semibold text-red-700 mt-2">Typical Scenario:</p>
+                            <p class="ml-4 italic">A defendant convicted of Murder, whose conviction was upheld by the Court of Appeals, seeks a final appeal, arguing a significant error in legal procedure occurred during their trial.</p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            <div class="connector h-12"></div>
+
+            <!-- Intermediate Appellate Courts -->
+            <div class="w-full md:w-3/4">
+                <div class="text-center mb-2">
+                    <span class="text-sm font-semibold uppercase text-slate-500 tracking-wider">State Intermediate Appellate Courts</span>
+                </div>
+                <details class="court-card bg-white p-4 rounded-lg">
+                    <summary class="font-bold text-lg text-slate-700">Courts of Appeals</summary>
+                    <div class="mt-4 pt-4 border-t border-slate-200 text-sm space-y-2">
+                        <p><strong>Composition:</strong> 14 Courts – 80 Justices</p>
+                        <p class="font-semibold text-slate-600">Jurisdiction:</p>
+                        <ul class="list-disc list-inside ml-4">
+                            <li>Regional jurisdiction.</li>
+                            <li>Hears intermediate appeals from trial courts in their respective districts (both civil and criminal cases).</li>
+                        </ul>
+                         <p class="font-semibold text-slate-600 mt-2">Typical Scenario:</p>
+                         <p class="ml-4 italic">A defendant convicted of DWI in a County Court at Law appeals the conviction, claiming that evidence was improperly admitted during the trial.</p>
+                    </div>
+                </details>
+            </div>
+            
+            <div class="connector h-12"></div>
+
+            <!-- State Trial Courts -->
+            <div class="w-full md:w-3/4">
+                <div class="text-center mb-2">
+                    <span class="text-sm font-semibold uppercase text-slate-500 tracking-wider">State Trial Courts of General & Special Jurisdiction</span>
+                </div>
+                <details class="court-card bg-white p-4 rounded-lg">
+                    <summary class="font-bold text-lg text-slate-700">District Courts</summary>
+                     <div class="mt-4 pt-4 border-t border-slate-200 text-sm space-y-2">
+                        <p><strong>Composition:</strong> 482 Courts – 482 Judges</p>
+                        <p class="font-semibold text-slate-600">Jurisdiction:</p>
+                        <ul class="list-disc list-inside ml-4">
+                            <li>Original jurisdiction in all felony criminal matters.</li>
+                             <li>Original jurisdiction in civil actions over $200, divorce, title to land, and contested elections.</li>
+                             <li>Juvenile matters.</li>
+                        </ul>
+                         <p class="font-semibold text-slate-600 mt-2">Typical Scenario:</p>
+                         <p class="ml-4 italic">A person is indicted by a grand jury for Burglary of a Habitation, a felony. Their case is tried in a District Court.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="connector h-12"></div>
+            
+            <!-- County-Level Courts -->
+            <div class="w-full">
+                 <div class="text-center mb-2">
+                    <span class="text-sm font-semibold uppercase text-slate-500 tracking-wider">County Trial Courts of Limited Jurisdiction</span>
+                </div>
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <!-- Constitutional County Courts -->
+                    <details class="court-card bg-white p-4 rounded-lg">
+                        <summary class="font-bold text-md text-slate-700">Constitutional County Courts</summary>
+                         <div class="mt-4 pt-4 border-t border-slate-200 text-sm space-y-2">
+                            <p><strong>Composition:</strong> 254 Courts (1 in each county)</p>
+                            <p class="font-semibold text-slate-600">Jurisdiction:</p>
+                            <ul class="list-disc list-inside ml-4">
+                                <li>Exclusive original jurisdiction over misdemeanors with fines greater than $500 or jail sentence.</li>
+                                <li>Civil actions between $200 and $20,000.</li>
+                                <li>Probate and mental health matters.</li>
+                                <li>Appeals from lower courts (de novo).</li>
+                            </ul>
+                            <p class="font-semibold text-slate-600 mt-2">Typical Scenario:</p>
+                            <p class="ml-4 italic">A person is arrested for Driving While Intoxicated (1st offense), a Class B Misdemeanor. Their case is heard in the Constitutional County Court.</p>
+                        </div>
+                    </details>
+                    <!-- Statutory County Courts -->
+                    <details class="court-card bg-white p-4 rounded-lg">
+                        <summary class="font-bold text-md text-slate-700">Statutory County Courts</summary>
+                        <div class="mt-4 pt-4 border-t border-slate-200 text-sm space-y-2">
+                            <p><strong>Composition:</strong> 255 Courts</p>
+                            <p class="font-semibold text-slate-600">Jurisdiction:</p>
+                            <ul class="list-disc list-inside ml-4">
+                                <li>All civil, criminal, original and appellate actions prescribed by law for constitutional county courts.</li>
+                                <li>Jurisdiction over civil matters up to $250,000.</li>
+                            </ul>
+                            <p class="font-semibold text-slate-600 mt-2">Typical Scenario:</p>
+                            <p class="ml-4 italic">A business sues a client for $80,000 in unpaid invoices. The case is filed in a Statutory County Court due to the amount in controversy.</p>
+                        </div>
+                    </details>
+                     <!-- Statutory Probate Courts -->
+                    <details class="court-card bg-white p-4 rounded-lg">
+                        <summary class="font-bold text-md text-slate-700">Statutory Probate Courts</summary>
+                        <div class="mt-4 pt-4 border-t border-slate-200 text-sm space-y-2">
+                            <p><strong>Composition:</strong> 18 Courts (in 10 counties)</p>
+                            <p class="font-semibold text-slate-600">Jurisdiction:</p>
+                            <ul class="list-disc list-inside ml-4">
+                                <li>Limited primarily to probate, mental health, and guardianship matters.</li>
+                            </ul>
+                            <p class="font-semibold text-slate-600 mt-2">Typical Scenario:</p>
+                            <p class="ml-4 italic">A family disputes the validity of a will after a relative's death. The case to probate the will and settle the estate is heard in a Statutory Probate Court.</p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            <div class="connector h-12"></div>
+
+            <!-- Local Trial Courts -->
+            <div class="w-full">
+                <div class="text-center mb-2">
+                    <span class="text-sm font-semibold uppercase text-slate-500 tracking-wider">Local Trial Courts of Limited Jurisdiction</span>
+                </div>
+                 <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Justice Courts -->
+                    <details class="court-card bg-white p-4 rounded-lg">
+                        <summary class="font-bold text-lg text-slate-700">Justice Courts</summary>
+                        <div class="mt-4 pt-4 border-t border-slate-200 text-sm space-y-2">
+                            <p><strong>Composition:</strong> 801 Courts – 801 Judges</p>
+                            <p class="font-semibold text-slate-600">Jurisdiction:</p>
+                            <ul class="list-disc list-inside ml-4">
+                                <li>Criminal misdemeanors punishable by fine only (Class C).</li>
+                                <li>Civil actions of not more than $20,000.</li>
+                                <li>Small claims.</li>
+                                <li>Magistrate functions.</li>
+                            </ul>
+                            <p class="font-semibold text-slate-600 mt-2">Typical Scenario:</p>
+                            <p class="ml-4 italic">A driver receives a speeding ticket (a Class C misdemeanor). Their case is handled by the Justice of the Peace for that precinct.</p>
+                        </div>
+                    </details>
+                    <!-- Municipal Courts -->
+                    <details class="court-card bg-white p-4 rounded-lg">
+                        <summary class="font-bold text-lg text-slate-700">Municipal Courts</summary>
+                         <div class="mt-4 pt-4 border-t border-slate-200 text-sm space-y-2">
+                            <p><strong>Composition:</strong> 945 Courts – 1,316 Judges</p>
+                            <p class="font-semibold text-slate-600">Jurisdiction:</p>
+                            <ul class="list-disc list-inside ml-4">
+                                <li>Criminal misdemeanors punishable by fine only (Class C).</li>
+                                <li>Exclusive original jurisdiction over municipal ordinance criminal cases.</li>
+                                <li>Limited civil jurisdiction.</li>
+                                <li>Magistrate functions.</li>
+                            </ul>
+                            <p class="font-semibold text-slate-600 mt-2">Typical Scenario:</p>
+                            <p class="ml-4 italic">A homeowner receives a citation for a city code violation, such as having high grass. The case is heard in Municipal Court.</p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

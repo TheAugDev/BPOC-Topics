@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Police Mindset & Tactics Interactive Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Blue & Gray with Amber accents -->
+    <!-- Application Structure Plan: A single-page application focused on the cognitive and tactical aspects of policing. The structure is thematic, starting with the learning mindset, moving to decision-making models (WIN), exploring the psychology of performance (Imagery), and concluding with practical awareness tactics (SAFE model, Field Interviews). This progression helps build a strong conceptual foundation before moving to application. Key interactions include collapsible sections for detailed explanations and side-by-side comparisons for concepts like the two operational mindsets. -->
+    <!-- Visualization & Content Choices: 
+        - The Learning Circle: Report Info -> A diagram about growth. Goal -> Explain the learning process. Viz -> A descriptive text block. Justification -> The concept is philosophical and best explained textually.
+        - Critical Decision-Making Model (CDM): Report Info -> A spinning model diagram. Goal -> Instruct on a decision-making process. Viz -> A collapsible section breaking down the CDM's core and steps. Justification -> Allows for a focused explanation of this central model.
+        - Officer Mindsets (Verbal Persuasion vs. Recognize-React): Report Info -> A comparison diagram. Goal -> Contrast two operational modes. Viz -> Two distinct, styled cards with bullet points. Justification -> Visually separates the two modes and the SAFE acronym, making the concept clear and easy to memorize.
+        - The 4 Risk Zones: Report Info -> A diagram showing scan areas. Goal -> Teach situational awareness. Viz -> A descriptive list. Justification -> A simple, clear list is effective for memorizing the four key areas to scan.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        details > summary { 
+            cursor: pointer;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+            font-weight: 600;
+        }
+        details > summary:hover {
+            background-color: #f8fafc;
+        }
+        details[open] > summary {
+            background-color: #f1f5f9;
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem !important;
+            }
+            
+            h1 {
+                font-size: 2rem !important;
+            }
+            
+            h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            h3 {
+                font-size: 1.25rem !important;
+            }
+            
+            /* Improve touch targets for mobile */
+            details > summary {
+                padding: 1rem;
+                font-size: 1.1rem;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+            }
+            
+            /* Better spacing for mobile */
+            .space-y-8 > * + * {
+                margin-top: 1.5rem !important;
+            }
+            
+            .space-y-6 > * + * {
+                margin-top: 1.25rem !important;
+            }
+            
+            .space-y-4 > * + * {
+                margin-top: 1rem !important;
+            }
+            
+            /* Improve readability on mobile */
+            p, li {
+                line-height: 1.6;
+            }
+            
+            .text-sm {
+                font-size: 0.9rem !important;
+            }
+            
+            /* Grid adjustments for mobile */
+            .grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            /* Card adjustments */
+            .bg-white {
+                padding: 1rem !important;
+            }
+            
+            /* Flex adjustments */
+            .flex {
+                flex-direction: column !important;
+            }
+            
+            .md\\:flex-row {
+                flex-direction: column !important;
+            }
+            
+            /* Better button spacing for mobile */
+            button {
+                min-height: 44px;
+                padding: 0.75rem 1rem;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.5rem !important;
+            }
+            
+            h1 {
+                font-size: 1.75rem !important;
+            }
+            
+            .bg-white {
+                margin: 0 !important;
+                border-radius: 0.5rem;
+            }
+            
+            details > summary {
+                padding: 0.75rem;
+                font-size: 1rem;
+            }
+        }
+        
+        /* Landscape mobile orientation */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .container {
+                padding: 0.5rem !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem !important;
+            }
+            
+            .space-y-8 > * + * {
+                margin-top: 1rem !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <header class="text-center mb-8">
+            <div class="mb-4">
+                <a href="../index.html" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                    <span class="mr-2">←</span> Back to Main
+                </a>
+            </div>
+            <h1 class="text-4xl font-bold text-slate-800">Police Mindset & Tactics</h1>
+            <p class="text-slate-600 mt-2">A Guide to Mental Preparation and Situational Awareness</p>
+        </header>
+
+        <main class="space-y-8">
+            <!-- Section 1: The Learning Mindset -->
+            <section id="learning-mindset" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">1. The Learning Mindset: Expectations & Growth</h2>
+                <p class="mb-4">Success in law enforcement training and practice requires a specific mindset geared towards continuous growth. This begins with understanding the "Learning Circle," where individuals are pushed beyond their comfort zones to expand their knowledge, skills, and abilities.</p>
+                
+                <div class="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                    <h4 class="font-bold text-blue-800">The Role of Mistakes</h4>
+                    <p class="text-sm mt-2">Mistakes are a necessary part of learning. However, it's crucial to distinguish between productive and counterproductive mistakes:</p>
+                    <ul class="list-disc list-inside mt-2 text-sm space-y-1">
+                        <li><strong>Working Mistakes:</strong> These happen when you are pushing your limits and trying to do the right thing for the right reason. They are essential for growth.</li>
+                        <li><strong>"Braking" Mistakes:</strong> These are counterproductive and stem from a lack of focus, not following instructions, or repeating the same error.</li>
+                    </ul>
+                </div>
+                <p class="mt-4 text-center font-semibold italic">"You earned the right to be in this academy class. Now, you must earn the right to stay."</p>
+            </section>
+
+            <!-- Section 2: Critical Decision Making -->
+            <section id="decision-making" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">2. Critical Decision-Making (CDM) & W.I.N.</h2>
+                <p class="mb-4">The CDM provides an organized method for making choices in any situation. At its heart is the question: <span class="font-bold">"What's Important Now?" (W.I.N.)</span>. After every decision, your next question should be W.I.N.?</p>
+
+                <div class="space-y-4">
+                    <details>
+                        <summary>The Spinning Model (CDM)</summary>
+                        <div class="p-4 border-t mt-2 text-sm">
+                             <ul class="list-disc list-inside space-y-2">
+                                <li><strong>Core:</strong> The center of the model is your agency's moral compass—its mission, values, and ethics. No step in the CDM should ever contradict this core.</li>
+                                <li><strong>Information Collection:</strong> The first step is to gather information about the situation.</li>
+                                <li><strong>Threat/Risk Assessment:</strong> Analyze the information to assess threats and risks.</li>
+                                <li><strong>Police Powers & Agency Policy:</strong> Consider your legal authority and agency rules.</li>
+                                <li><strong>Actions & Behaviors:</strong> Choose and execute your actions based on the previous steps.</li>
+                                <li><strong>After Action Review:</strong> Re-evaluate the outcome. This feeds back into information collection, creating a continuous "spinning" loop of decision-making.</li>
+                             </ul>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Implicit Bias</summary>
+                        <div class="p-4 border-t mt-2 text-sm">
+                            <p>Be aware of implicit bias—the subconscious attitudes or stereotypes that can affect your understanding, decisions, and actions. These biases can influence split-second decision-making and must be actively managed to ensure fair and objective policing.</p>
+                        </div>
+                    </details>
+                </div>
+            </section>
+            
+            <!-- Section 3: Mental Preparation -->
+            <section id="mental-prep" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">3. Mental Preparation: The #1 Survival Factor</h2>
+                <p class="mb-6">Mental conditioning and preparedness are the most important factors in officer survival. The transition from a civilian to a police mindset requires deliberate effort and practice.</p>
+                <div class="space-y-4">
+                     <details>
+                        <summary>The Conscious vs. Sub-Conscious Mind</summary>
+                        <div class="p-4 border-t mt-2 text-sm">
+                           <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="font-semibold">Conscious Mind</h4>
+                                    <ul class="list-disc list-inside">
+                                        <li>Logical & Analytical</li>
+                                        <li>Reasoning & Rational</li>
+                                        <li>Short-term memory</li>
+                                        <li>Willpower</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                     <h4 class="font-semibold">Sub-Conscious Mind</h4>
+                                     <ul class="list-disc list-inside">
+                                        <li>Intuition ("Gut Feeling")</li>
+                                        <li>Emotions</li>
+                                        <li>Long-term memory</li>
+                                        <li>Protective Instincts</li>
+                                     </ul>
+                                </div>
+                           </div>
+                           <p class="mt-4">Effective policing requires leveraging both. Your "gut instinct" is often your sub-conscious mind recognizing patterns from your training and experience much faster than your conscious mind can process them.</p>
+                        </div>
+                    </details>
+                     <details>
+                        <summary>Imagery: Mental Rehearsal</summary>
+                        <div class="p-4 border-t mt-2 text-sm">
+                           <p class="mb-2"><span class="font-bold">Imagery</span> is the act of creating or re-creating an experience in the mind. The purpose is to focus and direct the imagination to enhance performance.</p>
+                           <p>Brain scan studies show that the same neurons fire during memory recollection as during the original experience. This means mental rehearsal—vividly imagining yourself successfully performing a task—builds and strengthens the neural pathways needed for high-stress performance. Elite performers, from Blue Angels pilots to professional athletes, use this technique extensively.</p>
+                        </div>
+                    </details>
+                </div>
+            </section>
+            
+            <!-- Section 4: Safety & Situational Awareness -->
+            <section id="awareness" class="bg-white p-6 rounded-lg shadow-md">
+                 <h2 class="text-2xl font-bold mb-4 text-slate-700">4. Safety & Situational Awareness</h2>
+                 <p class="mb-4"><span class="font-semibold">Situational Awareness</span> is the intentional direction of attention to your environment to understand its significance and project future consequences. It is about moving from being a passive observer ("Zoo Lion") to an active participant ("Hunter").</p>
+                 
+                 <div class="p-4 bg-amber-50 border-l-4 border-amber-500 text-amber-800 rounded-r-lg mb-6">
+                    <p class="font-bold">The Color Codes of Awareness</p>
+                    <ul class="list-disc list-inside mt-2 text-sm space-y-1">
+                        <li><span class="font-bold">White:</span> Relaxed and unaware. You are a potential victim.</li>
+                        <li><span class="font-bold">Yellow:</span> Alert to your surroundings. You are paying attention to noises, movement, and people. <span class="italic">This is the lifetime commitment for a peace officer.</span></li>
+                        <li><span class="font-bold">Orange:</span> Your senses are alerted to a specific potential threat. You are formulating a plan.</li>
+                        <li><span class="font-bold">Red:</span> Taking action. Fighting, running, chasing.</li>
+                        <li><span class="font-bold">Black:</span> Panic. Freezing or irrational behavior, often due to a lack of preparation.</li>
+                    </ul>
+                     <p class="mt-2 text-xs">The more time you spend in Condition White, the higher your risk. The more time in Yellow and Orange, the greater your chance of survival.</p>
+                </div>
+
+                 <h3 class="font-semibold text-lg mb-3">Reducing Lag Time</h3>
+                 <p class="text-sm mb-4">Studies show that action is faster than reaction. An attacker can fire a concealed weapon in a fraction of the time it takes an officer to react to the stimulus. We give ourselves more time through:</p>
+                 <div class="grid md:grid-cols-3 gap-4 text-center">
+                    <div class="p-3 bg-slate-100 rounded-lg font-semibold">Proper Tactics</div>
+                    <div class="p-3 bg-slate-100 rounded-lg font-semibold">Distance</div>
+                    <div class="p-3 bg-slate-100 rounded-lg font-semibold">Barriers / Cover</div>
+                 </div>
+
+                 <h3 class="font-semibold text-lg mb-3 mt-6">The 4 Personal Contact Risk Zones (Continual Scan)</h3>
+                 <p class="text-sm mb-4">You must continually scan the four risk zones of any person you contact:</p>
+                <ol class="list-decimal list-inside space-y-2 font-semibold">
+                    <li>Face & Chest (for emotional state and breathing changes)</li>
+                    <li>Hands (the #1 threat delivery system)</li>
+                    <li>Waistband Area</li>
+                    <li>Immediate Area & Stance (their position and body language)</li>
+                </ol>
+            </section>
+
+             <!-- Section 5: Officer Mindset & Field Tactics -->
+            <section id="field-tactics" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">5. Officer Mindset & Field Interview Tactics</h2>
+                <p class="mb-4">An officer must be able to fluidly shift between two primary operational mindsets based on the situation's safety level.</p>
+                <div class="grid md:grid-cols-2 gap-6 mt-6">
+                    <div class="p-4 bg-green-50 rounded-lg border border-green-300">
+                        <h3 class="font-bold text-lg text-green-800 text-center">Verbal Persuasion Mode</h3>
+                        <p class="text-sm text-center mt-1">Used when the situation is SAFE and you can use communication to achieve voluntary compliance.</p>
+                        <ul class="list-disc list-inside text-sm mt-3 space-y-1">
+                            <li>7-Step Professional Contact</li>
+                            <li>PACE & LEAPS</li>
+                            <li>Deflection of Verbal Abuse</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-red-50 rounded-lg border border-red-300">
+                        <h3 class="font-bold text-lg text-red-800 text-center">Recognize-React Mode</h3>
+                        <p class="text-sm text-center mt-1">Used when a SAFE violation occurs. You must react to restore safety before returning to verbal persuasion.</p>
+                         <ul class="list-disc list-inside text-sm mt-3 space-y-1">
+                            <li><span class="font-bold">S</span>ecurity Risk (e.g., suspect reaches for waistband)</li>
+                            <li><span class="font-bold">A</span>ttack</li>
+                            <li><span class="font-bold">F</span>light / Fleeing</li>
+                            <li><span class="font-bold">E</span>xcessive Repetition (refusing lawful commands)</li>
+                        </ul>
+                        <p class="text-sm mt-2">Your reaction involves using tactics like distance, cover, commands, and appropriate force options.</p>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <h3 class="font-semibold text-lg mb-3">Contact & Cover Principle</h3>
+                     <details>
+                        <summary>Primary Officer's Role</summary>
+                        <div class="p-4 border-t text-sm">
+                           <p>The primary officer is <span class="font-bold">in charge of the call</span> and conducts ALL business. This includes:</p>
+                             <ul class="list-disc list-inside space-y-1 pl-4">
+                                <li>Interviewing all parties (victim, suspect, witness).</li>
+                                <li>Running computer checks.</li>
+                                <li>Delegating tasks to other officers.</li>
+                                <li>Making arrest decisions.</li>
+                             </ul>
+                        </div>
+                    </details>
+                     <details>
+                        <summary>Backup Officer's Role</summary>
+                        <div class="p-4 border-t text-sm">
+                           <p>The backup officer is <span class="font-bold text-red-600">NOT a spectator.</span> Their sole responsibility is the <span class="font-bold">safety and security of the scene</span>. This includes:</p>
+                            <ul class="list-disc list-inside space-y-1 pl-4">
+                                <li>Taking a position of tactical advantage (e.g., the "L" position) to observe all subjects.</li>
+                                <li>Communicating any threat observations to the primary officer.</li>
+                                <li>Addressing any threats directly.</li>
+                                <li>Avoiding lengthy conversations that detract from safety awareness.</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+
+                 <div class="mt-6">
+                    <h3 class="font-semibold text-lg mb-3">Searching Procedures</h3>
+                    <p class="text-sm mb-4">A search incidental to a lawful arrest is a full search of the person and any bags/containers in their possession. The goal is to find weapons or contraband, ensure officer and facility safety, and safeguard prisoner property.</p>
+                     <ul class="list-disc list-inside text-sm space-y-1">
+                        <li>Always ask the "magic question" first: "Before I search, do you have ANY weapons or anything that can poke me?"</li>
+                        <li>Search from a position of control and tactical advantage (behind the suspect).</li>
+                        <li>Always start with the back waistband.</li>
+                        <li>Search slowly and methodically, using an open hand to pass over the clothing. Do NOT pat.</li>
+                     </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

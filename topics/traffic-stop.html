@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Traffic Stop Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Blue & Gray with Amber accents -->
+    <!-- Application Structure Plan: A single-page application focused on traffic stops. The structure follows the chronological and logical flow of a stop: Legal Review (Why), Pre-Stop Procedures (Planning), The Stop (Execution), and Tactical Considerations (Safety). This task-oriented flow is intuitive for learning the process. Key interactions include collapsible sections for detailed procedures and key case law callouts, plus simple diagrams for vehicle positioning and ambush zones to make critical information highly visual and memorable. -->
+    <!-- Visualization & Content Choices: 
+        - Stop Phases/Risks: Report Info -> Text lists. Goal -> Inform. Viz -> Styled cards and lists. Justification -> Clean, scannable text is best for foundational concepts.
+        - Radio Procedures: Report Info -> Text description. Goal -> Instruct. Viz -> A formatted block with a clear, step-by-step example of a radio call-out. Justification -> Provides a practical, easy-to-follow script.
+        - Vehicle Positioning/Approaches: Report Info -> Diagrams and lists. Goal -> Instruct/Visualize. Viz -> Simple, clear diagrams created with HTML/CSS to illustrate standard positions and approach paths. Justification -> Visual diagrams are far more effective than text for explaining spatial relationships.
+        - Ambush Zones: Report Info -> Diagram. Goal -> Explain a critical safety concept. Viz -> A dedicated diagram with explanatory text. Justification -> Visually highlights the most dangerous areas around a vehicle, reinforcing tactical awareness.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        details > summary { 
+            cursor: pointer;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+            font-weight: 600;
+        }
+        details > summary:hover {
+            background-color: #f8fafc;
+        }
+        details[open] > summary {
+            background-color: #f1f5f9;
+        }
+        .diagram {
+            background-color: #f1f5f9;
+            border: 1px solid #e2e8f0;
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem !important;
+            }
+            
+            h1 {
+                font-size: 2rem !important;
+            }
+            
+            h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            h3 {
+                font-size: 1.25rem !important;
+            }
+            
+            /* Improve touch targets for mobile */
+            details > summary {
+                padding: 1rem;
+                font-size: 1.1rem;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+            }
+            
+            /* Better spacing for mobile */
+            .space-y-8 > * + * {
+                margin-top: 1.5rem !important;
+            }
+            
+            .space-y-6 > * + * {
+                margin-top: 1.25rem !important;
+            }
+            
+            .space-y-4 > * + * {
+                margin-top: 1rem !important;
+            }
+            
+            /* Improve readability on mobile */
+            p, li {
+                line-height: 1.6;
+            }
+            
+            .text-sm {
+                font-size: 0.9rem !important;
+            }
+            
+            /* Grid adjustments for mobile */
+            .grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            /* Card adjustments */
+            .bg-white {
+                padding: 1rem !important;
+            }
+            
+            /* Diagram adjustments for mobile */
+            .diagram {
+                padding: 1rem !important;
+                font-size: 0.9rem;
+                margin: 0.5rem 0;
+            }
+            
+            /* Flex adjustments */
+            .flex {
+                flex-direction: column !important;
+            }
+            
+            .md\\:flex-row {
+                flex-direction: column !important;
+            }
+            
+            /* Better button spacing for mobile */
+            button {
+                min-height: 44px;
+                padding: 0.75rem 1rem;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.5rem !important;
+            }
+            
+            h1 {
+                font-size: 1.75rem !important;
+            }
+            
+            .bg-white {
+                margin: 0 !important;
+                border-radius: 0.5rem;
+            }
+            
+            .diagram {
+                padding: 0.75rem !important;
+                font-size: 0.85rem;
+            }
+            
+            details > summary {
+                padding: 0.75rem;
+                font-size: 1rem;
+            }
+        }
+        
+        /* Landscape mobile orientation */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .container {
+                padding: 0.5rem !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem !important;
+            }
+            
+            .space-y-8 > * + * {
+                margin-top: 1rem !important;
+            }
+        }
+        
+        /* Better diagram visualization on small screens */
+        @media (max-width: 640px) {
+            .diagram {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .diagram * {
+                white-space: normal;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <header class="text-center mb-8">
+            <div class="mb-4">
+                <a href="../index.html" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                    <span class="mr-2">←</span> Back to Main
+                </a>
+            </div>
+            <h1 class="text-4xl font-bold text-slate-800">Traffic Stops: A Tactical Guide</h1>
+            <p class="text-slate-600 mt-2">Denton Police Training Academy</p>
+        </header>
+
+        <main class="space-y-8">
+            <!-- Section 1: Legal Review -->
+            <section id="legal-review" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">1. Legal Review & Risk Assessment</h2>
+                <p class="mb-4"><span class="font-semibold">Vehicle Stop Definition:</span> Any situation where an officer is immediately deploying directly from their patrol vehicle.</p>
+                <p class="mb-4">A traffic stop is a seizure under the 4th Amendment and must be based on <span class="font-semibold">Reasonable Suspicion</span> (that criminal activity is afoot) or <span class="font-semibold">Probable Cause</span> (that a traffic infraction occurred).</p>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-red-50 border-l-4 border-red-500">
+                        <h4 class="font-bold text-red-700">Two Primary Hazards</h4>
+                        <ul class="list-disc list-inside text-sm mt-1">
+                            <li>Felonious Assault</li>
+                            <li>Accidental Assault (from passing traffic)</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-amber-50 border-l-4 border-amber-500">
+                        <h4 class="font-bold text-amber-700">Three Risk Categories</h4>
+                         <ul class="list-disc list-inside text-sm mt-1">
+                            <li><strong>Low Risk:</strong> Daytime, clear traffic violation.</li>
+                            <li><strong>Unknown Risk:</strong> Most stops fall here. Suspicious vehicle, tinted windows, etc.</li>
+                            <li><strong>High Risk (Felony Stop):</strong> Known suspect, weapons involved, pursuits.</li>
+                        </ul>
+                    </div>
+                </div>
+                 <p class="text-sm mt-4 italic">Remember: The risk assessment of a stop can change at any time, escalating or de-escalating based on new information.</p>
+            </section>
+
+            <!-- Section 2: Stop Procedures -->
+            <section id="stop-procedures" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">2. Stop Procedures: Before, During, and After</h2>
+                <p class="mb-6">A traffic stop has three phases: the <span class="font-semibold">Beginning</span> (pre-stop observations and planning), the <span class="font-semibold">Middle</span> (interaction with the violator), and the <span class="font-semibold">End</span> (the final action taken). Most tactical changes occur during the middle phase.</p>
+
+                <div class="space-y-4">
+                    <details>
+                        <summary>Pre-Stop Procedures</summary>
+                        <div class="p-4 border-t mt-2 text-sm">
+                             <ul class="list-decimal list-inside space-y-2">
+                                <li>Identify the violation or articulable reason for the stop.</li>
+                                <li>Examine the vehicle and occupants, and predetermine a safe stop location. Avoid stopping on hills, curves, or busy intersections.</li>
+                                <li>Transmit information to dispatch <span class="font-bold">before</span> activating your emergency lights.</li>
+                                <li>Activate lights, watch the vehicle's response, remove your seatbelt, and update dispatch with your final location if it changes.</li>
+                             </ul>
+                        </div>
+                    </details>
+                    
+                    <details>
+                        <summary>Radio Communications (The LOCAL Acronym)</summary>
+                        <div class="p-4 border-t mt-2 text-sm">
+                            <p class="mb-2">Use the acronym LOCAL to organize your radio traffic. Give the essential information first in case your transmission is interrupted.</p>
+                            <div class="p-4 bg-slate-100 rounded-md font-mono">
+                                <p><strong>YOU:</strong> "802 Traffic, 600 West Hickory."</p>
+                                <p><strong>DISPATCH:</strong> "802."</p>
+                                <p><strong>YOU:</strong> "Texas License Plate Adam-Boy-Charles-1-2-3. It will be a [Color] [Make/Model] with [Occupant #] occupants."</p>
+                            </div>
+                            <p class="mt-4 font-semibold">Breakdown:</p>
+                            <ul class="list-disc list-inside pl-4 mt-1">
+                                <li><strong>L</strong>ocation: Give unit #, activity, and location, then PAUSE for dispatch.</li>
+                                <li><strong>O</strong>ccupants: Number of occupants, if visible.</li>
+                                <li><strong>C</strong>olor of the vehicle.</li>
+                                <li><strong>A</strong>uto: Make, model, body style.</li>
+                                <li><strong>L</strong>icense Plate: Give phonetically.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details>
+                        <summary>Making Contact</summary>
+                        <div class="p-4 border-t mt-2 text-sm">
+                            <ul class="list-disc list-inside space-y-2">
+                                <li>Exit your vehicle quickly but check for traffic first. Use your car door for cover while you observe.</li>
+                                <li>On approach, check the trunk/bed of the vehicle. Touch it to ensure it's latched and to leave your prints.</li>
+                                <li>Use all windows to look inside the vehicle as you approach. Scan for threats and occupants.</li>
+                                <li><span class="font-bold">Watch the hands.</span> Always keep the occupants' hands in view.</li>
+                                <li>Stand at a position of advantage (e.g., behind the B-pillar), not directly in the doorway.</li>
+                                <li>Keep your gun hand free as much as possible. Accept documents with your non-weapon hand.</li>
+                            </ul>
+                        </div>
+                    </details>
+                     <details>
+                        <summary>Returning to Your Vehicle</summary>
+                        <div class="p-4 border-t mt-2 text-sm">
+                             <ul class="list-disc list-inside space-y-2">
+                                <li>Do not walk backwards. Take a few steps back while watching the vehicle, then turn and walk, periodically checking back over your shoulder.</li>
+                                <li>Keep your gun hand free.</li>
+                                <li>In your vehicle, do not get too focused on the ticket or computer. Hold documents up, not in your lap, and regularly look up to check on the suspect vehicle.</li>
+                             </ul>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <!-- Section 3: Tactical Positioning -->
+            <section id="tactical-positioning" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">3. Tactical Positioning & Approaches</h2>
+                <p class="mb-6">Your positioning—of both your vehicle and yourself—is a critical component of officer safety.</p>
+
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="font-semibold mb-2">Patrol Unit Positioning</h3>
+                        <div class="grid md:grid-cols-2 gap-4 text-center text-sm">
+                            <div class="p-4 diagram rounded-lg"><strong>Standard Left-Side:</strong> 20 ft back, 3 ft offset to the left.</div>
+                             <div class="p-4 diagram rounded-lg"><strong>Close Left-Side:</strong> 3 ft back, offset to the left.</div>
+                             <div class="p-4 diagram rounded-lg"><strong>Standard Right-Side:</strong> 20 ft back, 3 ft offset to the right.</div>
+                             <div class="p-4 diagram rounded-lg"><strong>Close Right-Side:</strong> 3 ft back, offset to the right.</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold mb-2">Officer Approach Tactics</h3>
+                        <div class="grid md:grid-cols-2 gap-4 text-sm">
+                             <div class="p-4 bg-slate-50 rounded-lg">
+                                <h4 class="font-bold">Driver-Side Approach</h4>
+                                <p class="mt-1">The most common approach. The officer approaches along the driver's side of the suspect vehicle.</p>
+                            </div>
+                             <div class="p-4 bg-slate-50 rounded-lg">
+                                <h4 class="font-bold">Passenger-Side Approach</h4>
+                                <p class="mt-1">Can provide a tactical advantage as the driver may not expect it. The officer approaches along the passenger side.</p>
+                            </div>
+                            <div class="p-4 bg-slate-50 rounded-lg">
+                                <h4 class="font-bold">Tactical Walk-Up</h4>
+                                <p class="mt-1">Officer flares out wide to stay out of the suspect's mirrors for as long as possible before approaching the window.</p>
+                            </div>
+                             <div class="p-4 bg-slate-50 rounded-lg">
+                                <h4 class="font-bold">Walk-Back / Walk-Through</h4>
+                                <p class="mt-1">The officer uses the PA to order the violator to walk back towards the patrol unit. This places the violator in an area more advantageous to the officer.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 4: Ambush Zones -->
+            <section id="ambush-zones" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">4. Ambush Zones & Threat Mitigation</h2>
+                <p class="mb-4">Statistically, certain positions around a vehicle are more dangerous than others during a stop. Being aware of these "ambush zones" is key to survival.</p>
+                <div class="p-4 diagram rounded-lg text-center">
+                    <p class="font-semibold">The 12 Ambush Zones</p>
+                    <p class="text-xs mt-2">The area is divided into 12 zones relative to the suspect vehicle's doors. The zones directly at the driver and passenger doors (1L, 1R, 2L, 2R) are extremely vulnerable.</p>
+                    <div class="mt-4 p-4 bg-red-100 border border-red-300 rounded-md">
+                        <p class="font-bold text-red-800">Most Dangerous Position: Statistically, zone 6L (the area just behind the driver's side B-pillar) is where most officers are when they are assaulted.</p>
+                    </div>
+                </div>
+                 <div class="mt-6">
+                    <h3 class="font-semibold text-lg mb-3">Mitigation & Escape Routes</h3>
+                     <p class="text-sm mb-2">If an attack occurs, your immediate escape route depends on your position:</p>
+                    <ul class="list-disc list-inside space-y-1 text-sm">
+                        <li>If the attack comes from zones <span class="font-mono">1L, 1R, 2L, or 2R</span> (near your patrol car), escape to the <span class="font-bold">rear of your vehicle</span>.</li>
+                        <li>If the attack comes from zones <span class="font-mono">3L, 4L, 5L, or 6L</span> (along the suspect vehicle), escape to the <span class="font-bold">right rear of the suspect's vehicle</span>.</li>
+                    </ul>
+                     <p class="text-sm mt-3 italic">The goal is to move offline from the direct threat and create distance and cover.</p>
+                </div>
+                <div class="mt-6">
+                     <h3 class="font-semibold text-lg mb-3">Key Case Law for Traffic Stops</h3>
+                     <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <div class="p-3 bg-slate-50 rounded-lg"><strong>Pennsylvania v. Mimms:</strong> Allows officers to order the driver out of the vehicle.</div>
+                        <div class="p-3 bg-slate-50 rounded-lg"><strong>Maryland v. Wilson:</strong> Extends *Mimms* to allow officers to order passengers out of the vehicle.</div>
+                        <div class="p-3 bg-slate-50 rounded-lg"><strong>Graham v. Connor:</strong> The landmark case establishing the "objective reasonableness" standard for all uses of force.</div>
+                        <div class="p-3 bg-slate-50 rounded-lg"><strong>Canton v. Harris:</strong> A case establishing that a failure to properly train officers can affect the rights of people and create municipal liability.</div>
+                     </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+</body>
+</html>

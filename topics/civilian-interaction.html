@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Civilian Interaction Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Blue & Gray with Amber accents -->
+    <!-- Application Structure Plan: A single-page application focused on the principles of civilian interaction. The structure is thematic and procedural, guiding the user from the legal background (Community Safety Act) to practical application (Contact Methods) and tactical theory (Officer Mindsets). This approach is designed for effective learning and retention. Key interactions include collapsible sections for step-by-step procedures and a side-by-side comparison table to highlight the evolution of contact methods. -->
+    <!-- Visualization & Content Choices: 
+        - Contact Methods (7-Step Violator vs. 7-Step Professional): Report Info -> Text lists of steps. Goal -> Compare & Instruct. Viz -> A clear side-by-side table and separate collapsible 'details' sections for each step. Justification -> The table provides an at-a-glance comparison, while the collapsible details allow for focused study of each method's procedure.
+        - Officer Mindsets (Verbal Persuasion vs. Recognize-React): Report Info -> Diagram and lists. Goal -> Explain a core tactical concept. Viz -> Two distinct, styled cards with bullet points. Justification -> Visually separates the two modes of operation, making the SAFE acronym and the triggers for switching mindsets easy to understand and memorize.
+        - Civilian Expectations: Report Info -> A list of suggestions for drivers. Goal -> Inform. Viz -> A clean, numbered list. Justification -> Presents the information from the civilian's perspective in a simple, easy-to-follow format.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        details > summary { 
+            cursor: pointer;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+            font-weight: 600;
+        }
+        details > summary:hover {
+            background-color: #f8fafc;
+        }
+        details[open] > summary {
+            background-color: #f1f5f9;
+        }
+        .comparison-table th, .comparison-table td {
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem !important;
+            }
+            
+            h1 {
+                font-size: 2rem !important;
+            }
+            
+            h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            h3 {
+                font-size: 1.25rem !important;
+            }
+            
+            /* Improve touch targets for mobile */
+            details > summary {
+                padding: 1rem;
+                font-size: 1.1rem;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+            }
+            
+            /* Better spacing for mobile */
+            .space-y-8 > * + * {
+                margin-top: 1.5rem !important;
+            }
+            
+            .space-y-6 > * + * {
+                margin-top: 1.25rem !important;
+            }
+            
+            .space-y-4 > * + * {
+                margin-top: 1rem !important;
+            }
+            
+            /* Improve readability on mobile */
+            p, li {
+                line-height: 1.6;
+            }
+            
+            .text-sm {
+                font-size: 0.9rem !important;
+            }
+            
+            /* Make tables more mobile-friendly */
+            .comparison-table {
+                font-size: 0.85rem;
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .comparison-table th, .comparison-table td {
+                padding: 0.5rem !important;
+                min-width: 120px;
+            }
+            
+            /* Grid adjustments for mobile */
+            .grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            /* Card adjustments */
+            .bg-white {
+                padding: 1rem !important;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.5rem !important;
+            }
+            
+            h1 {
+                font-size: 1.75rem !important;
+            }
+            
+            .bg-white {
+                margin: 0 !important;
+                border-radius: 0.5rem;
+            }
+            
+            .comparison-table {
+                font-size: 0.75rem;
+            }
+            
+            .comparison-table th, .comparison-table td {
+                padding: 0.375rem !important;
+                min-width: 100px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <header class="text-center mb-8">
+            <div class="mb-4">
+                <a href="../index.html" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                    <span class="mr-2">←</span> Back to Main
+                </a>
+            </div>
+            <h1 class="text-4xl font-bold text-slate-800">Civilian Interaction Guide</h1>
+            <p class="text-slate-600 mt-2">Denton Police Training Academy</p>
+        </header>
+
+        <main class="space-y-8">
+            <!-- Section 1: Legal Mandate -->
+            <section id="legal-mandate" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">1. The Community Safety Education Act (SB 30)</h2>
+                <p class="mb-4">Passed in 2017, this act mandates training for new and veteran officers, as well as education for the public, to standardize expectations and improve interactions during traffic stops and other encounters.</p>
+                <div class="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                    <h4 class="font-bold text-blue-800">Required Training Topics (Occupations Code 1701.268)</h4>
+                    <ul class="list-disc list-inside mt-2 text-sm space-y-1">
+                        <li>The role, duties, and responsibilities of peace officers.</li>
+                        <li>A person's rights concerning interactions with peace officers.</li>
+                        <li>Proper behavior for civilians and peace officers during interactions.</li>
+                        <li>Laws regarding questioning, detention, and failure to identify.</li>
+                        <li>How and where to file a complaint or a compliment for an officer.</li>
+                    </ul>
+                </div>
+                <p class="text-xs mt-4 italic">Officers licensed on or after January 1, 2018, must complete this training within two years of being licensed.</p>
+            </section>
+
+            <!-- Section 2: Contact Methods -->
+            <section id="contact-methods" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">2. Evolution of the Professional Contact</h2>
+                <p class="mb-6">Over time, interaction methods have evolved to be more professional and versatile. The following compares the traditional "7-Step Violator Contact" with the modern "7-Step Professional Contact."</p>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm comparison-table">
+                        <thead class="bg-slate-100">
+                            <tr>
+                                <th class="w-1/2">7-Step Violator Contact (Traditional)</th>
+                                <th class="w-1/2">7-Step Professional Contact (Modern)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1. Greeting & Agency ID</td><td>1. Introduction</td></tr>
+                            <tr><td>2. Statement of Violation</td><td>2. Contact Reason</td></tr>
+                            <tr><td>3. ID of Driver & Vehicle Check</td><td>3. Their Chance to Justify/Explain</td></tr>
+                            <tr><td>4. Statement of Action to be Taken</td><td>4. ID Info</td></tr>
+                            <tr><td>5. Take That Action</td><td>5. Additional Info (Investigation)</td></tr>
+                            <tr><td>6. Explain What Violator Must Do</td><td>6. Evaluate & Make a Decision</td></tr>
+                            <tr><td>7. Leave</td><td>7. Close the Contact</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-6">
+                    <h3 class="font-semibold text-lg mb-3">The 7-Step Professional Contact (In Detail)</h3>
+                    <div class="space-y-2">
+                        <details>
+                            <summary>Step 1: Introduction</summary>
+                            <div class="p-4 border-t text-sm">
+                                <p>Employ business courtesy to set a professional tone. "Hello/Good morning, ma'am/sir. I am Officer _____ with the _____ Police Department."</p>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Step 2 & 3: Contact Reason & Their Response</summary>
+                            <div class="p-4 border-t text-sm">
+                                <p>State the reason for the stop clearly. Use "You" statements to keep the focus on the violation. <span class="font-bold text-red-600">Do NOT ask "Do you know why I stopped you?"</span></p>
+                                <p class="mt-2 p-2 bg-slate-100 rounded-md font-mono">"You were stopped for..."</p>
+                                <p class="mt-2">After stating the reason, <span class="font-semibold">pause</span> and give them a chance to justify or explain. If they don't, you can prompt with: "Is there a reason for ___?"</p>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Step 4 & 5: ID & Additional Info</summary>
+                            <div class="p-4 border-t text-sm">
+                                <p>Request their Driver License/ID and confirm their address. If they hand you a License to Carry, ask where the weapon is and instruct them not to reach for it. Then request insurance and ask any other necessary investigative questions before disengaging.</p>
+                                <p class="mt-2 p-2 bg-slate-100 rounded-md font-mono">"Please wait in your vehicle until I return."</p>
+                            </div>
+                        </details>
+                         <details>
+                            <summary>Step 6: Evaluate & Decide</summary>
+                            <div class="p-4 border-t text-sm">
+                                <p>Return to a safe location (not inside your car if alone) to run checks and prepare your citation or warning. Use your portable radio. Keep a visual on the violator's vehicle. Conduct wanted checks in this order:</p>
+                                <ol class="list-decimal list-inside pl-4 mt-2">
+                                    <li>Last Name (spelled phonetically if needed)</li>
+                                    <li>First Name</li>
+                                    <li>Race then Sex (e.g., "White male")</li>
+                                    <li>Date of Birth</li>
+                                </ol>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Step 7: Close the Contact</summary>
+                            <div class="p-4 border-t text-sm">
+                                <p>Safely return to the violator and state the action being taken. Explain what they must do (e.g., sign the citation). A signature is a promise to appear, not an admission of guilt. Provide a copy with court information. End with a professional closing statement.</p>
+                                <p class="mt-2 p-2 bg-slate-100 rounded-md font-mono">"Thank you for your cooperation. You are free to go."</p>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 3: Civilian Expectations -->
+            <section id="civilian-expectations" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">3. Civilian Education: What Drivers Are Taught</h2>
+                <p class="mb-4">The Community Safety Education Act mandates education for new drivers. Here are the key suggestions they receive for traffic stops:</p>
+                 <ol class="list-decimal list-inside space-y-2 text-sm">
+                    <li>Slow down and safely move to the right side of the road.</li>
+                    <li>Park, set the emergency brake, turn the engine off, and turn on hazard lights. At night, turn on the interior dome light.</li>
+                    <li>Remain in the car and lower the driver's window.</li>
+                    <li>Keep both hands in sight on the steering wheel and wait for instructions.</li>
+                    <li>Inform the officer of the location of documents (license, insurance) <span class="font-bold">before</span> reaching for them.</li>
+                    <li>If asked to exit, check for traffic before doing so.</li>
+                    <li>Advise passengers to remain in the car unless instructed otherwise.</li>
+                    <li>If you feel the location is unsafe, turn on your hazard lights, drive slowly to a well-lit, populated area, and you may call 9-1-1 to verify the officer's identity.</li>
+                    <li>Do not argue the validity of a charge on the roadside; that is what the court system is for.</li>
+                </ol>
+                 <p class="mt-4 text-sm"><span class="font-semibold">Right to Record:</span> Civilians have the right to record interactions with law enforcement, provided they do not physically impede an officer's ability to perform their duties.</p>
+            </section>
+
+             <!-- Section 4: Officer Mindset -->
+            <section id="officer-mindset" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">4. Officer Mindset: Verbal Persuasion vs. Recognize-React</h2>
+                <p class="mb-4">An officer must be able to fluidly shift between two primary operational mindsets based on the situation's safety level.</p>
+                <div class="grid md:grid-cols-2 gap-6 mt-6">
+                    <div class="p-4 bg-green-50 rounded-lg border border-green-300">
+                        <h3 class="font-bold text-lg text-green-800 text-center">Verbal Persuasion Mode</h3>
+                        <p class="text-sm text-center mt-1">Used when the situation is SAFE and you can use communication to achieve voluntary compliance.</p>
+                        <ul class="list-disc list-inside text-sm mt-3 space-y-1">
+                            <li>7-Step Professional Contact</li>
+                            <li><strong>PACE</strong>:
+                                <ul class="list-disc list-inside ml-4 mt-1">
+                                    <li>Primary</li>
+                                    <li>Alternate</li>
+                                    <li>Contingency</li>
+                                    <li>Emergency</li>
+                                </ul>
+                            </li>
+                            <li><strong>LEAPS</strong>:
+                                <ul class="list-disc list-inside ml-4 mt-1">
+                                    <li>Listen</li>
+                                    <li>Empathize</li>
+                                    <li>Ask</li>
+                                    <li>Paraphrase</li>
+                                    <li>Summarize</li>
+                                </ul>
+                            </li>
+                            <li>Deflection of Verbal Abuse</li>
+                            <li>5 Steps for Voluntary Non-compliance</li>
+                            <li>Cuffing from a standing position</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-red-50 rounded-lg border border-red-300">
+                        <h3 class="font-bold text-lg text-red-800 text-center">Recognize-React Mode</h3>
+                        <p class="text-sm text-center mt-1">Used when a SAFE violation occurs. You must react to restore safety before returning to verbal persuasion.</p>
+                         <ul class="list-disc list-inside text-sm mt-3 space-y-1">
+                            <li><span class="font-bold">S</span>ecurity Risk (e.g., suspect reaches for something)</li>
+                            <li><span class="font-bold">A</span>ttack</li>
+                            <li><span class="font-bold">F</span>light / Fleeing</li>
+                            <li><span class="font-bold">E</span>xcessive Repetition (refusing lawful commands)</li>
+                        </ul>
+                        <p class="text-sm mt-2">Your reaction involves using tactical positioning, distance, cover, commands, and appropriate force options.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

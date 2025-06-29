@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frisking & The Law: Interactive Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Blue & Gray with Amber accents -->
+    <!-- Application Structure Plan: A single-page application focused solely on frisking. The structure is task-oriented: Legal Foundations (The 'Why'), Frisking Techniques (The 'How'), and Handling Finds (The 'What If'). This logical flow guides the user from theory to practice. Key interactions include collapsible sections for detailed procedures and key case law callouts to make critical information easily digestible and memorable. -->
+    <!-- Visualization & Content Choices: 
+        - Frisk Justification: Report Info -> Text explaining the need for articulable facts. Goal -> Inform & Emphasize. Viz -> Contrasting "Bad" vs. "Good" examples in styled cards. Justification -> Clearly demonstrates the difference between a conclusory statement and proper legal articulation.
+        - Frisking Techniques: Report Info -> Images and text describing hand grips. Goal -> Instruct. Viz -> Side-by-side cards with bulleted lists for the two main techniques. Justification -> Organizes practical steps into a clear, comparable format.
+        - Plain Feel Doctrine: Report Info -> Text on Minnesota v. Dickerson. Goal -> Explain a critical legal limit. Viz -> A prominent, highlighted block with a clear summary. Justification -> Makes this essential rule impossible to miss.
+        - What to do if a weapon is found: Report Info -> List of considerations. Goal -> Guide decision-making. Viz -> Interactive collapsible sections for different weapon types. Interaction -> User clicks a weapon type to see the appropriate response protocol. Justification -> Encourages active thinking about different scenarios.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        details > summary { 
+            cursor: pointer;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+        }
+        details > summary:hover {
+            background-color: #f8fafc;
+        }
+        details[open] > summary {
+            background-color: #f1f5f9;
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem !important;
+            }
+            
+            h1 {
+                font-size: 2rem !important;
+            }
+            
+            h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr !important;
+            }
+            
+            /* Improve touch targets for mobile */
+            details > summary {
+                padding: 1rem;
+                font-size: 1.1rem;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+            }
+            
+            /* Better spacing for mobile */
+            .space-y-8 > * + * {
+                margin-top: 1.5rem !important;
+            }
+            
+            .space-y-4 > * + * {
+                margin-top: 1rem !important;
+            }
+            
+            /* Improve readability on mobile */
+            p, li {
+                line-height: 1.6;
+            }
+            
+            .text-sm {
+                font-size: 0.9rem !important;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.5rem !important;
+            }
+            
+            h1 {
+                font-size: 1.75rem !important;
+            }
+            
+            .bg-white {
+                margin: 0 !important;
+                border-radius: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <header class="text-center mb-8">
+            <div class="mb-4">
+                <a href="../index.html" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                    <span class="mr-2">←</span> Back to Main
+                </a>
+            </div>
+            <h1 class="text-4xl font-bold text-slate-800">Frisking and the Law</h1>
+            <p class="text-slate-600 mt-2">A Practical and Legal Guide for Law Enforcement</p>
+        </header>
+
+        <main class="space-y-8">
+            <!-- Section 1: Legal Foundations -->
+            <section id="legal-foundations" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">1. Legal Foundations of Frisking</h2>
+                <p class="mb-4">A frisk (or "pat down") is a limited search for weapons and is strictly governed by the 4th Amendment. Its sole purpose is <span class="font-semibold">officer safety</span>. Understanding when a frisk is justified is critical.</p>
+                
+                <div class="p-4 bg-amber-50 border-l-4 border-amber-500 text-amber-800 rounded-r-lg mb-6">
+                    <p><span class="font-bold">Key Principle:</span> A frisk is justified when an officer has <span class="font-bold">Reasonable Suspicion</span> that a person lawfully detained is armed and dangerous.</p>
+                </div>
+
+                <h3 class="font-semibold text-lg mb-3">Articulating Your Justification</h3>
+                <p class="text-sm mb-4">Simply stating "for officer safety" is not enough. You must be able to articulate the specific facts and circumstances that made you believe the person could be armed.</p>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <h4 class="font-bold text-red-700">Bad Response:</h4>
+                        <p class="text-sm mt-1">"I did it for officer safety."</p>
+                    </div>
+                    <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <h4 class="font-bold text-green-700">Good Response:</h4>
+                        <p class="text-sm mt-1">"I feared for my safety because it was 4:30 AM, the driver had no ID, the car's window was broken, and in my experience, suspects in stolen vehicles (a felony) are often armed with tools that can be used as weapons."</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                    <p class="font-bold text-blue-800">The "Plain Feel" Doctrine: Minnesota v. Dickerson (1993)</p>
+                    <p class="text-sm text-blue-700 mt-2">During a lawful frisk for weapons, an officer may seize other contraband only if its identity as contraband is <span class="font-bold">immediately apparent</span> from its touch without further manipulation. If you have to squeeze, slide, or otherwise manipulate an object to determine it is contraband (after you know it's not a weapon), you cannot seize it under this doctrine.</p>
+                </div>
+            </section>
+
+            <!-- Section 2: Techniques & Procedures -->
+            <section id="techniques" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">2. Frisking Techniques & Procedures</h2>
+                <p class="mb-6">Proper technique ensures both officer safety and adherence to legal standards. Remember, a frisk is for weapons only and is a pass over the <span class="font-semibold">outer clothing</span>.</p>
+
+                <div class="space-y-4">
+                    <details>
+                        <summary class="font-semibold">Frisking Positions</summary>
+                        <div class="p-4 border-t mt-2 text-sm">
+                             <ul class="list-disc list-inside space-y-2">
+                                <li><span class="font-bold">Standing:</span> The most common position. The officer should always be behind the suspect in a position of tactical advantage.</li>
+                                <li><span class="font-bold">Kneeling:</span> Suspect is on their knees with legs crossed. Provides good officer control.</li>
+                                <li><span class="font-bold">Prone:</span> For high-risk situations. A suspect in this position would likely be handcuffed *before* any search.</li>
+                                <li class="text-red-600 font-semibold">"Hands on the wall" or "hands on the head" positions are NOT recommended due to tactical disadvantages.</li>
+                             </ul>
+                        </div>
+                    </details>
+                    
+                    <details>
+                        <summary class="font-semibold">The "Magic Question"</summary>
+                        <div class="p-4 border-t mt-2 text-sm">
+                            <p>Before you begin the physical frisk, always ask:</p>
+                            <p class="mt-2 p-3 bg-slate-100 rounded-md font-mono text-center">"Before I search you, do you have any weapons or anything that can poke or cut me?"</p>
+                        </div>
+                    </details>
+
+                    <details>
+                        <summary class="font-semibold">Physical Frisking Technique</summary>
+                        <div class="p-4 border-t mt-2 text-sm">
+                            <ul class="list-disc list-inside space-y-2">
+                                <li>Begin from behind the suspect, keeping them off-balance.</li>
+                                <li>Control the suspect's hands (e.g., using an interlaced finger grip).</li>
+                                <li>Use an <span class="font-bold">open palm</span> to pass over the outer clothing. <span class="font-bold text-red-600">DO NOT PAT.</span></li>
+                                <li>Use a bladed hand only for sensitive areas.</li>
+                                <li>Start with the waistband area, then systematically search the rest of the person's body.</li>
+                                <li>Keep your eyes on the subject to observe their movements at all times.</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <!-- Section 3: Handling Finds & Resistance -->
+            <section id="handling-finds" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">3. Handling Finds, Resistance, & Cuffing</h2>
+                <p class="mb-6">Your response to finding a weapon, or encountering resistance, must be deliberate and tactical.</p>
+
+                <div class="space-y-4">
+                     <details>
+                        <summary class="font-semibold">What if you find an UNDECLARED weapon?</summary>
+                        <div class="p-4 border-t mt-2 text-sm">
+                            <p class="mb-2">Your response depends on the type of weapon and the overall situation (e.g., if a cover officer is present).</p>
+                             <ul class="list-disc list-inside space-y-2">
+                                <li><strong>Pocket Knife, Screwdriver, Box Cutter, etc.:</strong> You may choose to remove and retain it for the remainder of the contact, or leave it and instruct the person not to touch it. Handcuffing for safety is a primary consideration.</li>
+                                <li><strong>Firearm:</strong> This is a high-risk situation. The immediate tactical goal is to secure the weapon and the suspect. This may involve taking the suspect to a kneeling or prone position to be handcuffed, preferably with the assistance of a cover officer.</li>
+                             </ul>
+                        </div>
+                    </details>
+                    <details>
+                        <summary class="font-semibold">What if the suspect resists?</summary>
+                        <div class="p-4 border-t mt-2 text-sm">
+                             <ul class="list-disc list-inside space-y-2">
+                                <li>If you feel active resistance, your first priority is to regain control. You may need to <span class="font-bold">take control and handcuff</span> immediately.</li>
+                                <li>Alternatively, you may need to <span class="font-bold">disengage</span> and transition to an appropriate force option to handle the resistance.</li>
+                                <li>Resistance during a lawful search can constitute an offense such as Resisting Arrest/Search (PC 38.03) or Interference with Public Duties (PC 38.15).</li>
+                             </ul>
+                        </div>
+                    </details>
+                     <details>
+                        <summary class="font-semibold">How to Cuff from the Frisk Position</summary>
+                        <div class="p-4 border-t mt-2 text-sm">
+                            <ul class="list-decimal list-inside space-y-2">
+                                <li>Pull the suspect's hands back from their body.</li>
+                                <li>Move any sleeves with your cuffing hand and then load the cuffs.</li>
+                                <li>Apply the bottom cuff first, then the second cuff. This can often be done in one smooth motion.</li>
+                                <li><strong>If wrists are too far apart:</strong> Apply the first cuff, then use a "peel off" wrist lock grip on the uncuffed hand to bring the hands together safely to apply the second cuff. A cover officer can assist if necessary.</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+</body>
+</html>

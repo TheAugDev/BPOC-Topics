@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness & Wellness Interactive Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Green & Gray with Blue accents -->
+    <!-- Application Structure Plan: A single-page application focused on officer fitness and wellness. The structure is thematic, starting with foundational definitions, moving to practical exercise principles (FITT), then covering nutrition, and finally providing interactive self-assessment tools. This logical flow guides the user from knowledge to application. Key interactions include collapsible sections for detailed guidelines and interactive checklists for the PAR-Q and other self-assessments, making the content more engaging and personally relevant. -->
+    <!-- Visualization & Content Choices: 
+        - Fitness Components: Report Info -> Lists of fitness types. Goal -> Inform & Differentiate. Viz -> Two styled cards clearly separating "Health-Related" and "Motor" fitness components. Justification -> Visual separation helps clarify the two distinct but related categories.
+        - FITT Guidelines: Report Info -> Text blocks for different training types. Goal -> Instruct. Viz -> A master collapsible section for FITT, with nested collapsible details for Cardiovascular, Strength, and Flexibility training. Justification -> This nested structure allows users to see the high-level concept and then drill down into specifics for each type of exercise without being overwhelmed.
+        - Nutrition: Report Info -> Text on macronutrients and diet strategies. Goal -> Educate. Viz -> A combination of styled cards for different nutrients (Carbs, Protein, Fat) and a prominent "MyPlate" graphic. Justification -> Breaking down nutrients into individual cards makes the information digestible, while the MyPlate graphic provides a simple, memorable visual for building a healthy meal.
+        - Self-Assessments: Report Info -> Static questionnaire forms. Goal -> Engage & Assess. Viz -> Interactive checklists using HTML and JavaScript. Interaction -> Users can click checkboxes to answer questions, and the score can be tallied dynamically. Justification -> Transforms a passive reading task into an active, engaging self-evaluation.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        details > summary { 
+            cursor: pointer;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+            font-weight: 600;
+        }
+        details > summary:hover {
+            background-color: #f8fafc;
+        }
+        details[open] > summary {
+            background-color: #f1f5f9;
+        }
+        .assessment-question {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .assessment-question:last-child {
+            border-bottom: none;
+        }
+        .assessment-question input[type="checkbox"] {
+            margin-right: 1rem;
+            height: 1.25rem;
+            width: 1.25rem;
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem !important;
+            }
+            
+            h1 {
+                font-size: 2rem !important;
+            }
+            
+            h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            h3 {
+                font-size: 1.25rem !important;
+            }
+            
+            /* Improve touch targets for mobile */
+            details > summary {
+                padding: 1rem;
+                font-size: 1.1rem;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+            }
+            
+            /* Better spacing for mobile */
+            .space-y-8 > * + * {
+                margin-top: 1.5rem !important;
+            }
+            
+            .space-y-6 > * + * {
+                margin-top: 1.25rem !important;
+            }
+            
+            .space-y-4 > * + * {
+                margin-top: 1rem !important;
+            }
+            
+            /* Improve readability on mobile */
+            p, li {
+                line-height: 1.6;
+            }
+            
+            .text-sm {
+                font-size: 0.9rem !important;
+            }
+            
+            /* Grid adjustments for mobile */
+            .grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            /* Assessment question improvements */
+            .assessment-question {
+                padding: 1rem 0.5rem;
+                flex-direction: row;
+                align-items: flex-start;
+            }
+            
+            .assessment-question input[type="checkbox"] {
+                margin-right: 0.75rem;
+                margin-top: 0.25rem;
+                height: 1.5rem;
+                width: 1.5rem;
+                flex-shrink: 0;
+            }
+            
+            .assessment-question label {
+                line-height: 1.5;
+                font-size: 0.95rem;
+            }
+            
+            /* Button improvements for mobile */
+            button {
+                min-height: 44px;
+                padding: 0.75rem 1rem;
+                font-size: 1rem;
+            }
+            
+            /* Card adjustments */
+            .bg-white {
+                padding: 1rem !important;
+            }
+            
+            /* MyPlate graphic adjustments */
+            .myplate-container {
+                overflow-x: auto;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.5rem !important;
+            }
+            
+            h1 {
+                font-size: 1.75rem !important;
+            }
+            
+            .bg-white {
+                margin: 0 !important;
+                border-radius: 0.5rem;
+            }
+            
+            .assessment-question {
+                padding: 0.75rem 0.25rem;
+            }
+            
+            .assessment-question input[type="checkbox"] {
+                height: 1.25rem;
+                width: 1.25rem;
+            }
+            
+            .assessment-question label {
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Improve form usability on touch devices */
+        @media (hover: none) and (pointer: coarse) {
+            .assessment-question {
+                padding: 1rem 0.5rem;
+            }
+            
+            .assessment-question input[type="checkbox"] {
+                height: 1.75rem;
+                width: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <header class="text-center mb-8">
+            <div class="mb-4">
+                <a href="../index.html" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                    <span class="mr-2">←</span> Back to Main
+                </a>
+            </div>
+            <h1 class="text-4xl font-bold text-slate-800">Officer Fitness, Wellness, & Stress</h1>
+            <p class="text-slate-600 mt-2">A Guide to Health and Performance in Law Enforcement</p>
+        </header>
+
+        <main class="space-y-8">
+            <!-- Section 1: Foundations -->
+            <section id="foundations" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">1. Foundations of Fitness and Wellness</h2>
+                <p class="mb-4">For law enforcement professionals, physical readiness is non-negotiable. Wellness is a continuum, from death to optimal well-being. Fitness is the key to performance and reducing stress-related disorders like alcoholism and suicide, which are higher in law enforcement than in the civilian population.</p>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                        <h4 class="font-bold text-blue-800">Physical Fitness</h4>
+                        <p class="text-sm mt-2">The condition of the body that enables an individual to use their body in activities without undue fatigue and exhaustion. Fitness equates to <span class="font-semibold">performance and readiness</span>.</p>
+                    </div>
+                     <div class="p-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
+                        <h4 class="font-bold text-green-800">Wellness</h4>
+                        <p class="text-sm mt-2">Goes beyond physical fitness to encompass a person's overall health status and risk potential. It is a state of positive well-being, balancing physical, mental, spiritual, and socio-emotional health.</p>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                     <h3 class="font-semibold text-lg mb-3">Components of Fitness</h3>
+                     <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <h4 class="font-bold">Health-Related Fitness</h4>
+                            <p class="text-xs mb-2">(Focus on lifetime fitness)</p>
+                            <ul class="list-disc list-inside">
+                                <li>Cardiovascular Fitness</li>
+                                <li>Flexibility</li>
+                                <li>Muscular Endurance</li>
+                                <li>Muscular Strength</li>
+                                <li>Body Composition</li>
+                            </ul>
+                        </div>
+                         <div class="p-4 bg-slate-50 rounded-lg">
+                            <h4 class="font-bold">Motor Fitness</h4>
+                            <p class="text-xs mb-2">(Focus on job-specific tasks)</p>
+                            <ul class="list-disc list-inside">
+                                <li>Agility</li>
+                                <li>Anaerobic Power (Speed)</li>
+                                <li>Explosive Leg Strength</li>
+                            </ul>
+                        </div>
+                     </div>
+                </div>
+                 <p class="text-sm mt-6 italic">While officers are often hired at above-average fitness levels, incumbent officers tend to be below average compared to the general population. Maintaining fitness is key to a long, healthy career.</p>
+            </section>
+
+            <!-- Section 2: Exercise Program Principles -->
+            <section id="exercise-principles" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">2. Principles of an Exercise Program</h2>
+                <p class="mb-6">A safe, effective exercise program is built on several key principles. Before starting, it's crucial to determine your readiness, using a tool like the PAR-Q if necessary.</p>
+
+                <div class="space-y-4">
+                    <details>
+                        <summary>Core Exercise Principles</summary>
+                        <div class="p-4 border-t mt-2 text-sm space-y-3">
+                            <div>
+                                <h4 class="font-semibold">Progressive Overload</h4>
+                                <p>To improve, the body must be subjected to demands greater than normal daily activities. As the body adapts, the demand (intensity or duration) must be gradually increased.</p>
+                            </div>
+                             <div>
+                                <h4 class="font-semibold">Regularity and Recovery</h4>
+                                <p>An exercise program must be consistent. Fitness begins to decline after 96 hours of inactivity. Equally important is recovery; allow at least 48 hours between heavy exercises targeting the same muscle groups.</p>
+                            </div>
+                             <div>
+                                <h4 class="font-semibold">Specificity</h4>
+                                <p>The body adapts specifically to the type of demand placed on it. Running builds cardiovascular endurance, while weight training builds strength. A program should be specific to your fitness goals.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Balance</h4>
+                                <p>The program should work opposing muscles (e.g., biceps and triceps) and balance all components of fitness (cardiovascular, strength, and flexibility).</p>
+                            </div>
+                        </div>
+                    </details>
+                    
+                    <details>
+                        <summary>The FITT Guidelines</summary>
+                        <div class="p-4 border-t mt-2 text-sm">
+                            <p class="mb-4">FITT is a framework for applying the exercise principles to your workout plan.</p>
+                            <ul class="list-none space-y-2">
+                                <li><span class="font-bold">F</span>requency: Number of workouts per week.</li>
+                                <li><span class="font-bold">I</span>ntensity: How hard you exercise (e.g., Target Heart Rate).</li>
+                                <li><span class="font-bold">T</span>ime: Duration of your workout.</li>
+                                <li><span class="font-bold">T</span>ype: The specific kind of exercise (e.g., aerobic, strength).</li>
+                            </ul>
+                            <div class="mt-4 space-y-2">
+                                <details class="bg-slate-50 rounded-lg">
+                                    <summary class="text-xs font-semibold">Applying FITT to Cardiovascular Training</summary>
+                                    <div class="p-3 border-t text-xs">
+                                        <p><strong>Purpose:</strong> Improve heart/lung efficiency, control weight, increase energy. Essential for use of force and performance under stress.</p>
+                                        <ul class="list-disc list-inside mt-2">
+                                            <li><strong>Frequency:</strong> Minimum 3 days/week.</li>
+                                            <li><strong>Intensity:</strong> Target Heart Rate (THR) zone of 60-80% of max.</li>
+                                            <li><strong>Time:</strong> Minimum 20 minutes in THR zone.</li>
+                                            <li><strong>Type:</strong> Aerobic (rhythmic, large muscle groups) like running, swimming, cycling.</li>
+                                        </ul>
+                                    </div>
+                                </details>
+                                <details class="bg-slate-50 rounded-lg">
+                                    <summary class="text-xs font-semibold">Applying FITT to Strength Training</summary>
+                                    <div class="p-3 border-t text-xs">
+                                         <p><strong>Purpose:</strong> Increase lean muscle and strength for lifting, carrying, pushing, pulling, and use of force.</p>
+                                        <ul class="list-disc list-inside mt-2">
+                                            <li><strong>Frequency:</strong> 2-4 days/week (allow 48 hours recovery for same muscle groups).</li>
+                                            <li><strong>Intensity:</strong> Progress from moderate to vigorous effort.</li>
+                                            <li><strong>Time:</strong> 1-3 sets of 8-12 reps (for strength) or 12-20 reps (for endurance).</li>
+                                            <li><strong>Type:</strong> Weight training or calisthenics.</li>
+                                        </ul>
+                                    </div>
+                                </details>
+                                 <details class="bg-slate-50 rounded-lg">
+                                    <summary class="text-xs font-semibold">Applying FITT to Flexibility Training</summary>
+                                    <div class="p-3 border-t text-xs">
+                                         <p><strong>Purpose:</strong> Prevent injuries, improve posture, and reduce soreness. Essential for reaching, bending, and rapid movements.</p>
+                                        <ul class="list-disc list-inside mt-2">
+                                            <li><strong>Frequency:</strong> 3-7 days/week.</li>
+                                            <li><strong>Intensity:</strong> Hold to an easy point of tension (no bouncing).</li>
+                                            <li><strong>Time:</strong> Hold each stretch for 10-20 seconds.</li>
+                                            <li><strong>Type:</strong> Best performed after a workout when muscles are warm.</li>
+                                        </ul>
+                                    </div>
+                                </details>
+                                 <details class="bg-slate-50 rounded-lg">
+                                    <summary class="text-xs font-semibold">Applying FITT to Anaerobic Training</summary>
+                                    <div class="p-3 border-t text-xs">
+                                         <p><strong>Purpose:</strong> Increase ability for short, intense bursts of maximum effort (sprinting, pushing, defensive tactics).</p>
+                                        <ul class="list-disc list-inside mt-2">
+                                            <li><strong>Frequency:</strong> 1-2 days/week.</li>
+                                            <li><strong>Intensity:</strong> All-out effort (90% of Max Heart Rate).</li>
+                                            <li><strong>Time:</strong> Short bursts of 20-60 seconds, followed by rest.</li>
+                                            <li><strong>Type:</strong> Sprints (running, cycling), leaping, stair climbing.</li>
+                                        </ul>
+                                    </div>
+                                </details>
+                            </div>
+                        </div>
+                    </details>
+                    
+                    <details>
+                        <summary>Workout Components & Safety</summary>
+                        <div class="p-4 border-t mt-2 text-sm">
+                             <h4 class="font-semibold">A Complete Session Includes:</h4>
+                            <ol class="list-decimal list-inside space-y-2 mt-2">
+                                <li><strong>Warm Up (5-10 minutes):</strong> Dynamic stretching and light cardio to prepare muscles and elevate heart rate.</li>
+                                <li><strong>Work Out (20-30+ minutes):</strong> The main exercise session applying FITT principles for cardio and/or strength.</li>
+                                <li><strong>Cool Down (5-10 minutes):</strong> Gradual transition from vigorous exercise to a resting state, followed by slow, sustained static stretching.</li>
+                            </ol>
+                            <h4 class="font-semibold mt-4">Safety Measures:</h4>
+                             <ul class="list-disc list-inside mt-2 space-y-1">
+                                <li>Seek medical advice if you have any health concerns.</li>
+                                <li>Be aware of heat. Heat stress is likely at heat indexes above 105°F. Reduce intensity or postpone exercise.</li>
+                                <li>Stay hydrated: Drink 8-10 glasses of water daily. When exercising in heat, drink before, during, and after your workout.</li>
+                                <li>Listen to your body. Do not exercise through pain.</li>
+                             </ul>
+                        </div>
+                    </details>
+                </div>
+            </section>
+            
+            <!-- Section 3: Nutrition -->
+            <section id="nutrition" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">3. Nutrition for Performance</h2>
+                <p class="mb-6">Proper nutrition is the fuel for your body. A balanced intake of fuel (macros) and non-fuel nutrients is essential for energy, alertness, and long-term health.</p>
+
+                 <div class="space-y-4">
+                    <details>
+                        <summary>Fuel Nutrients (Macronutrients)</summary>
+                        <div class="p-4 border-t mt-2 text-sm space-y-4">
+                            <div>
+                                <h4 class="font-semibold">Carbohydrates (55-60% of daily calories)</h4>
+                                <p>The body's preferred energy source. Simple carbs (sweets, white flour) provide quick but unstable energy. Complex carbs (potatoes, whole grains, fruits, vegetables) provide slow, sustained energy and should be prioritized.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Protein (12-15% of daily calories)</h4>
+                                <p>The "building blocks" used for building and repairing tissue. Sources include meat, fish, poultry, eggs, and beans.</p>
+                            </div>
+                             <div>
+                                <h4 class="font-semibold">Fats (No more than 30% of daily calories)</h4>
+                                <p>Necessary for nerve function and vitamin storage. Prioritize <span class="font-bold">unsaturated fats</span> (vegetable oils, avocados, nuts) over <span class="font-bold">saturated fats</span> (animal products, tropical oils) and <span class="font-bold">trans fats</span> (processed snacks). High LDL ("bad") cholesterol can clog arteries, while HDL ("good") cholesterol is protective.</p>
+                            </div>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Healthy Eating Strategies (MyPlate)</summary>
+                        <div class="p-4 border-t mt-2 text-sm">
+                            <div class="flex flex-col md:flex-row gap-4 items-center">
+                                <img src="https://i.imgur.com/gOkpGMy.png" alt="Choose My Plate graphic" class="w-48 h-48">
+                                <div class="flex-1">
+                                    <h4 class="font-semibold mb-2">Build a Healthy Plate:</h4>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>Make half your plate fruits and vegetables.</li>
+                                        <li>Make at least half your grains whole grains.</li>
+                                        <li>Choose lean proteins.</li>
+                                        <li>Switch to fat-free or low-fat (1%) milk.</li>
+                                        <li>Drink water instead of sugary drinks.</li>
+                                        <li>Balance, variety, and moderation are key. The 80/20 rule (eat healthy 80% of the time) can help with long-term adherence.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                 </div>
+            </section>
+            
+             <!-- Section 4: Self-Assessments -->
+            <section id="self-assessments" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">4. Self-Assessment Tools</h2>
+                <p class="mb-6">These tools can help you evaluate your readiness for exercise and identify potential stressors in your life. This information is for your personal use only.</p>
+                 <div class="space-y-4">
+                    <details>
+                        <summary>Physical Activity Readiness Questionnaire (PAR-Q)</summary>
+                        <div id="par-q-assessment" class="p-4 border-t mt-2 text-sm">
+                           <p class="mb-4">Answer the following questions to help determine if you should consult a doctor before starting a new exercise program.</p>
+                            <!-- Questions will be injected by JS -->
+                            <div id="par-q-result" class="mt-4 p-3 bg-amber-100 rounded-lg text-center font-semibold hidden"></div>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Holmes and Rahe Stress Scale (Major Life Events)</summary>
+                        <div id="holmes-rahe-test" class="p-4 border-t mt-2 text-sm">
+                            <p class="mb-4">Check any of these major life events that have happened to you in the past year. Your score will provide a rough estimate of your stress level.</p>
+                            <!-- Content will be injected by JS -->
+                             <div class="mt-4 flex justify-between items-center">
+                                <button id="calculate-hr-score" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Calculate Score</button>
+                                <div id="hr-score-result" class="font-bold text-lg"></div>
+                            </div>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Alcohol Usage Self-Evaluation</summary>
+                         <div id="alcohol-assessment" class="p-4 border-t mt-2 text-sm">
+                           <p class="mb-4">Answer "Yes" or "No" to the following questions honestly for your own self-evaluation.</p>
+                            <!-- Questions will be injected by JS -->
+                            <div id="alcohol-result" class="mt-4 p-3 bg-red-100 text-red-700 rounded-lg text-center font-semibold hidden"></div>
+                        </div>
+                    </details>
+                 </div>
+            </section>
+        </main>
+    </div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const parqQuestions = [
+            "Has a doctor ever said you have a heart condition and that you should only do physical activity recommended by a doctor?",
+            "Do you feel pain in your chest when you do physical activity?",
+            "In the past month, have you had chest pain when you were not doing physical activity?",
+            "Do you often lose your balance, feel faint or have spells of severe dizziness?",
+            "Has a doctor ever said your blood pressure was too high (or is it over 144/94)?",
+            "Has your doctor ever told you that you have a bone or joint problem that could be made worse by a change in your physical activity?",
+            "Is there a good physical reason, not mentioned here, why you should not follow an activity program?",
+            "Are you over age 65 and not accustomed to vigorous exercise?"
+        ];
+        
+        const hrEvents = [
+            { event: "Death of a Spouse", score: 100 },
+            { event: "Divorce", score: 73 },
+            { event: "Marital Separation", score: 65 },
+            { event: "Imprisonment", score: 63 },
+            { event: "Death of a Close Family Member", score: 63 },
+            { event: "Personal Injury or Illness", score: 53 },
+            { event: "Marriage", score: 50 },
+            { event: "Dismissal from Work", score: 47 },
+            { event: "Marital Reconciliation", score: 45 },
+            { event: "Retirement", score: 45 },
+            { event: "Change in Health of Family Member", score: 44 },
+            { event: "Pregnancy", score: 40 },
+            { event: "Sexual Difficulties", score: 39 },
+            { event: "Gain a New Family Member", score: 39 },
+            { event: "Business Readjustment", score: 39 },
+            { event: "Change in Financial State", score: 38 },
+            { event: "Change in Frequency of Arguments", score: 35 },
+            { event: "Major Mortgage", score: 32 },
+            { event: "Foreclosure of Mortgage or Loan", score: 30 },
+            { event: "Change in Responsibilities at Work", score: 29 },
+            { event: "Child Leaving Home", score: 29 },
+            { event: "Trouble with In-Laws", score: 29 },
+            { event: "Outstanding Personal Achievement", score: 28 },
+            { event: "Spouse Starts or Stops Work", score: 26 },
+            { event: "Begin or End School", score: 26 },
+            { event: "Change in Living Conditions", score: 25 },
+            { event: "Revision of Personal Habits", score: 24 },
+            { event: "Trouble with Boss", score: 23 },
+            { event: "Change in Working Hours or Conditions", score: 20 },
+            { event: "Change in Residence", score: 20 },
+            { event: "Change in Schools", score: 20 },
+            { event: "Change in Recreation", score: 19 },
+            { event: "Change in Church Activities", score: 19 },
+            { event: "Change in Social Activities", score: 18 },
+            { event: "Minor Mortgage or Loan", score: 17 },
+            { event: "Change in Sleeping Habits", score: 16 },
+            { event: "Change in # of Family Reunions", score: 15 },
+            { event: "Change in Eating Habits", score: 15 },
+            { event: "Vacation", score: 13 },
+            { event: "Christmas", score: 12 },
+            { event: "Minor Violation of Law", score: 11 }
+        ];
+
+        const alcoholQuestions = [
+            "Have you ever felt the need or tried to cut down on your alcohol intake?",
+            "Do you test yourself for control, say you won't drink, and then take a drink anyway?",
+            "Do you think it would be difficult to enjoy life if you could not take another drink?",
+            "Do you use alcohol as a way of handling stressful situations or life problems?",
+            "Have you ever gotten angry at someone for telling you that you drink too much?",
+            "Have you ever felt guilty about your drinking?",
+            "Have you ever felt as if you needed a drink to get going in the morning?",
+            "Do you have wide swings in mood and personality?",
+            "Can you drink more than you used to?",
+            "Do you ever wake up the morning after and find you can't remember part of the evening before?",
+            "Are you in more of a hurry to get that first drink?",
+            "Do you regret things you have done or said while drinking?",
+            "Are you having an increasing number of financial, family, sexual or work problems because of alcohol?",
+            "Do you sometimes get the shakes in the morning and find it helps to have a little drink?"
+        ];
+        
+        const parqContainer = document.getElementById('par-q-assessment');
+        const hrContainer = document.getElementById('holmes-rahe-test');
+        const alcoholContainer = document.getElementById('alcohol-assessment');
+        
+        if (parqContainer) {
+            parqQuestions.forEach(q => {
+                const div = document.createElement('div');
+                div.className = 'assessment-question';
+                div.innerHTML = `<input type="checkbox" class="parq-check"><label>${q}</label>`;
+                parqContainer.insertBefore(div, document.getElementById('par-q-result'));
+            });
+            
+            parqContainer.addEventListener('change', () => {
+                const resultDiv = document.getElementById('par-q-result');
+                const anyYes = Array.from(parqContainer.querySelectorAll('.parq-check')).some(cb => cb.checked);
+                if (anyYes) {
+                    resultDiv.textContent = 'You answered "Yes" to one or more questions. Please talk to your doctor before increasing your physical activity.';
+                    resultDiv.classList.remove('hidden');
+                } else {
+                    resultDiv.classList.add('hidden');
+                }
+            });
+        }
+        
+        if (hrContainer) {
+            hrEvents.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'assessment-question';
+                div.innerHTML = `<input type="checkbox" class="hr-check" data-score="${item.score}"><label>${item.event} (${item.score} points)</label>`;
+                hrContainer.insertBefore(div, hrContainer.querySelector('#calculate-hr-score').parentElement);
+            });
+            
+            const calcBtn = document.getElementById('calculate-hr-score');
+            const scoreResult = document.getElementById('hr-score-result');
+            calcBtn.addEventListener('click', () => {
+                let score = 0;
+                hrContainer.querySelectorAll('.hr-check:checked').forEach(box => {
+                    score += parseInt(box.dataset.score);
+                });
+                
+                let risk = "Slight risk of illness.";
+                let color = 'text-green-600';
+                if (score >= 300) {
+                    risk = "At risk of illness.";
+                    color = 'text-red-600';
+                } else if (score >= 150) {
+                    risk = "Moderate risk of illness.";
+                    color = 'text-amber-600';
+                }
+                scoreResult.textContent = `Total Score: ${score} - ${risk}`;
+                scoreResult.className = `font-bold text-lg ${color}`;
+            });
+        }
+
+        if (alcoholContainer) {
+            alcoholQuestions.forEach(q => {
+                const div = document.createElement('div');
+                div.className = 'assessment-question';
+                div.innerHTML = `<input type="checkbox" class="alcohol-check"><label>${q}</label>`;
+                alcoholContainer.insertBefore(div, document.getElementById('alcohol-result'));
+            });
+
+            alcoholContainer.addEventListener('change', () => {
+                const resultDiv = document.getElementById('alcohol-result');
+                const anyYes = Array.from(alcoholContainer.querySelectorAll('.alcohol-check')).some(cb => cb.checked);
+                if (anyYes) {
+                    resultDiv.textContent = 'If you answered "Yes" to one or more items, you should think seriously about getting help.';
+                    resultDiv.classList.remove('hidden');
+                } else {
+                    resultDiv.classList.add('hidden');
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

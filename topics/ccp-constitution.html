@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCP & Constitution Interactive Study Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Slate & Amber -->
+    <!-- Application Structure Plan: This single-page application uses a fixed sidebar for thematic navigation, allowing users to easily switch between the Code of Criminal Procedure (CCP), Constitutional Rights, and practical scenarios. This non-linear, dashboard-style approach is more effective for studying than a simple document conversion. Key interactions include collapsible sections for detailed lists (like 'Who are Peace Officers?') to improve readability, and an interactive quiz format for the practical scenarios where users can guess the offense before revealing the answer, which aids retention. -->
+    <!-- Visualization & Content Choices: 
+        - CCP vs. PC Objectives: Report Info -> Two lists of objectives. Goal -> Compare. Viz -> Side-by-side comparison table using HTML/Tailwind. Justification -> Direct comparison in a table format makes the distinct goals of each code immediately clear.
+        - List of Peace Officers: Report Info -> Long, single list. Goal -> Organize & Inform. Viz -> Collapsible 'details' sections. Justification -> Prevents overwhelming the user with a wall of text, making the information scannable and easier to digest.
+        - Constitutional Amendments: Report Info -> Text describing rights. Goal -> Inform & Relate. Viz -> Styled cards for each amendment, cross-referencing Texas Constitution and CCP articles. Justification -> Organizes rights into distinct, memorable blocks and shows the relationship between federal and state law.
+        - Practical Scenarios: Report Info -> Text scenarios with answers. Goal -> Test Knowledge. Viz -> Interactive quiz format with 'Reveal Answer' buttons. Interaction -> User actively engages by attempting to solve the scenario first. Justification -> Active recall is a more effective learning strategy than passive reading.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-link.active {
+            background-color: #f59e0b;
+            color: #1e293b;
+            font-weight: 600;
+        }
+        details > summary { 
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+        }
+        details > summary:hover {
+            background-color: #f1f5f9;
+        }
+        .scenario-answer {
+            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .scenario-answer.visible {
+            max-height: 500px; /* Adjust as needed */
+            opacity: 1;
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            /* Make sidebar stack on top for mobile */
+            .flex {
+                flex-direction: column !important;
+            }
+            
+            aside {
+                width: 100% !important;
+                position: static !important;
+                order: -1;
+            }
+            
+            main {
+                padding: 1rem !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem !important;
+            }
+            
+            h2 {
+                font-size: 1.25rem !important;
+            }
+            
+            h3 {
+                font-size: 1.1rem !important;
+            }
+            
+            /* Improve navigation on mobile */
+            .nav-link {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+            }
+            
+            /* Better spacing for mobile */
+            .space-y-6 > * + * {
+                margin-top: 1.5rem !important;
+            }
+            
+            .space-y-4 > * + * {
+                margin-top: 1rem !important;
+            }
+            
+            /* Improve readability on mobile */
+            p, li {
+                line-height: 1.6;
+            }
+            
+            .text-sm {
+                font-size: 0.9rem !important;
+            }
+            
+            /* Make tables more mobile-friendly */
+            table {
+                font-size: 0.85rem;
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            th, td {
+                padding: 0.5rem !important;
+            }
+            
+            /* Improve touch targets */
+            details > summary {
+                padding: 1rem;
+                font-size: 1rem;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+            }
+            
+            button {
+                min-height: 44px;
+                padding: 0.75rem 1rem;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-width: 480px) {
+            main {
+                padding: 0.5rem !important;
+            }
+            
+            h1 {
+                font-size: 1.25rem !important;
+            }
+            
+            .bg-white {
+                margin: 0 !important;
+                border-radius: 0.5rem;
+            }
+            
+            table {
+                font-size: 0.75rem;
+            }
+        }
+        
+        /* Hide sidebar on very small screens when not needed */
+        @media (max-width: 640px) {
+            #sidebar {
+                max-height: auto;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="w-full md:w-64 bg-slate-800 text-white p-4 space-y-2 flex-shrink-0">
+            <div class="mb-4">
+                <a href="../index.html" class="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium w-full justify-center">
+                    <span class="mr-2">←</span> Back to Main
+                </a>
+            </div>
+            <h1 class="text-2xl font-bold text-amber-400">CCP & Constitution</h1>
+            <p class="text-xs text-slate-400 pb-2">BPOC Guide</p>
+            <nav id="main-nav" class="space-y-1">
+                <a href="#ccp-intro" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700">CCP Introduction</a>
+                <a href="#peace-officers" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700">Peace Officers</a>
+                <a href="#cj-system" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700">Criminal Justice System</a>
+                <a href="#constitution-intro" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700">US Constitution</a>
+                <a href="#bill-of-rights" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700">The Bill of Rights</a>
+                <a href="#arrest-search-seizure" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700">Arrest, Search & Seizure</a>
+                <a href="#rights-of-accused" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700">Rights of the Accused</a>
+                <a href="#public-order-offenses" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700">Public Order Offenses</a>
+                <a href="#scenarios" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700">Practical Scenarios</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main id="main-content" class="flex-1 p-4 md:p-8 overflow-y-auto">
+            <!-- Content will be injected here by JavaScript -->
+        </main>
+    </div>
+
+<script>
+const contentDiv = document.getElementById('main-content');
+const navLinks = document.querySelectorAll('.nav-link');
+
+const guideData = {
+    'ccp-intro': {
+        title: "Introduction to the Code of Criminal Procedure",
+        description: "The Texas Code of Criminal Procedure (CCP) establishes the rules for the administration of criminal justice in Texas. It governs everything from investigation and arrest to court proceedings and sentencing.",
+        content: `
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">Objectives of the CCP vs. Penal Code</h3>
+                    <p class="mb-4">It's crucial to understand the different goals of the Code of Criminal Procedure and the Penal Code.</p>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                            <h4 class="font-semibold text-slate-800">CCP Objectives (Art. 1.03) - The "Rulebook"</h4>
+                            <ul class="list-disc list-inside mt-2 text-sm space-y-1">
+                                <li>Adopt measures to prevent crime.</li>
+                                <li>Exclude offenders from all hope of escape.</li>
+                                <li>Ensure fair and impartial trials with little delay.</li>
+                                <li>Bring evidence to produce conviction or acquittal.</li>
+                                <li>Ensure the execution of lawful sentences.</li>
+                            </ul>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                             <h4 class="font-semibold text-slate-800">Penal Code Objectives (Sec. 1.02) - The "What"</h4>
+                            <ul class="list-disc list-inside mt-2 text-sm space-y-1">
+                                <li>Ensure public safety through deterrence and rehabilitation.</li>
+                                <li>Define and grade offenses with fair warning.</li>
+                                <li>Prescribe proportionate penalties.</li>
+                                <li>Safeguard conduct that is without guilt.</li>
+                                <li>Limit official discretion to prevent oppression.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+    'peace-officers': {
+        title: "Peace Officers: Roles & Authority",
+        description: "The CCP defines who peace officers are, their duties and powers, and the authority of officers from other jurisdictions.",
+        content: `
+             <div class="space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">Who Are Peace Officers? (CCP 2.12)</h3>
+                    <p class="mb-4">The CCP lists numerous positions that are designated as peace officers. Click to expand the categories.</p>
+                    <div class="space-y-2 text-sm">
+                        <details><summary class="font-semibold">Core Law Enforcement</summary><div class="p-3 bg-slate-50 rounded-b-lg border-l-2 border-slate-300 ml-2">Sheriffs, their deputies, & reserves; Constables & their deputies; Marshals or Police Officers of a city, town, or village; Rangers & officers commissioned by DPS.</div></details>
+                        <details><summary class="font-semibold">Specialized & Investigative Roles</summary><div class="p-3 bg-slate-50 rounded-b-lg border-l-2 border-slate-300 ml-2">Investigators for District/County Attorneys; TABC agents; Arson investigators; Investigators for Texas Medical Board, Dental Board, and TCOLE; Attorney General investigators; Comptroller security & investigators.</div></details>
+                        <details><summary class="font-semibold">Jurisdiction-Specific Officers</summary><div class="p-3 bg-slate-50 rounded-b-lg border-l-2 border-slate-300 ml-2">Airport Police, Municipal/County Park Rangers, Water Control District Officers, Hospital District Officers, Transit Authority Officers, Railroad Peace Officers (CCP 2.121), Adjunct Police Officers (CCP 2.123), Tribal Peace Officers (CCP 2.126).</div></details>
+                    </div>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">Duties and Powers (CCP 2.13)</h3>
+                    <p class="mb-2">Within their jurisdiction, it is the duty of every peace officer to:</p>
+                     <ul class="list-disc list-inside space-y-2">
+                        <li><strong>Preserve the peace</strong>.</li>
+                        <li>Interfere without warrant to <strong>prevent or suppress crime</strong>.</li>
+                        <li><strong>Execute all lawful process</strong> issued by a magistrate or court.</li>
+                        <li>Give notice to a magistrate of all offenses committed within their jurisdiction.</li>
+                        <li><strong>Arrest offenders without warrant</strong> in every case where authorized by law.</li>
+                        <li>Take possession of a missing child under CCP 63.009(g).</li>
+                     </ul>
+                     <p class="mt-4 text-sm">An officer may inquire into the immigration status of a person only if it is necessary to investigate an offense or provide information on federal visas for victims/witnesses.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">Jurisdiction & Authority</h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <h4 class="font-semibold">Conservator of the Peace (CCP 2.17)</h4>
+                            <p class="text-sm mt-1">The <span class="font-bold">Sheriff</span> is the primary conservator of the peace for their county. They SHALL arrest all offenders in their view, quell riots, and suppress all assaults and batteries.</p>
+                        </div>
+                         <div class="p-4 bg-slate-50 rounded-lg">
+                            <h4 class="font-semibold">Custody of Prisoners (CCP 2.18)</h4>
+                            <p class="text-sm mt-1">When a prisoner is committed to jail by warrant, it is the <span class="font-bold">Sheriff's</span> duty to guard them to prevent escape.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <h4 class="font-semibold">Special Investigators (CCP 2.122)</h4>
+                            <p class="text-sm mt-1">Certain federal agents (e.g., FBI, DEA, Secret Service) are NOT Texas peace officers but are granted arrest, search, and seizure powers for <span class="font-bold">state felonies only</span>.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <h4 class="font-semibold">Peace Officers From Adjoining States (CCP 2.124)</h4>
+                            <p class="text-sm mt-1">An officer from an adjoining state has the same powers as a Texas officer when transporting an inmate to a medical facility in a bordering county or if they are on duty in a bordering municipality (within one mile of the border).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+    'cj-system': {
+        title: "The Criminal Justice System",
+        description: "The criminal justice system is comprised of three main components: police, courts, and corrections. This section outlines their structure, jurisdiction, and how they interact.",
+        content: `
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">Three Components of the System</h3>
+                    <p class="mb-4">Each component has distinct roles at the city, county, state, and federal levels.</p>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <h4 class="font-semibold text-center">Police</h4>
+                            <p class="text-sm text-center mt-1">City Police, County Sheriff, State Troopers, Federal Agents</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <h4 class="font-semibold text-center">Courts</h4>
+                            <p class="text-sm text-center mt-1">Municipal, Justice, County, District, Appellate, Federal</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <h4 class="font-semibold text-center">Corrections</h4>
+                            <p class="text-sm text-center mt-1">Municipal Fines, County Jail, State Prison, Probation, Parole</p>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-sm">These components are interdependent. For example, increased arrests by police lead to increased court dockets. Court dispositions (convictions) increase correctional populations. The success or failure of the correctional system (rehabilitation) directly impacts the police through recidivism.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">Texas Court Jurisdiction</h3>
+                    <p class="mb-4">The Texas court system has a defined hierarchy for handling civil and criminal cases.</p>
+                    <div class="space-y-2 text-sm">
+                        <details><summary class="font-semibold">Municipal Courts (CCP 4.14)</summary><div class="p-3 bg-slate-50 rounded-b-lg border-l-2 border-slate-300 ml-2">Handle Class C misdemeanors and city ordinance violations. Fines up to $500, with higher limits for certain public health/safety ordinances.</div></details>
+                        <details><summary class="font-semibold">Justice Courts (CCP 4.11)</summary><div class="p-3 bg-slate-50 rounded-b-lg border-l-2 border-slate-300 ml-2">Handle Class C misdemeanors and small claims civil cases. Have concurrent jurisdiction with Municipal Courts within city limits.</div></details>
+                        <details><summary class="font-semibold">County Courts at Law (CCP 4.07)</summary><div class="p-3 bg-slate-50 rounded-b-lg border-l-2 border-slate-300 ml-2">Have original jurisdiction for Class A and B misdemeanors (except official misconduct). They also hear appeals from Justice and Municipal courts.</div></details>
+                        <details><summary class="font-semibold">District Courts (CCP 4.05)</summary><div class="p-3 bg-slate-50 rounded-b-lg border-l-2 border-slate-300 ml-2">Trial courts of general jurisdiction. Have original jurisdiction for all felony offenses and official misconduct cases.</div></details>
+                        <details><summary class="font-semibold">Courts of Appeals</summary><div class="p-3 bg-slate-50 rounded-b-lg border-l-2 border-slate-300 ml-2">Hear appeals from County and District courts for both civil and criminal cases. They do not hear original cases.</div></details>
+                        <details><summary class="font-semibold">Court of Criminal Appeals & Texas Supreme Court</summary><div class="p-3 bg-slate-50 rounded-b-lg border-l-2 border-slate-300 ml-2">These are the highest appellate courts. The <span class="font-bold">Court of Criminal Appeals</span> is the final appellate court for all criminal cases (death penalty cases are appealed directly here). The <span class="font-bold">Texas Supreme Court</span> is the final appellate court for civil cases only.</div></details>
+                    </div>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">Magistrates (CCP 2.09, 2.10)</h3>
+                    <p class="mb-2">Magistrates include various judges (from Supreme Court down to Municipal) and some other appointed judicial officers. Their primary duties are:</p>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>To preserve the peace within their jurisdiction.</li>
+                        <li>To issue all process intended to aid in preventing and suppressing crime (e.g., warrants).</li>
+                        <li>To cause the arrest of offenders so they may be brought to punishment.</li>
+                    </ul>
+                </div>
+            </div>
+        `
+    },
+    'constitution-intro': {
+        title: "Introduction to the U.S. Constitution",
+        description: "This section provides historical context for the creation of the U.S. Constitution and outlines the structure and purpose of its main articles.",
+        content: `
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">Historical Context</h3>
+                    <p class="mb-4">The U.S. Constitution was born from the American colonies' rebellion against the English king, who they believed had denied them their historic rights. The colonists believed that law was superior to any government, including a monarch.</p>
+                    <ul class="list-disc list-inside space-y-2 text-sm">
+                        <li><strong>First Continental Congress (1774):</strong> Delegates from 12 colonies met to petition England for rights like "life, liberty, and property," trial by jury, and peaceable assembly. The King rejected their appeal.</li>
+                        <li><strong>Declaration of Independence (1776):</strong> The colonies declared themselves free, justifying their independence with the principle that all men are created equal with certain inalienable rights.</li>
+                        <li><strong>Articles of Confederation (1778):</strong> The nation's first constitution, it created a weak central government with no authority to levy taxes, regulate commerce, or maintain an army effectively.</li>
+                        <li><strong>Constitutional Convention (1787):</strong> Delegates met to revise the Articles but quickly realized a new framework was needed. They drafted the U.S. Constitution, which was ratified after the promise of a Bill of Rights was made.</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">The Three Branches of Government</h3>
+                    <p class="mb-4">The first three articles of the Constitution establish the framework for the federal government.</p>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <h4 class="font-semibold">Article I: Legislative Branch</h4>
+                            <p class="text-sm mt-1">Establishes the U.S. Congress (Senate and House of Representatives) and gives it the power to make laws, levy taxes, declare war, and regulate commerce.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                             <h4 class="font-semibold">Article II: Executive Branch</h4>
+                            <p class="text-sm mt-1">Establishes the Presidency and outlines the duties of the President, including serving as Commander-in-Chief, making treaties, and appointing judges and other officers.</p>
+                        </div>
+                         <div class="p-4 bg-slate-50 rounded-lg">
+                             <h4 class="font-semibold">Article III: Judicial Branch</h4>
+                            <p class="text-sm mt-1">Establishes the U.S. Supreme Court and gives it original and appellate jurisdiction. It also defines the crime of treason.</p>
+                        </div>
+                    </div>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">Fundamental Principles in Article I</h3>
+                     <ul class="list-disc list-inside space-y-2">
+                        <li><span class="font-semibold">Writ of Habeas Corpus:</span> A court order to bring a party before a judge to determine if their imprisonment is lawful. Its purpose is to ensure restraint is by due process. The privilege of this writ cannot be suspended except in cases of rebellion or invasion.</li>
+                        <li><span class="font-semibold">No Bill of Attainder:</span> The legislature cannot pass a law that declares a person guilty of a crime and punishes them without a trial.</li>
+                        <li><span class="font-semibold">No Ex Post Facto Law:</span> A person cannot be punished for an act that was not a crime at the time it was committed.</li>
+                     </ul>
+                </div>
+            </div>
+        `
+    },
+    'bill-of-rights': {
+        title: "The Bill of Rights & Key Amendments",
+        description: "The first ten amendments to the Constitution, known as the Bill of Rights, were created to protect individual liberties from government overreach. This section details these fundamental rights and their parallels in Texas law.",
+        content: `
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">1st Amendment: Freedoms of Expression</h3>
+                    <p class="mb-2">"Congress shall make no law respecting an establishment of religion, or prohibiting the free exercise thereof; or abridging the freedom of speech, or of the press; or the right of the people peaceably to assemble, and to petition the Government for a redress of grievances."</p>
+                    <details class="p-2 rounded bg-slate-50">
+                        <summary class="font-semibold text-sm">Unprotected Speech</summary>
+                        <div class="mt-2 text-sm">
+                            <p>While freedom of speech is broad, it is not absolute. The Supreme Court has identified several categories of unprotected speech:</p>
+                            <ul class="list-decimal list-inside mt-2 space-y-1 pl-2">
+                                <li><strong>Incitement:</strong> Speech directed toward inciting or producing imminent lawless action that is likely to do so.</li>
+                                <li><strong>Fighting Words:</strong> Speech that is likely to cause a violent response against the speaker or includes insulting comments likely to cause emotional harm.</li>
+                                <li><strong>Hate Speech:</strong> Typically only unprotected if it is intended and likely to produce an imminent, violent reaction.</li>
+                                <li><strong>Defamation:</strong> False statements that harm someone's reputation.</li>
+                                <li><strong>Obscenity:</strong> Sexual material that appeals to prurient interest and lacks serious artistic, political, or scientific value (e.g., child pornography).</li>
+                            </ul>
+                            <div class="mt-3 p-2 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                                <p class="font-semibold text-red-800">Duran v. City of Douglas:</p>
+                                <p class="text-red-700">This case affirmed that verbal harassment or criticism of a police officer, on its own, does not justify an arrest. Protected speech can only be restricted when it violates a statute, such as by making a direct threat or physically interfering with an officer's duties.</p>
+                            </div>
+                        </div>
+                    </details>
+                    <p class="text-xs mt-3 text-slate-600"><strong>See Also:</strong> TX Const. Art. 1 Sec. 4, 6, 8, 27; CCP Art. 1.16, 1.17</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">2nd Amendment: Right to Bear Arms</h3>
+                    <p>"A well regulated Militia, being necessary to the security of a free State, the right of the people to keep and bear Arms, shall not be infringed."</p>
+                    <p class="text-xs mt-3 text-slate-600"><strong>See Also:</strong> TX Const. Art. 1 Sec. 23</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">3rd Amendment: Quartering of Soldiers</h3>
+                    <p>"No Soldier shall, in time of peace be quartered in any house, without the consent of the Owner, nor in time of war, but in a manner to be prescribed by law."</p>
+                     <p class="text-xs mt-3 text-slate-600"><strong>See Also:</strong> TX Const. Art. 1 Sec. 25</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">4th Amendment: Search and Seizure</h3>
+                    <p class="mb-2">"The right of the people to be secure in their persons, houses, papers, and effects, against unreasonable searches and seizures, shall not be violated, and no Warrants shall issue, but upon probable cause, supported by Oath or affirmation, and particularly describing the place to be searched, and the persons or things to be seized."</p>
+                    <p class="text-sm">This means a search or seizure is <span class="font-bold">unreasonable</span> unless it is done with a warrant, with consent, or under a specific exception backed by the appropriate level of proof (probable cause or reasonable suspicion).</p>
+                    <div class="mt-3 p-2 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                        <p class="font-semibold text-blue-800">Tennessee v. Garner (1985):</p>
+                        <p class="text-blue-700 text-sm">The Supreme Court ruled that all police uses of force, including deadly force, are considered "seizures" under the 4th Amendment and must be "reasonable."</p>
+                    </div>
+                    <p class="text-xs mt-3 text-slate-600"><strong>See Also:</strong> TX Const. Art. 1 Sec. 9; CCP Art. 1.06</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">7th Amendment: Right to Jury in Civil Cases</h3>
+                    <p>"In Suits at common law, where the value in controversy shall exceed twenty dollars, the right of trial by jury shall be preserved, and no fact tried by a jury, shall be otherwise re-examined in any Court of the United States, than according to the rules of the common law."</p>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">8th Amendment: Bail and Punishment</h3>
+                    <p>"Excessive bail shall not be required, nor excessive fines imposed, nor cruel and unusual punishments inflicted."</p>
+                    <p class="text-sm mt-2">This amendment ensures that bail and fines are not used to oppress an individual and that punishments fit the crime. "Cruel and unusual punishment" applies to post-conviction actions, not excessive force claims during an arrest, which are covered by the 4th Amendment's reasonableness standard.</p>
+                     <p class="text-xs mt-3 text-slate-600"><strong>See Also:</strong> TX Const. Art. 1 Sec. 11, 13; CCP Art. 1.07, 1.09</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">9th & 10th Amendments: Reserved Rights and Powers</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <h4 class="font-semibold">9th Amendment</h4>
+                            <p class="text-sm mt-1">"The enumeration in the Constitution, of certain rights, shall not be construed to deny or disparage others retained by the people." This means that citizens have other rights beyond those specifically listed in the Constitution.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                             <h4 class="font-semibold">10th Amendment</h4>
+                            <p class="text-sm mt-1">"The powers not delegated to the United States by the Constitution, nor prohibited by it to the States, are reserved to the States respectively, or to the people." This is the basis for states' rights and police powers.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">14th Amendment: Due Process and Equal Protection</h3>
+                    <p>"No state shall make or enforce any law which shall abridge the privileges or immunities of citizens of the United States; nor shall any State deprive any person of life, liberty, or property, without due process of law; nor deny to any person within its jurisdiction the equal protection of the laws."</p>
+                    <p class="mt-2 text-sm">This critical amendment applies the Bill of Rights to the states, ensuring that state governments must also respect the constitutional rights of all citizens. It establishes dual citizenship (state and U.S.) and guarantees that all persons receive equal protection under the law.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">The Exclusionary Rule</h3>
+                     <p class="mb-2">A crucial check on law enforcement power derived from the 4th Amendment.</p>
+                    <ul class="list-disc list-inside space-y-2 text-sm">
+                        <li><strong>Exclusionary Rule:</strong> Evidence that was obtained illegally by law enforcement in violation of constitutional rights is not admissible in court against the accused. (*Mapp v. Ohio*)</li>
+                        <li><strong>Fruit of the Poisonous Tree:</strong> An extension of the exclusionary rule. Any evidence discovered as a result of the initial illegally obtained evidence is also inadmissible.</li>
+                        <li><strong>Texas Rule (CCP 38.23):</strong> Texas law explicitly states that no evidence obtained in violation of any legal provision shall be admitted. An exception exists for evidence obtained by an officer acting in objective good faith reliance on a warrant issued by a neutral magistrate based on probable cause.</li>
+                     </ul>
+                </div>
+            </div>
+        `
+    },
+    'arrest-search-seizure': {
+        title: "Arrest, Search & Seizure",
+        description: "This section details the legal standards for police action, including the levels of suspicion, probable cause, and the requirements for warrants and warrantless searches.",
+        content: `
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">Continuum of Proof</h3>
+                    <p class="mb-4">Law enforcement actions are justified by different levels of proof. Understanding this continuum is critical.</p>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <h4 class="font-semibold">1. Mere Suspicion</h4>
+                            <p class="text-sm mt-1">A hunch or feeling of intuition. It is <span class="font-bold">insufficient proof</span> of any fact. An officer can use it to start a consensual encounter, run a license plate, or conduct surveillance to build more facts.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <h4 class="font-semibold">2. Reasonable Suspicion</h4>
+                            <p class="text-sm mt-1">Sufficient, articulable facts and circumstances, and rational inferences from those facts, that would lead a reasonable officer to conclude that criminal activity <span class="font-bold">may be afoot</span>. This is the standard for a lawful temporary detention (a "Terry Stop"). It is less than Probable Cause.</p>
+                            <p class="text-xs mt-2 text-slate-500">Case Law: Terry v. Ohio (1968), U.S. v. Sokolow (1989)</p>
+                        </div>
+                         <div class="p-4 bg-slate-50 rounded-lg">
+                            <h4 class="font-semibold">3. Probable Cause</h4>
+                            <p class="text-sm mt-1">Facts and circumstances within the officer's knowledge, based on reasonably trustworthy information, sufficient to warrant a reasonable person to believe that a crime has been or is being committed by the suspect (for arrest) or that seizable property would be found in a particular place (for search).</p>
+                             <p class="text-xs mt-2 text-slate-500">Case Law: Beck v. Ohio (1964), Brinegar v. U.S. (1949)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">Warrants: Arrest & Search</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold">Arrest Warrant (CCP 15.01)</h4>
+                             <p class="text-sm mb-2">A written order from a magistrate, directed to a peace officer, commanding them to take the body of the person accused of an offense.</p>
+                             <h5 class="text-xs font-bold mt-2">Requisites (CCP 15.02)</h5>
+                             <ul class="list-disc list-inside text-xs space-y-1 pl-2">
+                                <li>Issued in the name of "The State of Texas"</li>
+                                <li>Specify the name of the person (or a reasonably definite description)</li>
+                                <li>State the offense</li>
+                                <li>Signed by the magistrate</li>
+                             </ul>
+                        </div>
+                        <div>
+                             <h4 class="font-semibold">Search Warrant (CCP 18.01)</h4>
+                             <p class="text-sm mb-2">A written order from a magistrate, directed to a peace officer, commanding them to search for specific property or things and seize them.</p>
+                              <h5 class="text-xs font-bold mt-2">Requirements</h5>
+                             <ul class="list-disc list-inside text-xs space-y-1 pl-2">
+                                <li>Based on a sworn affidavit establishing Probable Cause.</li>
+                                <li>Must particularly describe the place to be searched and the items to be seized.</li>
+                             </ul>
+                        </div>
+                    </div>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">Warrantless Arrests & Searches</h3>
+                     <p class="mb-2">A search or seizure is unreasonable without a warrant unless a specific exception applies. The most common exceptions are based on exigent (emergency) circumstances.</p>
+                    <details class="p-2 rounded bg-slate-50">
+                        <summary class="font-semibold text-sm">Recognized Exigent Circumstances</summary>
+                        <div class="mt-2 text-sm">
+                            <ul class="list-decimal list-inside mt-2 space-y-1 pl-2">
+                                <li><strong>Preventing Serious Injury & Providing Aid:</strong> Allows warrantless entry to break up a violent fight or render emergency aid. (*Brigham City v. Stuart*)</li>
+                                <li><strong>Preventing Imminent Destruction of Evidence:</strong> Allows limited search/seizure if evidence is about to be destroyed. (*Kentucky v. King*, *Cupp v. Murphy*)</li>
+                                <li><strong>Preventing Imminent Escape / "Hot Pursuit":</strong> Allows officers in fresh pursuit of a fleeing <span class="font-bold">felon</span> to enter a place to make an arrest. For a <span class="font-bold">misdemeanant</span>, entry is only justified if another exigency exists. (*Warden v. Hayden*, *Lange v. California*)</li>
+                            </ul>
+                        </div>
+                    </details>
+                    <p class="mt-4 font-semibold text-sm">Plain View Doctrine</p>
+                    <p class="text-sm">An officer may seize evidence without a warrant if: 1) The officer is lawfully present to see what they see, 2) It is immediately apparent that the item is contraband or evidence, and 3) The officer has a lawful right of access to the item.</p>
+                </div>
+            </div>
+        `
+    },
+    'rights-of-accused': {
+        title: "Rights of the Accused",
+        description: "The 5th, 6th, and 8th Amendments provide a shield of rights for any person accused of a crime, ensuring due process, a fair trial, and protection from excessive punishment.",
+        content: `
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">5th Amendment Protections</h3>
+                    <p class="mb-4">"No person shall be held to answer for a capital, or otherwise infamous crime, unless on a presentment or indictment of a Grand Jury...nor shall any person be subject for the same offence to be twice put in jeopardy of life or limb; nor shall be compelled in any criminal case to be a witness against himself, nor be deprived of life, liberty, or property, without due process of law..."</p>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <div class="p-2"><strong>Grand Jury Indictment:</strong> Required for all felony charges.</div>
+                        <div class="p-2"><strong>Double Jeopardy:</strong> Cannot be tried twice for the same offense after acquittal. (TX Const. Art. 1 Sec. 14; CCP 1.10)</div>
+                        <div class="p-2"><strong>Self-Incrimination:</strong> Right to remain silent and not be compelled to be a witness against oneself.</div>
+                        <div class="p-2"><strong>Due Process:</strong> Must be processed through the justice system according to established rules. (TX Const. Art. 1 Sec. 19; CCP 1.04)</div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">6th Amendment Trial Rights</h3>
+                    <p class="mb-4">"In all criminal prosecutions, the accused shall enjoy the right to a speedy and public trial, by an impartial jury...and to be informed of the nature and cause of the accusation; to be confronted with the witnesses against him; to have compulsory process for obtaining witnesses in his favor, and to have the assistance of counsel for his defense."</p>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <div class="p-2"><strong>Speedy & Public Trial:</strong> A formal trial free from unreasonable delay and open to public view. (CCP 1.24)</div>
+                        <div class="p-2"><strong>Impartial Jury:</strong> Right to be tried by an unbiased jury. (CCP 1.12)</div>
+                        <div class="p-2"><strong>Informed of Charges:</strong> Right to know the specific accusation.</div>
+                        <div class="p-2"><strong>Confront Accusers:</strong> Right to cross-examine witnesses against them. (CCP 1.25)</div>
+                        <div class="p-2"><strong>Compulsory Process:</strong> Right to subpoena witnesses in their favor.</div>
+                        <div class="p-2"><strong>Assistance of Counsel:</strong> Right to have an attorney. (CCP 1.051)</div>
+                    </div>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">Bail and Arraignment (8th Amendment & CCP)</h3>
+                    <p class="mb-4">The 8th Amendment prohibits excessive bail. The CCP outlines the process for setting bail and arraigning an arrested person.</p>
+                     <div class="space-y-4">
+                        <details class="p-2 rounded bg-slate-50">
+                            <summary class="font-semibold text-sm">Bail (CCP 17.01)</summary>
+                            <div class="mt-2 text-sm">
+                                <p>Bail is the security given by an accused person that they will appear in court to answer the accusation. It can be a bail bond or a personal bond. All persons are eligible for bail except in specific circumstances outlined in the Texas Constitution (e.g., capital offenses where proof is evident).</p>
+                                <h5 class="font-semibold mt-2">Rules for Fixing Bail (CCP 17.15):</h5>
+                                <ul class="list-disc list-inside pl-2">
+                                    <li>Must be high enough to give reasonable assurance of compliance.</li>
+                                    <li>The nature of the offense and safety of the victim/community must be considered.</li>
+                                    <li>It must <span class="font-bold">not</span> be used as an instrument of oppression.</li>
+                                    <li>The accused's ability to make bail should be considered.</li>
+                                </ul>
+                            </div>
+                        </details>
+                        <details class="p-2 rounded bg-slate-50">
+                            <summary class="font-semibold text-sm">Arraignment (CCP 15.17)</summary>
+                            <div class="mt-2 text-sm">
+                                <p>An arrested person must be taken before a magistrate without unnecessary delay (no later than 48 hours after arrest). At this hearing, often called an arraignment, the magistrate will:</p>
+                                <ul class="list-disc list-inside pl-2">
+                                    <li>Inform the person of the charges against them.</li>
+                                    <li>Inform them of their rights (like the right to counsel and right to remain silent).</li>
+                                    <li>Set the amount of bail.</li>
+                                </ul>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">Texas Charging Instruments</h3>
+                    <div class="space-y-3 text-sm">
+                        <details><summary class="font-semibold">Complaint (CCP 15.04)</summary><div class="p-3 bg-slate-50 rounded-b-lg border-l-2 border-slate-300 ml-2">An affidavit made before a magistrate or prosecutor that charges the commission of an offense. It must state the name of the accused, the offense, the time/place, and be signed by the affiant. This is often the basis for an arrest warrant.</div></details>
+                        <details><summary class="font-semibold">Information (CCP 21.20)</summary><div class="p-3 bg-slate-50 rounded-b-lg border-l-2 border-slate-300 ml-2">A written statement filed by the prosecutor charging the defendant with an offense. It must be supported by a sworn complaint. This is used for most misdemeanor prosecutions.</div></details>
+                        <details><summary class="font-semibold">Indictment (CCP 21.01)</summary><div class="p-3 bg-slate-50 rounded-b-lg border-l-2 border-slate-300 ml-2">The official written statement of a grand jury accusing a person of an offense. An indictment is <span class="font-bold">required</span> to prosecute any felony in Texas.</div></details>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+    'public-order-offenses': {
+        title: "Offenses Against Public Order",
+        description: "This section covers specific offenses from the Penal Code that relate to disrupting public peace and order, often tying into the limits of protected speech under the First Amendment.",
+        content: `
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">Disorderly Conduct and Related Offenses</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead><tr><th class="p-3 bg-slate-100 border-b-2">Offense</th><th class="p-3 bg-slate-100 border-b-2">Conduct</th><th class="p-3 bg-slate-100 border-b-2">Level</th></tr></thead>
+                            <tbody>
+                                <tr><td class="p-3 border-b font-semibold">Disorderly Conduct (PC 42.01)</td><td class="p-3 border-b">Using abusive language to incite breach of peace; making unreasonable noise; fighting in public.</td><td class="p-3 border-b">Class C (or B for firearm offenses)</td></tr>
+                                <tr><td class="p-3 border-b font-semibold">Riot (PC 42.02)</td><td class="p-3 border-b">Knowingly participating in an assembly of 7 or more persons creating an immediate danger of damage/injury or obstructing government functions.</td><td class="p-3 border-b">Class B (or higher)</td></tr>
+                                <tr><td class="p-3 border-b font-semibold">Obstructing Highway (PC 42.03)</td><td class="p-3 border-b">Intentionally, knowingly, or recklessly obstructing a public way or disobeying a reasonable order to move.</td><td class="p-3 border-b">Class B (enhanced for emergency vehicles or reckless driving)</td></tr>
+                                <tr><td class="p-3 border-b font-semibold">Disrupting Meeting (PC 42.05)</td><td class="p-3 border-b">With intent, obstructing or interfering with a lawful meeting by physical action or verbal utterance.</td><td class="p-3 border-b">Class B</td></tr>
+                                <tr><td class="p-3 font-semibold">Funeral Disruption (PC 42.055)</td><td class="p-3">Picketing within 1,000 feet of a funeral service (3 hours before to 3 hours after).</td><td class="p-3">Class B</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">Defense for Speech-Related Conduct (PC 42.04)</h3>
+                    <p>If conduct that would violate Unreasonable Noise, Obstructing Passageway, or Funeral Disruption consists of speech, picketing, or other communication on social, political, or religious questions, an actor <span class="font-bold">must be ordered to move or disperse</span> by an officer or other authorized person before an arrest can be made. It is a defense to prosecution if no order was given, or if the order was unreasonable or was promptly obeyed.</p>
+                </div>
+            </div>
+        `
+    },
+    'scenarios': {
+        title: "Practical Scenarios",
+        description: "Apply your knowledge of the Penal Code and Code of Criminal Procedure to these practical scenarios. Read the scenario, determine the offense(s), and then click to reveal the answer.",
+        content: `
+            <div class="space-y-6">
+                <!-- Scenario 1 -->
+                <div class="bg-white p-6 rounded-lg shadow-md scenario">
+                    <h4 class="font-semibold mb-2">Scenario 1</h4>
+                    <p class="mb-3 text-sm">A police officer patrolling a closed city park at night observes a vehicle. Inside, two naked individuals are engaged in sexual intercourse.</p>
+                    <button class="toggle-answer bg-amber-500 text-white px-3 py-1 rounded-md text-sm">Reveal Answer</button>
+                    <div class="scenario-answer mt-3 p-3 bg-slate-100 rounded-lg"><strong>Public Lewdness (PC 21.07):</strong> Knowingly engaging in an act of sexual intercourse in a public place and being reckless about whether another is present who will be offended or alarmed.</div>
+                </div>
+                 <!-- Scenario 2 -->
+                <div class="bg-white p-6 rounded-lg shadow-md scenario">
+                    <h4 class="font-semibold mb-2">Scenario 2</h4>
+                    <p class="mb-3 text-sm">An officer is dispatched to a park for a disturbance. A security guard is detaining a suspect who, according to the guard, appeared drunk, ran in front of the bleachers, pulled his pants down, and exposed his anus to the crowd.</p>
+                    <button class="toggle-answer bg-amber-500 text-white px-3 py-1 rounded-md text-sm">Reveal Answer</button>
+                    <div class="scenario-answer mt-3 p-3 bg-slate-100 rounded-lg"><strong>Disorderly Conduct (PC 42.01(a)(10)):</strong> Intentionally or knowingly exposing his anus or genitals in a public place and being reckless about whether another may be present who will be offended or alarmed.</div>
+                </div>
+                 <!-- Scenario 3 -->
+                <div class="bg-white p-6 rounded-lg shadow-md scenario">
+                    <h4 class="font-semibold mb-2">Scenario 3</h4>
+                    <p class="mb-3 text-sm">At a mall, two subjects get into a loud argument over cutting in line. After a vulgar exchange, they begin shoving each other until separated by security.</p>
+                    <button class="toggle-answer bg-amber-500 text-white px-3 py-1 rounded-md text-sm">Reveal Answer</button>
+                    <div class="scenario-answer mt-3 p-3 bg-slate-100 rounded-lg"><strong>Disorderly Conduct (PC 42.01(a)(6)):</strong> Fighting with another in a public place. Both parties could also be charged with Disorderly Conduct (PC 42.01(a)(1)) for using abusive language that tends to incite an immediate breach of the peace.</div>
+                </div>
+                 <!-- Scenario 4 -->
+                <div class="bg-white p-6 rounded-lg shadow-md scenario">
+                    <h4 class="font-semibold mb-2">Scenario 4</h4>
+                    <p class="mb-3 text-sm">A man is standing in a roadway washing car windshields for money, causing traffic to stop and other cars to honk. He is yelled at to get out of the way.</p>
+                    <button class="toggle-answer bg-amber-500 text-white px-3 py-1 rounded-md text-sm">Reveal Answer</button>
+                    <div class="scenario-answer mt-3 p-3 bg-slate-100 rounded-lg"><strong>Obstructing Highway or Other Passageway (PC 42.03):</strong> Without legal privilege, intentionally, knowingly, or recklessly obstructing a highway or street, rendering passage unreasonably inconvenient or hazardous.</div>
+                </div>
+                <!-- Scenario 5 -->
+                <div class="bg-white p-6 rounded-lg shadow-md scenario">
+                    <h4 class="font-semibold mb-2">Scenario 5</h4>
+                    <p class="mb-3 text-sm">At a military funeral, a large group 600 feet away is loudly shouting offensive and vulgar comments towards the service, causing it to be halted.</p>
+                    <button class="toggle-answer bg-amber-500 text-white px-3 py-1 rounded-md text-sm">Reveal Answer</button>
+                    <div class="scenario-answer mt-3 p-3 bg-slate-100 rounded-lg"><strong>Funeral Service Disruption (PC 42.055):</strong> Engaging in picketing (which includes loud shouting) within 1,000 feet of a funeral service. The officer must first order them to disperse per PC 42.04 before making an arrest.</div>
+                </div>
+                 <!-- Scenario 7 -->
+                <div class="bg-white p-6 rounded-lg shadow-md scenario">
+                    <h4 class="font-semibold mb-2">Scenario 7</h4>
+                    <p class="mb-3 text-sm">A group of 10-15 students are damaging school property (breaking windows, spray painting). Teachers and security are present but not acting.</p>
+                    <button class="toggle-answer bg-amber-500 text-white px-3 py-1 rounded-md text-sm">Reveal Answer</button>
+                    <div class="scenario-answer mt-3 p-3 bg-slate-100 rounded-lg"><strong>Riot (PC 42.02):</strong> An assemblage of 7 or more persons creating an immediate danger of damage to property. Officers have a duty to cause dispersal, arresting if necessary, and may call for aid ("power of the county") under CCP 8.04.</div>
+                </div>
+                 <!-- Court Scenario 1 -->
+                <div class="bg-white p-6 rounded-lg shadow-md scenario">
+                    <h4 class="font-semibold mb-2">Court Scenario 1</h4>
+                    <p class="mb-3 text-sm">An individual is arrested and charged with Murder (a 1st Degree Felony).</p>
+                    <button class="toggle-answer bg-amber-500 text-white px-3 py-1 rounded-md text-sm">Reveal Answer</button>
+                    <div class="scenario-answer mt-3 p-3 bg-slate-100 rounded-lg">
+                        <ul class="list-disc list-inside">
+                            <li><strong>Original Jurisdiction:</strong> A District Court has original jurisdiction for all felony cases.</li>
+                            <li><strong>First Appeal:</strong> A Court of Appeals would hear the initial appeal.</li>
+                            <li><strong>Highest Appeal:</strong> The Texas Court of Criminal Appeals is the highest state court for criminal cases.</li>
+                            <li><strong>Federal Transfer:</strong> A case could be transferred to the federal system if a federal crime was also committed or if a federal constitutional right was violated during the state process.</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Court Scenario 2 -->
+                <div class="bg-white p-6 rounded-lg shadow-md scenario">
+                    <h4 class="font-semibold mb-2">Court Scenario 2</h4>
+                    <p class="mb-3 text-sm">Two men are found in a closed city park. One is issued a Class C citation for the violation. The other is also cited but then arrested for possessing brass knuckles (Unlawful Carrying Weapons, a Class A Misdemeanor).</p>
+                    <button class="toggle-answer bg-amber-500 text-white px-3 py-1 rounded-md text-sm">Reveal Answer</button>
+                    <div class="scenario-answer mt-3 p-3 bg-slate-100 rounded-lg">
+                         <ul class="list-disc list-inside">
+                            <li><strong>Man 1 (Class C):</strong> Will appear in either Municipal Court or Justice Court, as they have concurrent jurisdiction.</li>
+                            <li><strong>Man 2 (Class A):</strong> Will appear in a County Court at Law, which has jurisdiction over Class A and B misdemeanors.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        `
+    }
+};
+
+function renderContent(hash) {
+    const key = hash.substring(1);
+    const pageData = guideData[key] || guideData['ccp-intro'];
+    
+    contentDiv.innerHTML = `
+        <h2 class="text-3xl font-bold mb-2 text-slate-900">${pageData.title}</h2>
+        <p class="mb-8 text-slate-600 max-w-3xl">${pageData.description}</p>
+        ${pageData.content}
+    `;
+
+    navLinks.forEach(link => {
+        if (link.getAttribute('href') === hash) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+    
+    if (key === 'scenarios') {
+        initScenarios();
+    }
+}
+
+function initScenarios() {
+    const scenarios = document.querySelectorAll('.scenario');
+    scenarios.forEach(scenario => {
+        const button = scenario.querySelector('.toggle-answer');
+        const answer = scenario.querySelector('.scenario-answer');
+        if(button && answer) {
+            button.addEventListener('click', () => {
+                answer.classList.toggle('visible');
+                if (answer.classList.contains('visible')) {
+                    button.textContent = 'Hide Answer';
+                } else {
+                    button.textContent = 'Reveal Answer';
+                }
+            });
+        }
+    });
+}
+
+
+window.addEventListener('hashchange', () => renderContent(window.location.hash));
+window.addEventListener('DOMContentLoaded', () => {
+    if (!window.location.hash) {
+        window.location.hash = '#ccp-intro';
+    }
+    renderContent(window.location.hash);
+});
+
+</script>
+
+</body>
+</html>
