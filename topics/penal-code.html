@@ -150,6 +150,7 @@
                 <a href="#public-order" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700 touch-manipulation">Public Order & Safety</a>
                 <a href="#offenses-children" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700 touch-manipulation">Offenses Involving Children</a>
                 <a href="#punishments" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700 touch-manipulation">Punishments & Enhancements</a>
+                <a href="#quiz" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700 touch-manipulation">Interactive Quiz</a>
             </nav>
         </aside>
 
@@ -735,6 +736,56 @@ const data = {
                 </div>
             </div>
         `
+    },
+    quiz: {
+        title: "Interactive Quiz: Texas Penal Code",
+        description: "Test your understanding of the Texas Penal Code concepts covered in this study guide. This comprehensive quiz covers all major topics from offense elements to punishment levels.",
+        content: `
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div id="quiz-container" class="space-y-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="text-sm text-slate-600">
+                                Question <span id="current-question">1</span> of <span id="total-questions">15</span>
+                            </div>
+                            <div class="text-sm text-slate-600">
+                                Score: <span id="current-score">0</span>/<span id="questions-answered">0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="w-full bg-slate-200 rounded-full h-2 mb-6">
+                            <div id="progress-bar" class="bg-amber-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                        
+                        <div id="question-container" class="p-6 bg-slate-50 rounded-lg">
+                            <!-- Questions will be populated by JavaScript -->
+                        </div>
+                        
+                        <div id="explanation-container" class="hidden p-4 rounded-lg">
+                            <!-- Explanations will be shown after each answer -->
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button id="prev-btn" class="px-4 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                Previous
+                            </button>
+                            <button id="next-btn" class="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                Next Question
+                            </button>
+                        </div>
+                        
+                        <div id="quiz-results" class="hidden p-6 bg-slate-50 rounded-lg text-center">
+                            <h3 class="text-xl font-bold mb-4">Quiz Complete!</h3>
+                            <div id="final-score" class="text-3xl font-bold text-amber-600 mb-4"></div>
+                            <div id="performance-message" class="text-slate-600 mb-4"></div>
+                            <button id="restart-quiz" class="px-6 py-3 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors">
+                                Retake Quiz
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
     }
 };
 
@@ -1052,13 +1103,343 @@ function initUcwFlowcharts() {
     });
 }
 
+// Quiz Functionality
+const penalCodeQuizData = [
+    {
+        question: "What are the four elements that must be proven for any criminal offense (corpus delicti)?",
+        options: [
+            "Intent, action, harm, punishment",
+            "Forbidden conduct, required culpability, required result, negation of exception",
+            "Mental state, physical act, victim, evidence",
+            "Motive, opportunity, means, modus operandi"
+        ],
+        correct: 1,
+        explanation: "For any crime, the prosecution must prove: (1) The forbidden conduct, (2) The required culpability (mental state), (3) Any required result, and (4) The negation of any exception. This is the corpus delicti or 'body of the crime.'"
+    },
+    {
+        question: "Which mental state requires that a person is aware that their conduct is reasonably certain to cause the result?",
+        options: [
+            "Intentionally",
+            "Knowingly", 
+            "Recklessly",
+            "Criminal Negligence"
+        ],
+        correct: 1,
+        explanation: "Knowingly means the person is aware that their conduct is reasonably certain to cause the result. This is different from 'intentionally' where the person's conscious objective is to cause the result."
+    },
+    {
+        question: "What is the punishment range for a Class A Misdemeanor?",
+        options: [
+            "Up to $500 fine only",
+            "Up to 180 days in jail and/or up to $2,000 fine",
+            "Up to 1 year in jail and/or up to $4,000 fine",
+            "Up to 2 years in state jail"
+        ],
+        correct: 2,
+        explanation: "A Class A Misdemeanor is punishable by up to 1 year in jail and/or a fine up to $4,000. This is the most serious level of misdemeanor offense."
+    },
+    {
+        question: "For theft to be a felony, what is the minimum value of property that must be stolen?",
+        options: [
+            "$100",
+            "$750",
+            "$2,500",
+            "$5,000"
+        ],
+        correct: 2,
+        explanation: "Theft becomes a State Jail Felony when the value is $2,500 or more but less than $30,000. Below $2,500, theft is classified as a misdemeanor."
+    },
+    {
+        question: "Which of the following is NOT one of the three types of assault under Texas Penal Code Section 22.01?",
+        options: [
+            "Intentionally or knowingly causing bodily injury",
+            "Intentionally or knowingly threatening imminent bodily injury",
+            "Intentionally or knowingly causing someone to fear for their life",
+            "Intentionally or knowingly causing offensive or provocative physical contact"
+        ],
+        correct: 2,
+        explanation: "The three types of assault are: (1) causing bodily injury, (2) threatening imminent bodily injury, and (3) causing offensive/provocative physical contact. 'Causing fear for life' is not one of the statutory definitions."
+    },
+    {
+        question: "When does criminal trespass become a felony?",
+        options: [
+            "When it involves a habitation or shelter center",
+            "When it's committed at night",
+            "When the person is armed",
+            "Criminal trespass is always a misdemeanor"
+        ],
+        correct: 0,
+        explanation: "Criminal Trespass becomes a State Jail Felony when it involves a habitation (like a house) or a shelter center, rather than just any building or property."
+    },
+    {
+        question: "What defense justifies the use of force to protect property?",
+        options: [
+            "Self-defense",
+            "Defense of third person",
+            "Protection of property",
+            "Necessity"
+        ],
+        correct: 2,
+        explanation: "Protection of Property (Sec 9.41-9.44) is a specific defense that can justify the use of force to protect one's property, including land and tangible movable property."
+    },
+    {
+        question: "Under the Castle Doctrine, when can deadly force be presumed justified?",
+        options: [
+            "Anytime someone enters your property",
+            "When someone unlawfully enters your habitation, vehicle, or place of business",
+            "Only when someone threatens you with a weapon",
+            "Only during nighttime hours"
+        ],
+        correct: 1,
+        explanation: "The Castle Doctrine creates a presumption that deadly force was reasonable when someone unlawfully and with force enters your habitation, vehicle, or place of business/employment."
+    },
+    {
+        question: "What is the difference between burglary and criminal trespass?",
+        options: [
+            "Burglary requires breaking and entering, trespass does not",
+            "Burglary requires intent to commit a felony, theft, or assault; trespass does not",
+            "Burglary only applies to homes, trespass applies to any property",
+            "There is no difference"
+        ],
+        correct: 1,
+        explanation: "Burglary requires entering a habitation or building with intent to commit a felony, theft, or assault. Criminal trespass is simply entering or remaining on property without consent, regardless of intent to commit another crime."
+    },
+    {
+        question: "When is consent NOT a defense to assault?",
+        options: [
+            "In sports activities",
+            "When serious bodily injury occurs",
+            "In medical procedures",
+            "Between married couples"
+        ],
+        correct: 1,
+        explanation: "Consent is generally a defense to assault, but it is NOT a defense when serious bodily injury is caused to another. You cannot consent to serious bodily injury being inflicted upon you."
+    },
+    {
+        question: "What mental state is required for murder?",
+        options: [
+            "Intentionally or knowingly",
+            "Recklessly",
+            "With criminal negligence",
+            "Any mental state"
+        ],
+        correct: 0,
+        explanation: "Murder requires that a person intentionally or knowingly causes the death of another individual. This is the highest level of mental culpability required."
+    },
+    {
+        question: "In public intoxication, what must be proven beyond just being intoxicated?",
+        options: [
+            "The person was driving",
+            "The person was dangerous to themselves or others",
+            "The person was under 21",
+            "The person was in a school zone"
+        ],
+        correct: 1,
+        explanation: "Public Intoxication requires proof that the person appeared in a public place while intoxicated AND was dangerous to themselves or others. Simply being intoxicated in public is not enough."
+    },
+    {
+        question: "What is the punishment enhancement for a habitual offender with two prior felony convictions?",
+        options: [
+            "Double the normal punishment",
+            "Life imprisonment only",
+            "25 years to life imprisonment",
+            "Enhancement depends on the current offense level"
+        ],
+        correct: 2,
+        explanation: "Under the habitual offender statute, if someone has two prior felony convictions and commits another felony, they face enhanced punishment of 25 years to life imprisonment."
+    },
+    {
+        question: "When can a peace officer arrest without a warrant for a misdemeanor?",
+        options: [
+            "Never - warrants are always required for misdemeanors",
+            "Only if committed in the officer's presence",
+            "If committed in presence OR if it involves violence/family violence",
+            "Anytime within 24 hours of the offense"
+        ],
+        correct: 2,
+        explanation: "Peace officers can arrest without a warrant for misdemeanors committed in their presence, or for certain specific misdemeanors like those involving violence, family violence, or other exceptions listed in the Code of Criminal Procedure."
+    },
+    {
+        question: "What is required for a valid search incident to arrest?",
+        options: [
+            "A warrant must always be obtained first",
+            "The arrest must be lawful and the search must be reasonable in scope",
+            "The person must consent to the search",
+            "The search must occur within one hour of arrest"
+        ],
+        correct: 1,
+        explanation: "A search incident to arrest requires: (1) a lawful arrest, and (2) the search must be reasonable in scope and timing. This allows officers to search for weapons and evidence related to the arrest."
+    }
+];
+
+let currentQuizQuestion = 0;
+let quizScore = 0;
+let quizAnswered = 0;
+let selectedQuizAnswer = null;
+
+function initializePenalCodeQuiz() {
+    if (window.location.hash !== '#quiz') return;
+    
+    currentQuizQuestion = 0;
+    quizScore = 0;
+    quizAnswered = 0;
+    selectedQuizAnswer = null;
+    
+    document.getElementById('total-questions').textContent = penalCodeQuizData.length;
+    document.getElementById('quiz-results').classList.add('hidden');
+    document.getElementById('quiz-container').classList.remove('hidden');
+    
+    showPenalCodeQuestion();
+    updatePenalCodeQuizUI();
+    
+    // Add event listeners
+    document.getElementById('next-btn').addEventListener('click', nextPenalCodeQuestion);
+    document.getElementById('prev-btn').addEventListener('click', prevPenalCodeQuestion);
+    document.getElementById('restart-quiz').addEventListener('click', initializePenalCodeQuiz);
+}
+
+function showPenalCodeQuestion() {
+    const question = penalCodeQuizData[currentQuizQuestion];
+    selectedQuizAnswer = null;
+    
+    const questionContainer = document.getElementById('question-container');
+    questionContainer.innerHTML = `
+        <h3 class="text-lg font-semibold mb-4">${question.question}</h3>
+        <div class="space-y-3">
+            ${question.options.map((option, index) => `
+                <button class="quiz-option-btn w-full text-left p-3 rounded-lg border border-slate-300 hover:bg-amber-50 hover:border-amber-300 transition-colors" 
+                        data-index="${index}">
+                    ${String.fromCharCode(65 + index)}. ${option}
+                </button>
+            `).join('')}
+        </div>
+    `;
+
+    // Add click listeners to options
+    document.querySelectorAll('.quiz-option-btn').forEach(btn => {
+        btn.addEventListener('click', selectPenalCodeAnswer);
+    });
+
+    document.getElementById('explanation-container').classList.add('hidden');
+    document.getElementById('next-btn').disabled = true;
+    document.getElementById('next-btn').textContent = currentQuizQuestion === penalCodeQuizData.length - 1 ? 'Finish Quiz' : 'Next Question';
+}
+
+function selectPenalCodeAnswer(e) {
+    selectedQuizAnswer = parseInt(e.target.dataset.index);
+    
+    // Remove previous selections
+    document.querySelectorAll('.quiz-option-btn').forEach(btn => {
+        btn.classList.remove('bg-amber-100', 'border-amber-500', 'bg-green-100', 'border-green-500', 'bg-red-100', 'border-red-500');
+    });
+
+    // Mark selected answer
+    e.target.classList.add('bg-amber-100', 'border-amber-500');
+    
+    // Show correct/incorrect styling
+    const question = penalCodeQuizData[currentQuizQuestion];
+    document.querySelectorAll('.quiz-option-btn').forEach((btn, index) => {
+        if (index === question.correct) {
+            btn.classList.add('bg-green-100', 'border-green-500');
+        } else if (index === selectedQuizAnswer && selectedQuizAnswer !== question.correct) {
+            btn.classList.add('bg-red-100', 'border-red-500');
+        }
+        btn.disabled = true;
+    });
+
+    // Update score
+    if (selectedQuizAnswer === question.correct) {
+        quizScore++;
+    }
+    quizAnswered++;
+
+    // Show explanation
+    const explanationContainer = document.getElementById('explanation-container');
+    explanationContainer.innerHTML = `
+        <div class="p-4 ${selectedQuizAnswer === question.correct ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} border rounded-lg">
+            <h4 class="font-semibold ${selectedQuizAnswer === question.correct ? 'text-green-800' : 'text-red-800'} mb-2">
+                ${selectedQuizAnswer === question.correct ? 'Correct!' : 'Incorrect'}
+            </h4>
+            <p class="text-sm text-slate-700">${question.explanation}</p>
+        </div>
+    `;
+    explanationContainer.classList.remove('hidden');
+
+    document.getElementById('next-btn').disabled = false;
+    updatePenalCodeQuizUI();
+}
+
+function nextPenalCodeQuestion() {
+    if (currentQuizQuestion < penalCodeQuizData.length - 1) {
+        currentQuizQuestion++;
+        showPenalCodeQuestion();
+    } else {
+        showPenalCodeQuizResults();
+    }
+    updatePenalCodeQuizUI();
+}
+
+function prevPenalCodeQuestion() {
+    if (currentQuizQuestion > 0) {
+        currentQuizQuestion--;
+        showPenalCodeQuestion();
+    }
+    updatePenalCodeQuizUI();
+}
+
+function updatePenalCodeQuizUI() {
+    document.getElementById('current-question').textContent = currentQuizQuestion + 1;
+    document.getElementById('current-score').textContent = quizScore;
+    document.getElementById('questions-answered').textContent = quizAnswered;
+    
+    const progress = ((currentQuizQuestion + 1) / penalCodeQuizData.length) * 100;
+    document.getElementById('progress-bar').style.width = `${progress}%`;
+    
+    document.getElementById('prev-btn').disabled = currentQuizQuestion === 0;
+}
+
+function showPenalCodeQuizResults() {
+    document.getElementById('quiz-container').classList.add('hidden');
+    document.getElementById('quiz-results').classList.remove('hidden');
+    
+    const percentage = Math.round((quizScore / penalCodeQuizData.length) * 100);
+    document.getElementById('final-score').textContent = `${quizScore}/${penalCodeQuizData.length} (${percentage}%)`;
+    
+    let message = '';
+    if (percentage >= 90) {
+        message = 'Excellent! You have a strong understanding of Texas Penal Code concepts.';
+    } else if (percentage >= 80) {
+        message = 'Good job! You understand most of the key legal concepts.';
+    } else if (percentage >= 70) {
+        message = 'Fair performance. Consider reviewing the material and retaking the quiz.';
+    } else {
+        message = 'Please review the training material carefully and retake the quiz.';
+    }
+    
+    document.getElementById('performance-message').textContent = message;
+}
+
 window.addEventListener('hashchange', () => renderContent(window.location.hash));
 window.addEventListener('DOMContentLoaded', () => {
     if (!window.location.hash) {
         window.location.hash = '#foundations';
     }
     renderContent(window.location.hash);
+    
+    // Initialize quiz if we're on the quiz page
+    if (window.location.hash === '#quiz') {
+        setTimeout(initializePenalCodeQuiz, 100);
+    }
 });
+
+// Also initialize quiz when navigating to quiz section
+const originalRenderContent = renderContent;
+renderContent = function(hash) {
+    originalRenderContent(hash);
+    if (hash === '#quiz') {
+        setTimeout(initializePenalCodeQuiz, 100);
+    }
+};
 
 </script>
 

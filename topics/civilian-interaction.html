@@ -152,7 +152,7 @@
         <main class="space-y-8">
             <!-- Section 1: Legal Mandate -->
             <section id="legal-mandate" class="bg-white p-6 rounded-lg shadow-md">
-                <h2 class="text-2xl font-bold mb-4 text-slate-700">1. The Community Safety Education Act (SB 30)</h2>
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">1. The Community Safety Education Act (SB 30)</h
                 <p class="mb-4">Passed in 2017, this act mandates training for new and veteran officers, as well as education for the public, to standardize expectations and improve interactions during traffic stops and other encounters.</p>
                 <div class="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
                     <h4 class="font-bold text-blue-800">Required Training Topics (Occupations Code 1701.268)</h4>
@@ -302,7 +302,311 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Interactive Quiz Section -->
+            <section id="interactive-quiz" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">Interactive Quiz: Civilian Interaction</h2>
+                <p class="mb-6 text-slate-600">Test your understanding of civilian interaction principles, contact methods, and officer mindsets covered in this training module.</p>
+                
+                <div id="quiz-container" class="space-y-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="text-sm text-slate-600">
+                            Question <span id="current-question">1</span> of <span id="total-questions">10</span>
+                        </div>
+                        <div class="text-sm text-slate-600">
+                            Score: <span id="current-score">0</span>/<span id="questions-answered">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full bg-slate-200 rounded-full h-2 mb-6">
+                        <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    
+                    <div id="question-container" class="p-6 bg-slate-50 rounded-lg">
+                        <!-- Questions will be populated by JavaScript -->
+                    </div>
+                    
+                    <div id="explanation-container" class="hidden p-4 rounded-lg">
+                        <!-- Explanations will be shown after each answer -->
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <button id="prev-btn" class="px-4 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Previous
+                        </button>
+                        <button id="next-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Next Question
+                        </button>
+                    </div>
+                    
+                    <div id="quiz-results" class="hidden p-6 bg-slate-50 rounded-lg text-center">
+                        <h3 class="text-xl font-bold mb-4">Quiz Complete!</h3>
+                        <div id="final-score" class="text-3xl font-bold text-blue-600 mb-4"></div>
+                        <div id="performance-message" class="text-slate-600 mb-4"></div>
+                        <button id="restart-quiz" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            Retake Quiz
+                        </button>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
-</body>
-</html>
+
+    <script>
+        // Quiz Data for Civilian Interaction
+        const civilianInteractionQuizData = [
+            {
+                question: "What law mandates training for civilian interaction?",
+                options: [
+                    "The Police Reform Act",
+                    "The Community Safety Education Act (SB 30)",
+                    "The Civilian Rights Protection Act",
+                    "The Law Enforcement Standards Act"
+                ],
+                correct: 1,
+                explanation: "The Community Safety Education Act (SB 30), passed in 2017, mandates training for new and veteran officers as well as education for the public to standardize expectations and improve interactions."
+            },
+            {
+                question: "What does LEAPS stand for in civilian interactions?",
+                options: [
+                    "Listen, Empathize, Ask, Paraphrase, Summarize",
+                    "Legal, Ethical, Appropriate, Professional, Safe",
+                    "Look, Evaluate, Act, Plan, Summarize",
+                    "Lead, Engage, Assess, Proceed, Secure"
+                ],
+                correct: 0,
+                explanation: "LEAPS stands for Listen, Empathize, Ask, Paraphrase, Summarize. This is a communication technique used in verbal persuasion mode to build rapport with civilians."
+            },
+            {
+                question: "What does PACE stand for in the verbal persuasion mode?",
+                options: [
+                    "Positive Attitude, Courtesy, and Excellence", 
+                    "Primary, Alternate, Contingency, Emergency",
+                    "Police Academy Continuing Education",
+                    "Professional Accountability in Criminal Enforcement"
+                ],
+                correct: 1,
+                explanation: "In verbal persuasion mode, PACE stands for Primary, Alternate, Contingency, Emergency - representing different planning levels for officer response."
+            },
+            {
+                question: "In Step 3 of the 7-Step Professional Contact, what does the officer do?",
+                options: [
+                    "Check identification and vehicle registration",
+                    "Give the person a chance to justify or explain",
+                    "Statement of violation",
+                    "Take enforcement action"
+                ],
+                correct: 1,
+                explanation: "Step 3 of the 7-Step Professional Contact is 'Their Chance to Justify/Explain' - allowing the person to provide their side of the story before proceeding."
+            },
+            {
+                question: "When should an officer switch from Verbal Persuasion mode to Recognize-React mode?",
+                options: [
+                    "When the civilian asks questions",
+                    "When a SAFE violation occurs",
+                    "After 5 minutes of conversation",
+                    "Only when making an arrest"
+                ],
+                correct: 1,
+                explanation: "Officers should switch to Recognize-React mode when a SAFE violation occurs - Security risk, Attack, Flight/fleeing, or Excessive repetition of non-compliance."
+            },
+            {
+                question: "What does the 'S' in the SAFE acronym represent?",
+                options: [
+                    "Situation awareness",
+                    "Security risk",
+                    "Safety protocols",
+                    "Suspect behavior"
+                ],
+                correct: 1,
+                explanation: "In the SAFE acronym, 'S' stands for Security Risk, such as when a suspect reaches for something or poses a potential threat to officer safety."
+            },
+            {
+                question: "What does the 'F' in SAFE represent?",
+                options: [
+                    "Force options",
+                    "Flight/Fleeing",
+                    "Firearm presence",
+                    "Facial expressions"
+                ],
+                correct: 1,
+                explanation: "The 'F' in SAFE stands for Flight/Fleeing, indicating when a suspect attempts to leave or escape from the interaction."
+            },
+            {
+                question: "Which is recommended advice for civilians during a traffic stop?",
+                options: [
+                    "Exit the vehicle immediately",
+                    "Keep hands visible on the steering wheel and wait for instructions",
+                    "Start recording immediately",
+                    "Question the officer's authority"
+                ],
+                correct: 1,
+                explanation: "Civilians should keep both hands in sight on the steering wheel and wait for instructions during traffic stops to ensure officer safety and prevent misunderstandings."
+            },
+            {
+                question: "What is the goal of verbal persuasion techniques?",
+                options: [
+                    "To intimidate the civilian",
+                    "To gather information quickly",
+                    "To achieve voluntary compliance through professional communication",
+                    "To delay the interaction"
+                ],
+                correct: 2,
+                explanation: "The goal of verbal persuasion is to achieve voluntary compliance through professional, respectful communication rather than relying on authority or force."
+            },
+            {
+                question: "What does the 'E' in SAFE represent?",
+                options: [
+                    "Emergency situations",
+                    "Excessive repetition",
+                    "Evidence collection",
+                    "Exit strategies"
+                ],
+                correct: 1,
+                explanation: "The 'E' in SAFE stands for Excessive repetition, which refers to a person repeatedly refusing to comply with lawful commands."
+            },
+            {
+                question: "According to the Community Safety Education Act, what is required for officers licensed on or after January 1, 2018?",
+                options: [
+                    "Annual recertification",
+                    "Complete civilian interaction training within two years of being licensed",
+                    "Pass a written examination",
+                    "Attend monthly community meetings"
+                ],
+                correct: 1,
+                explanation: "Officers licensed on or after January 1, 2018, must complete the civilian interaction training mandated by the Community Safety Education Act within two years of being licensed."
+            },
+            {
+                question: "What right do civilians have regarding recording interactions with law enforcement?",
+                options: [
+                    "No right to record at all",
+                    "Right to record provided they don't physically impede the officer's duties",
+                    "Right to record only with officer permission",
+                    "Right to record only in public places"
+                ],
+                correct: 1,
+                explanation: "Civilians have the right to record interactions with law enforcement, provided they do not physically impede an officer's ability to perform their duties."
+            }
+        ];
+
+        // Quiz functionality
+        let currentQuestion = 0;
+        let score = 0;
+        let answeredQuestions = 0;
+        let selectedAnswer = null;
+
+        function initQuiz() {
+            document.getElementById('total-questions').textContent = civilianInteractionQuizData.length;
+            currentQuestion = 0;
+            score = 0;
+            answeredQuestions = 0;
+            selectedAnswer = null;
+            document.getElementById('quiz-results').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            showQuestion();
+            updateUI();
+        }
+
+        function showQuestion() {
+            const question = civilianInteractionQuizData[currentQuestion];
+            selectedAnswer = null;
+            
+            document.getElementById('question-container').innerHTML = `
+                <h3 class="text-lg font-semibold mb-4">${question.question}</h3>
+                <div class="space-y-3">
+                    ${question.options.map((option, index) => `
+                        <button class="option-btn w-full text-left p-3 rounded-lg border border-slate-300 hover:bg-blue-50 hover:border-blue-300 transition-colors" 
+                                data-index="${index}">
+                            ${String.fromCharCode(65 + index)}. ${option}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', selectAnswer);
+            });
+
+            document.getElementById('explanation-container').classList.add('hidden');
+            document.getElementById('next-btn').disabled = true;
+            document.getElementById('next-btn').textContent = currentQuestion === civilianInteractionQuizData.length - 1 ? 'Finish Quiz' : 'Next Question';
+        }
+
+        function selectAnswer(e) {
+            selectedAnswer = parseInt(e.target.dataset.index);
+            const question = civilianInteractionQuizData[currentQuestion];
+            
+            document.querySelectorAll('.option-btn').forEach((btn, index) => {
+                btn.classList.remove('bg-blue-100', 'border-blue-500', 'bg-green-100', 'border-green-500', 'bg-red-100', 'border-red-500');
+                if (index === question.correct) {
+                    btn.classList.add('bg-green-100', 'border-green-500');
+                } else if (index === selectedAnswer && selectedAnswer !== question.correct) {
+                    btn.classList.add('bg-red-100', 'border-red-500');
+                }
+                btn.disabled = true;
+            });
+
+            if (selectedAnswer === question.correct) score++;
+            answeredQuestions++;
+
+            document.getElementById('explanation-container').innerHTML = `
+                <div class="p-4 ${selectedAnswer === question.correct ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} border rounded-lg">
+                    <h4 class="font-semibold ${selectedAnswer === question.correct ? 'text-green-800' : 'text-red-800'} mb-2">
+                        ${selectedAnswer === question.correct ? 'Correct!' : 'Incorrect'}
+                    </h4>
+                    <p class="text-sm text-slate-700">${question.explanation}</p>
+                </div>
+            `;
+            document.getElementById('explanation-container').classList.remove('hidden');
+            document.getElementById('next-btn').disabled = false;
+            updateUI();
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < civilianInteractionQuizData.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                showResults();
+            }
+            updateUI();
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            }
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('current-question').textContent = currentQuestion + 1;
+            document.getElementById('current-score').textContent = score;
+            document.getElementById('questions-answered').textContent = answeredQuestions;
+            const progress = ((currentQuestion + 1) / civilianInteractionQuizData.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('prev-btn').disabled = currentQuestion === 0;
+        }
+
+        function showResults() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('quiz-results').classList.remove('hidden');
+            const percentage = Math.round((score / civilianInteractionQuizData.length) * 100);
+            document.getElementById('final-score').textContent = `${score}/${civilianInteractionQuizData.length} (${percentage}%)`;
+            
+            let message = '';
+            if (percentage >= 90) message = 'Excellent! You have a strong understanding of civilian interaction principles.';
+            else if (percentage >= 80) message = 'Good job! You understand most of the key communication concepts.';
+            else if (percentage >= 70) message = 'Fair performance. Consider reviewing the material and retaking the quiz.';
+            else message = 'Please review the training material carefully and retake the quiz.';
+            
+            document.getElementById('performance-message').textContent = message;
+        }
+
+        document.getElementById('next-btn').addEventListener('click', nextQuestion);
+        document.getElementById('prev-btn').addEventListener('click', prevQuestion);
+        document.getElementById('restart-quiz').addEventListener('click', initQuiz);
+
+        initQuiz();
+    </script>

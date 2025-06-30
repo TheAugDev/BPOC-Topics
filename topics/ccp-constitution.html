@@ -178,6 +178,7 @@
                 <a href="#rights-of-accused" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700">Rights of the Accused</a>
                 <a href="#public-order-offenses" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700">Public Order Offenses</a>
                 <a href="#scenarios" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700">Practical Scenarios</a>
+                <a href="#quiz" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700">Interactive Quiz</a>
             </nav>
         </aside>
 
@@ -599,18 +600,122 @@ const guideData = {
         content: `
             <div class="space-y-6">
                 <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Disorderly Conduct and Related Offenses</h3>
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">Disorderly Conduct and Related Offenses - Illegal Disruptions Chart</h3>
+                    <p class="mb-4 text-sm">This chart provides a comprehensive overview of various public order disruption offenses and their key elements.</p>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead><tr><th class="p-3 bg-slate-100 border-b-2">Offense</th><th class="p-3 bg-slate-100 border-b-2">Conduct</th><th class="p-3 bg-slate-100 border-b-2">Level</th></tr></thead>
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr>
+                                    <th class="p-3 bg-slate-100 border-b-2">Type of Disturbance</th>
+                                    <th class="p-3 bg-slate-100 border-b-2">Conduct/Elements</th>
+                                    <th class="p-3 bg-slate-100 border-b-2">Limitations/Special Requirements</th>
+                                    <th class="p-3 bg-slate-100 border-b-2">Level</th>
+                                </tr>
+                            </thead>
                             <tbody>
-                                <tr><td class="p-3 border-b font-semibold">Disorderly Conduct (PC 42.01)</td><td class="p-3 border-b">Using abusive language to incite breach of peace; making unreasonable noise; fighting in public.</td><td class="p-3 border-b">Class C (or B for firearm offenses)</td></tr>
-                                <tr><td class="p-3 border-b font-semibold">Riot (PC 42.02)</td><td class="p-3 border-b">Knowingly participating in an assembly of 7 or more persons creating an immediate danger of damage/injury or obstructing government functions.</td><td class="p-3 border-b">Class B (or higher)</td></tr>
-                                <tr><td class="p-3 border-b font-semibold">Obstructing Highway (PC 42.03)</td><td class="p-3 border-b">Intentionally, knowingly, or recklessly obstructing a public way or disobeying a reasonable order to move.</td><td class="p-3 border-b">Class B (enhanced for emergency vehicles or reckless driving)</td></tr>
-                                <tr><td class="p-3 border-b font-semibold">Disrupting Meeting (PC 42.05)</td><td class="p-3 border-b">With intent, obstructing or interfering with a lawful meeting by physical action or verbal utterance.</td><td class="p-3 border-b">Class B</td></tr>
-                                <tr><td class="p-3 font-semibold">Funeral Disruption (PC 42.055)</td><td class="p-3">Picketing within 1,000 feet of a funeral service (3 hours before to 3 hours after).</td><td class="p-3">Class B</td></tr>
+                                <tr>
+                                    <td class="p-3 border-b font-semibold">Disorderly Conduct<br>(PC 42.01)</td>
+                                    <td class="p-3 border-b">Various public actions/behaviors:<br>• Abusive language inciting breach of peace<br>• Unreasonable noise<br>• Fighting in public<br>• Exposing anus/genitals</td>
+                                    <td class="p-3 border-b">If noise, then warn for protected speech<br>If reckless, must warn before arrest</td>
+                                    <td class="p-3 border-b">Class C<br>(Class B for firearm offenses)</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-b font-semibold">Hindering Official Proceeding<br>(PC 38.13)</td>
+                                    <td class="p-3 border-b">Intentionally or recklessly hinders a public servant's proceeding by noise, disturbance, or violent/tumultuous behavior</td>
+                                    <td class="p-3 border-b">Must warn for protected speech before arrest</td>
+                                    <td class="p-3 border-b">Class A</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-b font-semibold">Disrupting Meeting/Procession<br>(PC 42.05)</td>
+                                    <td class="p-3 border-b">Intent to prevent/disrupt a lawful meeting, procession, or gathering, physically or verbally</td>
+                                    <td class="p-3 border-b">Depends on type and location of event<br>Warn for protected speech</td>
+                                    <td class="p-3 border-b">Class B</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-b font-semibold">Disrupting Funeral<br>(PC 42.055)</td>
+                                    <td class="p-3 border-b">Picketing within 1,000 ft. of funeral service</td>
+                                    <td class="p-3 border-b">3 hours before or after funeral<br>Warn for protected speech</td>
+                                    <td class="p-3 border-b">Class B</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-b font-semibold">Obstructing Highway/Passageway<br>(PC 42.03)</td>
+                                    <td class="p-3 border-b">Intentionally, knowingly, or recklessly blocking a substantial public access point</td>
+                                    <td class="p-3 border-b">Must warn before arrest<br>Enhanced for emergency vehicles</td>
+                                    <td class="p-3 border-b">Class B<br>(Enhanced for reckless driving)</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold">Riot<br>(PC 42.02)</td>
+                                    <td class="p-3">Group participants in an illegal disruption creating immediate danger of damage/injury or obstructing government functions</td>
+                                    <td class="p-3">7 or more participants required</td>
+                                    <td class="p-3">Class B<br>(or higher depending on circumstances)</td>
+                                </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div class="mt-4 p-3 bg-blue-50 border-l-4 border-blue-500 text-blue-800 text-sm">
+                        <p><strong>Key Enforcement Notes:</strong></p>
+                        <ul class="list-disc list-inside mt-1 space-y-1">
+                            <li>Warning requirements apply to protected speech (political, social, religious)</li>
+                            <li>Location and context significantly affect the application of these offenses</li>
+                            <li>Multiple participants may be required for certain group disturbances</li>
+                            <li>Enhanced penalties may apply for targeting emergency services or creating safety hazards</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-3 text-slate-700">Sex Paraphilia Chart</h3>
+                    <p class="mb-4 text-sm">This chart compares various sexual offenses and their key elements for quick reference during investigations.</p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr>
+                                    <th class="p-3 bg-slate-100 border-b-2">Type of Behavior</th>
+                                    <th class="p-3 bg-slate-100 border-b-2">Breach Type</th>
+                                    <th class="p-3 bg-slate-100 border-b-2">Offense Level (w/o enhancements)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="p-3 border-b font-semibold">Disorderly Conduct</td>
+                                    <td class="p-3 border-b">ANUS/GENITALS exposure<br>Recklessly offends/alarms another</td>
+                                    <td class="p-3 border-b">Class C</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-b font-semibold">Voyeurism</td>
+                                    <td class="p-3 border-b">Observing another without consent, into a reasonable "privacy" expectation dwelling<br>For lewd/unlawful purpose</td>
+                                    <td class="p-3 border-b">State Jail Felony</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-b font-semibold">Public Lewdness</td>
+                                    <td class="p-3 border-b">Deviate or sexual intercourse; sexual contact with ≥2 or more (≥2 to lewd)<br>Knowingly in public or recklessly offends or alarms another</td>
+                                    <td class="p-3 border-b">Class A</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-b font-semibold">Indecent Exposure</td>
+                                    <td class="p-3 border-b">Exposes anus/genitals to sexually arouse/gratify the desire of anyone<br>Intent to sexually arouse or gratify anyone</td>
+                                    <td class="p-3 border-b">Class B</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-b font-semibold">Indecency with a Child</td>
+                                    <td class="p-3 border-b">Indecent exposure with a child under 17<br>Not >3 years older than or the spouse of the child victim</td>
+                                    <td class="p-3 border-b">3rd Degree Felony</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 border-b font-semibold">Invasive Visual Recording</td>
+                                    <td class="p-3 border-b">Recording/broadcasting/transmitting visual image of another at location where person has reasonable expectation of privacy<br>Without consent of person being recorded</td>
+                                    <td class="p-3 border-b">State Jail Felony</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-4 p-3 bg-amber-50 border-l-4 border-amber-500 text-amber-800 text-sm">
+                        <p><strong>Key Notes:</strong></p>
+                        <ul class="list-disc list-inside mt-1 space-y-1">
+                            <li>Privacy expectations generally include homes, hotel rooms, changing rooms, and restrooms</li>
+                            <li>Age of consent considerations apply differently across offenses</li>
+                            <li>Intent to sexually arouse/gratify can be the actor or any other person</li>
+                            <li>Enhancements may apply based on victim age, repeat offenses, or other circumstances</li>
+                        </ul>
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-md">
@@ -695,6 +800,56 @@ const guideData = {
                 </div>
             </div>
         `
+    },
+    quiz: {
+        title: "Interactive Quiz: CCP & Constitution",
+        description: "Test your understanding of the Code of Criminal Procedure, Constitutional rights, peace officers, and the criminal justice system covered in this study guide.",
+        content: `
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div id="quiz-container" class="space-y-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="text-sm text-slate-600">
+                                Question <span id="current-question">1</span> of <span id="total-questions">12</span>
+                            </div>
+                            <div class="text-sm text-slate-600">
+                                Score: <span id="current-score">0</span>/<span id="questions-answered">0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="w-full bg-slate-200 rounded-full h-2 mb-6">
+                            <div id="progress-bar" class="bg-amber-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                        
+                        <div id="question-container" class="p-6 bg-slate-50 rounded-lg">
+                            <!-- Questions will be populated by JavaScript -->
+                        </div>
+                        
+                        <div id="explanation-container" class="hidden p-4 rounded-lg">
+                            <!-- Explanations will be shown after each answer -->
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button id="prev-btn" class="px-4 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                Previous
+                            </button>
+                            <button id="next-btn" class="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                Next Question
+                            </button>
+                        </div>
+                        
+                        <div id="quiz-results" class="hidden p-6 bg-slate-50 rounded-lg text-center">
+                            <h3 class="text-xl font-bold mb-4">Quiz Complete!</h3>
+                            <div id="final-score" class="text-3xl font-bold text-amber-600 mb-4"></div>
+                            <div id="performance-message" class="text-slate-600 mb-4"></div>
+                            <button id="restart-quiz" class="px-6 py-3 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors">
+                                Retake Quiz
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
     }
 };
 
@@ -739,6 +894,332 @@ function initScenarios() {
     });
 }
 
+// Quiz Functionality for CCP & Constitution
+const ccpQuizData = [
+    {
+        question: "What is the primary purpose of the Texas Code of Criminal Procedure (CCP)?",
+        options: [
+            "To define what conduct is criminal",
+            "To establish rules for the administration of criminal justice",
+            "To set punishment ranges for crimes",
+            "To protect civil rights in civil cases"
+        ],
+        correct: 1,
+        explanation: "The CCP establishes the rules for the administration of criminal justice in Texas, governing everything from investigation and arrest to court proceedings and sentencing. The Penal Code defines what conduct is criminal."
+    },
+    {
+        question: "Which amendment protects against unreasonable searches and seizures?",
+        options: [
+            "First Amendment",
+            "Second Amendment", 
+            "Fourth Amendment",
+            "Fifth Amendment"
+        ],
+        correct: 2,
+        explanation: "The Fourth Amendment protects citizens against unreasonable searches and seizures by the government and requires warrants to be based on probable cause."
+    },
+    {
+        question: "Who has the authority to commission peace officers in Texas?",
+        options: [
+            "Only the Governor",
+            "The Department of Public Safety only",
+            "Various agencies and officials including heads of agencies, judges, and the Governor",
+            "Only local police chiefs"
+        ],
+        correct: 2,
+        explanation: "Multiple entities can commission peace officers in Texas, including heads of law enforcement agencies, certain judges, the Governor, and other authorized officials as specified in the CCP."
+    },
+    {
+        question: "What court has jurisdiction over Class A and Class B misdemeanors?",
+        options: [
+            "Municipal Court",
+            "Justice of the Peace Court",
+            "County Court at Law",
+            "District Court"
+        ],
+        correct: 2,
+        explanation: "County Courts at Law have jurisdiction over Class A and Class B misdemeanors. Municipal and Justice courts handle Class C misdemeanors, while District Courts handle felonies."
+    },
+    {
+        question: "Which amendment established the right to remain silent?",
+        options: [
+            "Fourth Amendment",
+            "Fifth Amendment",
+            "Sixth Amendment", 
+            "Eighth Amendment"
+        ],
+        correct: 1,
+        explanation: "The Fifth Amendment protects against self-incrimination, which includes the right to remain silent. This is the basis for Miranda warnings."
+    },
+    {
+        question: "What is required for a peace officer to make a warrantless arrest for a misdemeanor?",
+        options: [
+            "The offense must be committed in the officer's presence",
+            "The suspect must consent to arrest",
+            "A supervisor must authorize it",
+            "It's never allowed"
+        ],
+        correct: 0,
+        explanation: "Generally, peace officers can only arrest for misdemeanors without a warrant if the offense is committed in their presence, with some specific exceptions for certain offenses involving violence or family violence."
+    },
+    {
+        question: "Which amendment guarantees the right to an attorney?",
+        options: [
+            "Fifth Amendment",
+            "Sixth Amendment",
+            "Seventh Amendment",
+            "Eighth Amendment"
+        ],
+        correct: 1,
+        explanation: "The Sixth Amendment guarantees the right to counsel (an attorney) in criminal prosecutions. This right applies to all critical stages of criminal proceedings."
+    },
+    {
+        question: "What is the difference between Disorderly Conduct and Breach of Peace?",
+        options: [
+            "They are the same offense",
+            "Disorderly Conduct is more serious",
+            "Breach of Peace is a federal offense",
+            "Disorderly Conduct requires intent to cause inconvenience, annoyance, or alarm"
+        ],
+        correct: 3,
+        explanation: "Disorderly Conduct requires specific intent to cause inconvenience, annoyance, or alarm, while Breach of Peace is more broadly defined as disturbing the peace through various disruptive behaviors."
+    },
+    {
+        question: "What does 'Double Jeopardy' protect against?",
+        options: [
+            "Being charged with two crimes at once",
+            "Being tried twice for the same offense",
+            "Receiving double the normal punishment",
+            "Having to pay double fines"
+        ],
+        correct: 1,
+        explanation: "Double Jeopardy, protected by the Fifth Amendment, prevents a person from being tried twice for the same offense after being acquitted or convicted."
+    },
+    {
+        question: "Which level of government primarily funds and operates the criminal justice system in Texas?",
+        options: [
+            "Federal government only",
+            "State government only",
+            "Local government only",
+            "A combination of state and local governments"
+        ],
+        correct: 3,
+        explanation: "The criminal justice system in Texas is primarily funded and operated by a combination of state and local governments, with some federal involvement for federal crimes."
+    },
+    {
+        question: "What is the standard of proof required in criminal cases?",
+        options: [
+            "Preponderance of the evidence",
+            "Clear and convincing evidence",
+            "Beyond a reasonable doubt",
+            "Absolute certainty"
+        ],
+        correct: 2,
+        explanation: "Criminal cases require proof 'beyond a reasonable doubt,' which is the highest standard of proof in the legal system, reflecting the serious consequences of criminal conviction."
+    },
+    {
+        question: "Under which circumstances can a peace officer enter a home without a warrant?",
+        options: [
+            "Anytime they suspect criminal activity",
+            "Only with consent or under specific emergency circumstances (exigent circumstances)",
+            "Never - warrants are always required",
+            "Only during daylight hours"
+        ],
+        correct: 1,
+        explanation: "Peace officers can enter a home without a warrant only with valid consent or under specific emergency circumstances (exigent circumstances) such as hot pursuit, preventing destruction of evidence, or immediate danger."
+    }
+];
+
+let currentCcpQuestion = 0;
+let ccpScore = 0;
+let ccpAnswered = 0;
+let selectedCcpAnswer = null;
+
+function initializeCcpQuiz() {
+    if (window.location.hash !== '#quiz') return;
+    
+    currentCcpQuestion = 0;
+    ccpScore = 0;
+    ccpAnswered = 0;
+    selectedCcpAnswer = null;
+    
+    document.getElementById('total-questions').textContent = ccpQuizData.length;
+    document.getElementById('quiz-results').classList.add('hidden');
+    document.getElementById('quiz-container').classList.remove('hidden');
+    
+    showCcpQuestion();
+    updateCcpQuizUI();
+    
+    // Add event listeners
+    document.getElementById('next-btn').addEventListener('click', nextCcpQuestion);
+    document.getElementById('prev-btn').addEventListener('click', prevCcpQuestion);
+    document.getElementById('restart-quiz').addEventListener('click', initializeCcpQuiz);
+}
+
+function showCcpQuestion() {
+    const question = ccpQuizData[currentCcpQuestion];
+    selectedCcpAnswer = null;
+    
+    const questionContainer = document.getElementById('question-container');
+    questionContainer.innerHTML = `
+        <h3 class="text-lg font-semibold mb-4">${question.question}</h3>
+        <div class="space-y-3">
+            ${question.options.map((option, index) => `
+                <button class="ccp-option-btn w-full text-left p-3 rounded-lg border border-slate-300 hover:bg-amber-50 hover:border-amber-300 transition-colors" 
+                        data-index="${index}">
+                    ${String.fromCharCode(65 + index)}. ${option}
+                </button>
+            `).join('')}
+        </div>
+    `;
+
+    // Add click listeners to options
+    document.querySelectorAll('.ccp-option-btn').forEach(btn => {
+        btn.addEventListener('click', selectCcpAnswer);
+    });
+
+    document.getElementById('explanation-container').classList.add('hidden');
+    document.getElementById('next-btn').disabled = true;
+    document.getElementById('next-btn').textContent = currentCcpQuestion === ccpQuizData.length - 1 ? 'Finish Quiz' : 'Next Question';
+}
+
+function selectCcpAnswer(e) {
+    selectedCcpAnswer = parseInt(e.target.dataset.index);
+    
+    // Remove previous selections
+    document.querySelectorAll('.ccp-option-btn').forEach(btn => {
+        btn.classList.remove('bg-amber-100', 'border-amber-500', 'bg-green-100', 'border-green-500', 'bg-red-100', 'border-red-500');
+    });
+
+    // Mark selected answer
+    e.target.classList.add('bg-amber-100', 'border-amber-500');
+    
+    // Show correct/incorrect styling
+    const question = ccpQuizData[currentCcpQuestion];
+    document.querySelectorAll('.ccp-option-btn').forEach((btn, index) => {
+        if (index === question.correct) {
+            btn.classList.add('bg-green-100', 'border-green-500');
+        } else if (index === selectedCcpAnswer && selectedCcpAnswer !== question.correct) {
+            btn.classList.add('bg-red-100', 'border-red-500');
+        }
+        btn.disabled = true;
+    });
+
+    // Update score
+    if (selectedCcpAnswer === question.correct) {
+        ccpScore++;
+    }
+    ccpAnswered++;
+
+    // Show explanation
+    const explanationContainer = document.getElementById('explanation-container');
+    explanationContainer.innerHTML = `
+        <div class="p-4 ${selectedCcpAnswer === question.correct ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} border rounded-lg">
+            <h4 class="font-semibold ${selectedCcpAnswer === question.correct ? 'text-green-800' : 'text-red-800'} mb-2">
+                ${selectedCcpAnswer === question.correct ? 'Correct!' : 'Incorrect'}
+            </h4>
+            <p class="text-sm text-slate-700">${question.explanation}</p>
+        </div>
+    `;
+    explanationContainer.classList.remove('hidden');
+
+    document.getElementById('next-btn').disabled = false;
+    updateCcpQuizUI();
+}
+
+function nextCcpQuestion() {
+    if (currentCcpQuestion < ccpQuizData.length - 1) {
+        currentCcpQuestion++;
+        showCcpQuestion();
+    } else {
+        showCcpQuizResults();
+    }
+    updateCcpQuizUI();
+}
+
+function prevCcpQuestion() {
+    if (currentCcpQuestion > 0) {
+        currentCcpQuestion--;
+        showCcpQuestion();
+    }
+    updateCcpQuizUI();
+}
+
+function updateCcpQuizUI() {
+    document.getElementById('current-question').textContent = currentCcpQuestion + 1;
+    document.getElementById('current-score').textContent = ccpScore;
+    document.getElementById('questions-answered').textContent = ccpAnswered;
+    
+    const progress = ((currentCcpQuestion + 1) / ccpQuizData.length) * 100;
+    document.getElementById('progress-bar').style.width = `${progress}%`;
+    
+    document.getElementById('prev-btn').disabled = currentCcpQuestion === 0;
+}
+
+function showCcpQuizResults() {
+    document.getElementById('quiz-container').classList.add('hidden');
+    document.getElementById('quiz-results').classList.remove('hidden');
+    
+    const percentage = Math.round((ccpScore / ccpQuizData.length) * 100);
+    document.getElementById('final-score').textContent = `${ccpScore}/${ccpQuizData.length} (${percentage}%)`;
+    
+    let message = '';
+    if (percentage >= 90) {
+        message = 'Excellent! You have a strong understanding of CCP and Constitutional concepts.';
+    } else if (percentage >= 80) {
+        message = 'Good job! You understand most of the key legal concepts.';
+    } else if (percentage >= 70) {
+        message = 'Fair performance. Consider reviewing the material and retaking the quiz.';
+    } else {
+        message = 'Please review the training material carefully and retake the quiz.';
+    }
+    
+    document.getElementById('performance-message').textContent = message;
+}
+
+function renderContent(hash) {
+    const key = hash.substring(1);
+    const pageData = guideData[key] || guideData['ccp-intro'];
+    
+    contentDiv.innerHTML = `
+        <h2 class="text-3xl font-bold mb-2 text-slate-900">${pageData.title}</h2>
+        <p class="mb-8 text-slate-600 max-w-3xl">${pageData.description}</p>
+        ${pageData.content}
+    `;
+
+    navLinks.forEach(link => {
+        if (link.getAttribute('href') === hash) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+    
+    if (key === 'scenarios') {
+        initScenarios();
+    } else if (key === 'quiz') {
+        setTimeout(initializeCcpQuiz, 100);
+    }
+}
+
+function initScenarios() {
+    const scenarios = document.querySelectorAll('.scenario');
+    scenarios.forEach(scenario => {
+        const button = scenario.querySelector('.toggle-answer');
+        const answer = scenario.querySelector('.scenario-answer');
+        if(button && answer) {
+            button.addEventListener('click', () => {
+                answer.classList.toggle('visible');
+                if (answer.classList.contains('visible')) {
+                    button.textContent = 'Hide Answer';
+                } else {
+                    button.textContent = 'Reveal Answer';
+                }
+            });
+        }
+    });
+}
+
 
 window.addEventListener('hashchange', () => renderContent(window.location.hash));
 window.addEventListener('DOMContentLoaded', () => {
@@ -746,6 +1227,11 @@ window.addEventListener('DOMContentLoaded', () => {
         window.location.hash = '#ccp-intro';
     }
     renderContent(window.location.hash);
+    
+    // Initialize quiz if we're on the quiz page
+    if (window.location.hash === '#quiz') {
+        setTimeout(initializeCcpQuiz, 100);
+    }
 });
 
 </script>

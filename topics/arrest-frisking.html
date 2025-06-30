@@ -91,6 +91,41 @@
                 border-radius: 0.5rem;
             }
         }
+
+        /* Quiz Styles */
+        #quiz-container {
+            display: none;
+        }
+        #question-container {
+            background-color: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+        }
+        .option-btn {
+            background-color: #fff;
+            border: 1px solid #d1d5db;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .option-btn:hover {
+            background-color: #f1f5f9;
+            border-color: #2563eb;
+        }
+        .progress-bar {
+            height: 0.5rem;
+            background-color: #2563eb;
+            border-radius: 0.375rem;
+            transition: width 0.3s;
+        }
+        #quiz-results {
+            display: none;
+            background-color: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+        }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800">
@@ -218,8 +253,359 @@
                 </div>
             </section>
 
+            <!-- Interactive Quiz Section -->
+            <section id="interactive-quiz" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">Interactive Quiz: Frisking & The Law</h2>
+                <p class="mb-6 text-slate-600">Test your understanding of frisking procedures, legal standards, and tactical considerations covered in this training module.</p>
+                
+                <div id="quiz-container" class="space-y-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="text-sm text-slate-600">
+                            Question <span id="current-question">1</span> of <span id="total-questions">12</span>
+                        </div>
+                        <div class="text-sm text-slate-600">
+                            Score: <span id="current-score">0</span>/<span id="questions-answered">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full bg-slate-200 rounded-full h-2 mb-6">
+                        <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    
+                    <div id="question-container" class="p-6 bg-slate-50 rounded-lg">
+                        <!-- Questions will be populated by JavaScript -->
+                    </div>
+                    
+                    <div id="explanation-container" class="hidden p-4 rounded-lg">
+                        <!-- Explanations will be shown after each answer -->
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <button id="prev-btn" class="px-4 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Previous
+                        </button>
+                        <button id="next-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Next Question
+                        </button>
+                    </div>
+                    
+                    <div id="quiz-results" class="hidden p-6 bg-slate-50 rounded-lg text-center">
+                        <h3 class="text-xl font-bold mb-4">Quiz Complete!</h3>
+                        <div id="final-score" class="text-3xl font-bold text-blue-600 mb-4"></div>
+                        <div id="performance-message" class="text-slate-600 mb-4"></div>
+                        <button id="restart-quiz" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            Retake Quiz
+                        </button>
+                    </div>
+                </div>
+            </section>
+
         </main>
     </div>
 
+    <script>
+        // Quiz Data for Frisking & The Law
+        const friskingQuizData = [
+            {
+                question: "What is the legal standard established in Terry v. Ohio that allows for a frisk?",
+                options: [
+                    "Probable cause that a crime has been committed",
+                    "Reasonable suspicion that the person is armed and dangerous",
+                    "A valid arrest warrant",
+                    "The person is acting suspiciously"
+                ],
+                correct: 1,
+                explanation: "Terry v. Ohio established that officers can frisk a person if they have reasonable suspicion that the person is armed and dangerous. This requires specific, articulable facts - not just a hunch or suspicious behavior alone."
+            },
+            {
+                question: "What is the purpose of a frisk?",
+                options: [
+                    "To search for evidence of a crime",
+                    "To find drugs or contraband",
+                    "To detect weapons for officer safety",
+                    "To intimidate the suspect"
+                ],
+                correct: 2,
+                explanation: "The sole purpose of a frisk is officer safety - to detect weapons. It is not a search for evidence of crimes, drugs, or other contraband. The scope must be limited to this safety purpose."
+            },
+            {
+                question: "Which case established the 'Plain Feel Doctrine'?",
+                options: [
+                    "Terry v. Ohio",
+                    "Minnesota v. Dickerson",
+                    "Graham v. Connor",
+                    "Pennsylvania v. Mimms"
+                ],
+                correct: 1,
+                explanation: "Minnesota v. Dickerson established the Plain Feel Doctrine, which allows officers to seize non-weapon contraband discovered during a lawful frisk, but only if the incriminating nature of the object is immediately apparent through touch."
+            },
+            {
+                question: "Under the Plain Feel Doctrine, when can an officer seize non-weapon contraband during a frisk?",
+                options: [
+                    "Whenever they feel something that might be contraband",
+                    "Only if they get a warrant first",
+                    "When the incriminating nature is immediately apparent without further manipulation",
+                    "Only after completing the frisk for weapons"
+                ],
+                correct: 2,
+                explanation: "The Plain Feel Doctrine allows seizure of contraband only when its incriminating nature is immediately apparent through touch, without further manipulation or 'squeezing, sliding, or otherwise manipulating' the object."
+            },
+            {
+                question: "What does 'articulable facts' mean in the context of a frisk?",
+                options: [
+                    "The officer must write a detailed report",
+                    "The officer must have specific, describable observations that support their suspicion",
+                    "The officer must announce their intentions before frisking",
+                    "The officer must get verbal permission from the suspect"
+                ],
+                correct: 1,
+                explanation: "Articulable facts means the officer must have specific, describable observations or information that they can clearly explain to justify their reasonable suspicion that the person is armed and dangerous."
+            },
+            {
+                question: "Which of the following is a proper reason to frisk someone?",
+                options: [
+                    "'The person looked suspicious'",
+                    "'It was a high-crime area'",
+                    "'The person reached toward their waistband when I approached'",
+                    "'I always frisk everyone I stop'"
+                ],
+                correct: 2,
+                explanation: "A specific action like reaching toward the waistband is an articulable fact that could support reasonable suspicion of being armed. Vague descriptions like 'looked suspicious' or general area characteristics are insufficient."
+            },
+            {
+                question: "What is the two-handed grip technique primarily used for?",
+                options: [
+                    "Finding small items more effectively",
+                    "Controlling the suspect's movement",
+                    "Officer safety and weapon detection",
+                    "Searching pockets thoroughly"
+                ],
+                correct: 2,
+                explanation: "The two-handed grip technique provides better control and safety by allowing the officer to control the suspect with one hand while conducting the frisk with the other, maintaining tactical advantage."
+            },
+            {
+                question: "If you feel a weapon during a frisk, what should you do first?",
+                options: [
+                    "Immediately remove the weapon",
+                    "Ask the suspect what the object is",
+                    "Secure and control the suspect, then remove the weapon",
+                    "Continue the frisk to look for other weapons"
+                ],
+                correct: 2,
+                explanation: "Officer safety requires that you first secure and control the suspect before removing any weapon. This prevents the suspect from accessing the weapon while you're trying to remove it."
+            },
+            {
+                question: "When should you consider handcuffing during a frisk?",
+                options: [
+                    "Always, as a standard procedure",
+                    "Never during a frisk",
+                    "When you feel active resistance or find a weapon",
+                    "Only if you're arresting the person"
+                ],
+                correct: 2,
+                explanation: "Handcuffing during a frisk is appropriate when you encounter active resistance or discover a weapon. This is a safety measure to maintain control of the situation, even during an investigative detention."
+            },
+            {
+                question: "What areas of the body can be frisked under Terry v. Ohio?",
+                options: [
+                    "Only the torso and arms",
+                    "Only outer clothing",
+                    "Any area where a weapon could reasonably be concealed",
+                    "Only areas where the officer saw suspicious movement"
+                ],
+                correct: 2,
+                explanation: "A Terry frisk can include any area of the outer clothing where a weapon could reasonably be concealed, including the torso, arms, legs, and other areas where weapons might be hidden."
+            },
+            {
+                question: "If a suspect actively resists during a frisk, this could constitute which offense?",
+                options: [
+                    "Assault on a Public Servant",
+                    "Resisting Arrest/Search or Interference with Public Duties",
+                    "Criminal Trespass",
+                    "Public Intoxication"
+                ],
+                correct: 1,
+                explanation: "Active resistance during a lawful frisk can constitute Resisting Arrest/Search (PC 38.03) or Interference with Public Duties (PC 38.15), as it interferes with the officer's lawful duties."
+            },
+            {
+                question: "Before conducting a frisk, an officer must have:",
+                options: [
+                    "Probable cause for an arrest",
+                    "A search warrant",
+                    "Reasonable suspicion of criminal activity AND that the person is armed and dangerous",
+                    "The person's consent"
+                ],
+                correct: 2,
+                explanation: "A frisk requires both reasonable suspicion that criminal activity is afoot (for the detention) AND reasonable suspicion that the person is armed and dangerous (for the frisk). Both elements must be present."
+            }
+        ];
+
+        // Quiz State
+        let currentQuestion = 0;
+        let score = 0;
+        let answeredQuestions = 0;
+        let selectedAnswer = null;
+
+        // DOM Elements
+        const questionContainer = document.getElementById('question-container');
+        const explanationContainer = document.getElementById('explanation-container');
+        const currentQuestionSpan = document.getElementById('current-question');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+        const currentScoreSpan = document.getElementById('current-score');
+        const questionsAnsweredSpan = document.getElementById('questions-answered');
+        const progressBar = document.getElementById('progress-bar');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const quizResults = document.getElementById('quiz-results');
+        const finalScore = document.getElementById('final-score');
+        const performanceMessage = document.getElementById('performance-message');
+        const restartBtn = document.getElementById('restart-quiz');
+
+        // Initialize Quiz
+        function initQuiz() {
+            totalQuestionsSpan.textContent = friskingQuizData.length;
+            currentQuestion = 0;
+            score = 0;
+            answeredQuestions = 0;
+            selectedAnswer = null;
+            quizResults.classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            showQuestion();
+            updateUI();
+        }
+
+        // Show Current Question
+        function showQuestion() {
+            const question = friskingQuizData[currentQuestion];
+            selectedAnswer = null;
+            
+            questionContainer.innerHTML = `
+                <h3 class="text-lg font-semibold mb-4">${question.question}</h3>
+                <div class="space-y-3">
+                    ${question.options.map((option, index) => `
+                        <button class="option-btn w-full text-left p-3 rounded-lg border border-slate-300 hover:bg-blue-50 hover:border-blue-300 transition-colors" 
+                                data-index="${index}">
+                            ${String.fromCharCode(65 + index)}. ${option}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+
+            // Add click listeners to options
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', selectAnswer);
+            });
+
+            explanationContainer.classList.add('hidden');
+            nextBtn.disabled = true;
+            nextBtn.textContent = currentQuestion === friskingQuizData.length - 1 ? 'Finish Quiz' : 'Next Question';
+        }
+
+        // Select Answer
+        function selectAnswer(e) {
+            selectedAnswer = parseInt(e.target.dataset.index);
+            
+            // Remove previous selections
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-100', 'border-blue-500', 'bg-green-100', 'border-green-500', 'bg-red-100', 'border-red-500');
+            });
+
+            // Mark selected answer
+            e.target.classList.add('bg-blue-100', 'border-blue-500');
+            
+            // Show correct/incorrect styling
+            const question = friskingQuizData[currentQuestion];
+            document.querySelectorAll('.option-btn').forEach((btn, index) => {
+                if (index === question.correct) {
+                    btn.classList.add('bg-green-100', 'border-green-500');
+                } else if (index === selectedAnswer && selectedAnswer !== question.correct) {
+                    btn.classList.add('bg-red-100', 'border-red-500');
+                }
+                btn.disabled = true;
+            });
+
+            // Update score
+            if (selectedAnswer === question.correct) {
+                score++;
+            }
+            answeredQuestions++;
+
+            // Show explanation
+            explanationContainer.innerHTML = `
+                <div class="p-4 ${selectedAnswer === question.correct ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} border rounded-lg">
+                    <h4 class="font-semibold ${selectedAnswer === question.correct ? 'text-green-800' : 'text-red-800'} mb-2">
+                        ${selectedAnswer === question.correct ? 'Correct!' : 'Incorrect'}
+                    </h4>
+                    <p class="text-sm text-slate-700">${question.explanation}</p>
+                </div>
+            `;
+            explanationContainer.classList.remove('hidden');
+
+            nextBtn.disabled = false;
+            updateUI();
+        }
+
+        // Next Question
+        function nextQuestion() {
+            if (currentQuestion < friskingQuizData.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                showResults();
+            }
+            updateUI();
+        }
+
+        // Previous Question
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            }
+            updateUI();
+        }
+
+        // Update UI
+        function updateUI() {
+            currentQuestionSpan.textContent = currentQuestion + 1;
+            currentScoreSpan.textContent = score;
+            questionsAnsweredSpan.textContent = answeredQuestions;
+            
+            const progress = ((currentQuestion + 1) / friskingQuizData.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            prevBtn.disabled = currentQuestion === 0;
+        }
+
+        // Show Results
+        function showResults() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            quizResults.classList.remove('hidden');
+            
+            const percentage = Math.round((score / friskingQuizData.length) * 100);
+            finalScore.textContent = `${score}/${friskingQuizData.length} (${percentage}%)`;
+            
+            let message = '';
+            if (percentage >= 90) {
+                message = 'Excellent! You have a strong understanding of frisking laws and procedures.';
+            } else if (percentage >= 80) {
+                message = 'Good job! You understand most of the key concepts.';
+            } else if (percentage >= 70) {
+                message = 'Fair performance. Consider reviewing the material and retaking the quiz.';
+            } else {
+                message = 'Please review the training material carefully and retake the quiz.';
+            }
+            
+            performanceMessage.textContent = message;
+        }
+
+        // Event Listeners
+        nextBtn.addEventListener('click', nextQuestion);
+        prevBtn.addEventListener('click', prevQuestion);
+        restartBtn.addEventListener('click', initQuiz);
+
+        // Initialize quiz on page load
+        initQuiz();
+    </script>
 </body>
 </html>

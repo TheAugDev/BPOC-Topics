@@ -346,6 +346,342 @@
                 </div>
             </section>
 
+            <!-- Section 5: Interactive Quiz -->
+            <section id="interactive-quiz" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">5. Interactive Quiz: Test Your Knowledge</h2>
+                <p class="mb-6 text-slate-600">Test your understanding of traffic stop procedures and tactics. This quiz covers all the key concepts from this training module.</p>
+                
+                <div id="quiz-container" class="space-y-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="text-sm text-slate-600">
+                            Question <span id="current-question">1</span> of <span id="total-questions">10</span>
+                        </div>
+                        <div class="text-sm text-slate-600">
+                            Score: <span id="current-score">0</span>/<span id="questions-answered">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full bg-slate-200 rounded-full h-2 mb-6">
+                        <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    
+                    <div id="question-container" class="p-6 bg-slate-50 rounded-lg">
+                        <!-- Questions will be populated by JavaScript -->
+                    </div>
+                    
+                    <div id="explanation-container" class="hidden p-4 rounded-lg">
+                        <!-- Explanations will be shown after each answer -->
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <button id="prev-btn" class="px-4 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Previous
+                        </button>
+                        <button id="next-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Next Question
+                        </button>
+                    </div>
+                    
+                    <div id="quiz-results" class="hidden p-6 bg-slate-50 rounded-lg text-center">
+                        <h3 class="text-xl font-bold mb-4">Quiz Complete!</h3>
+                        <div id="final-score" class="text-3xl font-bold text-blue-600 mb-4"></div>
+                        <div id="performance-message" class="text-slate-600 mb-4"></div>
+                        <button id="restart-quiz" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            Retake Quiz
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // Quiz Data
+        const quizData = [
+            {
+                question: "What constitutional amendment governs traffic stops?",
+                options: [
+                    "1st Amendment",
+                    "4th Amendment", 
+                    "5th Amendment",
+                    "6th Amendment"
+                ],
+                correct: 1,
+                explanation: "Traffic stops are considered seizures under the 4th Amendment, which protects against unreasonable searches and seizures. This is why stops must be based on reasonable suspicion or probable cause."
+            },
+            {
+                question: "What are the two primary hazards during a traffic stop?",
+                options: [
+                    "Vehicle pursuit and weapon threats",
+                    "Felonious assault and accidental assault from passing traffic",
+                    "Drug possession and violent resistance",
+                    "Escape attempts and false identification"
+                ],
+                correct: 1,
+                explanation: "The two primary hazards are felonious assault (intentional attack) and accidental assault from passing traffic. This is why proper positioning and awareness are critical."
+            },
+            {
+                question: "What does the acronym LOCAL stand for in radio communications?",
+                options: [
+                    "Location, Occupants, Color, Auto, License",
+                    "Law, Order, Contact, Alert, Location", 
+                    "Listen, Observe, Communicate, Act, Leave",
+                    "Legal, Official, Call, Assessment, Log"
+                ],
+                correct: 0,
+                explanation: "LOCAL helps organize radio traffic: Location (unit #, activity, location), Occupants (number visible), Color (of vehicle), Auto (make/model), License (plate number given phonetically)."
+            },
+            {
+                question: "When should you transmit initial information to dispatch?",
+                options: [
+                    "After activating emergency lights",
+                    "While approaching the vehicle",
+                    "Before activating emergency lights",
+                    "After making contact with the driver"
+                ],
+                correct: 2,
+                explanation: "You should transmit information to dispatch BEFORE activating your emergency lights. This ensures dispatch has the information even if something happens during the stop."
+            },
+            {
+                question: "What is the standard positioning for a left-side approach?",
+                options: [
+                    "10 feet back, 2 feet offset",
+                    "20 feet back, 3 feet offset to the left",
+                    "15 feet back, 4 feet offset",
+                    "25 feet back, 2 feet offset"
+                ],
+                correct: 1,
+                explanation: "Standard left-side positioning is 20 feet back and 3 feet offset to the left. This provides safety distance while maintaining good visual contact with the stopped vehicle."
+            },
+            {
+                question: "Which case law allows officers to order the driver out of the vehicle?",
+                options: [
+                    "Graham v. Connor",
+                    "Maryland v. Wilson",
+                    "Pennsylvania v. Mimms",
+                    "Canton v. Harris"
+                ],
+                correct: 2,
+                explanation: "Pennsylvania v. Mimms allows officers to order the driver out of the vehicle during a traffic stop for officer safety reasons, even without additional suspicion."
+            },
+            {
+                question: "What should you do when returning to your patrol vehicle?",
+                options: [
+                    "Walk backwards while watching the vehicle",
+                    "Turn and run quickly to your vehicle",
+                    "Take a few steps back while watching, then turn and walk, checking over your shoulder",
+                    "Walk sideways to keep the vehicle in view"
+                ],
+                correct: 2,
+                explanation: "Do not walk backwards to your vehicle. Take a few steps back while watching the vehicle, then turn and walk normally, periodically checking back over your shoulder. Keep your gun hand free."
+            },
+            {
+                question: "Statistically, which zone around a vehicle is most dangerous for officers?",
+                options: [
+                    "Zone 1L (directly at driver's door)",
+                    "Zone 6L (behind driver's side B-pillar)",
+                    "Zone 2R (passenger door area)",
+                    "Zone 3L (front of vehicle)"
+                ],
+                correct: 1,
+                explanation: "Zone 6L (just behind the driver's side B-pillar) is statistically where most officers are positioned when they are assaulted during traffic stops. This highlights the importance of tactical positioning."
+            },
+            {
+                question: "What are the three risk categories for traffic stops?",
+                options: [
+                    "Safe, Dangerous, Extremely Dangerous",
+                    "Low Risk, Unknown Risk, High Risk (Felony Stop)",
+                    "Routine, Suspicious, Emergency",
+                    "Standard, Enhanced, Maximum"
+                ],
+                correct: 1,
+                explanation: "The three risk categories are: Low Risk (daytime, clear traffic violation), Unknown Risk (most stops - suspicious vehicle, tinted windows), and High Risk/Felony Stop (known suspect, weapons, pursuits)."
+            },
+            {
+                question: "What should you always watch during a traffic stop approach?",
+                options: [
+                    "The vehicle's license plate",
+                    "The driver's facial expressions",
+                    "The occupants' hands",
+                    "The vehicle's condition"
+                ],
+                correct: 2,
+                explanation: "Always watch the hands! The hands are what can hurt you. This is a fundamental principle of officer safety - weapons are deployed with hands, so maintaining visual contact with occupants' hands is critical."
+            }
+        ];
+
+        // Quiz State
+        let currentQuestion = 0;
+        let score = 0;
+        let answeredQuestions = 0;
+        let selectedAnswer = null;
+        let quizCompleted = false;
+
+        // DOM Elements
+        const questionContainer = document.getElementById('question-container');
+        const explanationContainer = document.getElementById('explanation-container');
+        const currentQuestionSpan = document.getElementById('current-question');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+        const currentScoreSpan = document.getElementById('current-score');
+        const questionsAnsweredSpan = document.getElementById('questions-answered');
+        const progressBar = document.getElementById('progress-bar');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const quizResults = document.getElementById('quiz-results');
+        const finalScore = document.getElementById('final-score');
+        const performanceMessage = document.getElementById('performance-message');
+        const restartBtn = document.getElementById('restart-quiz');
+
+        // Initialize Quiz
+        function initQuiz() {
+            totalQuestionsSpan.textContent = quizData.length;
+            currentQuestion = 0;
+            score = 0;
+            answeredQuestions = 0;
+            selectedAnswer = null;
+            quizCompleted = false;
+            quizResults.classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            showQuestion();
+            updateUI();
+        }
+
+        // Show Current Question
+        function showQuestion() {
+            const question = quizData[currentQuestion];
+            selectedAnswer = null;
+            
+            questionContainer.innerHTML = `
+                <h3 class="text-lg font-semibold mb-4">${question.question}</h3>
+                <div class="space-y-3">
+                    ${question.options.map((option, index) => `
+                        <button class="option-btn w-full text-left p-3 rounded-lg border border-slate-300 hover:bg-blue-50 hover:border-blue-300 transition-colors" 
+                                data-index="${index}">
+                            ${String.fromCharCode(65 + index)}. ${option}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+
+            // Add click listeners to options
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', selectAnswer);
+            });
+
+            explanationContainer.classList.add('hidden');
+            nextBtn.disabled = true;
+            nextBtn.textContent = currentQuestion === quizData.length - 1 ? 'Finish Quiz' : 'Next Question';
+        }
+
+        // Select Answer
+        function selectAnswer(e) {
+            selectedAnswer = parseInt(e.target.dataset.index);
+            
+            // Remove previous selections
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-100', 'border-blue-500', 'bg-green-100', 'border-green-500', 'bg-red-100', 'border-red-500');
+            });
+
+            // Mark selected answer
+            e.target.classList.add('bg-blue-100', 'border-blue-500');
+            
+            // Show correct/incorrect styling
+            const question = quizData[currentQuestion];
+            document.querySelectorAll('.option-btn').forEach((btn, index) => {
+                if (index === question.correct) {
+                    btn.classList.add('bg-green-100', 'border-green-500');
+                } else if (index === selectedAnswer && selectedAnswer !== question.correct) {
+                    btn.classList.add('bg-red-100', 'border-red-500');
+                }
+                btn.disabled = true;
+            });
+
+            // Update score
+            if (selectedAnswer === question.correct) {
+                score++;
+            }
+            answeredQuestions++;
+
+            // Show explanation
+            explanationContainer.innerHTML = `
+                <div class="p-4 ${selectedAnswer === question.correct ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} border rounded-lg">
+                    <h4 class="font-semibold ${selectedAnswer === question.correct ? 'text-green-800' : 'text-red-800'} mb-2">
+                        ${selectedAnswer === question.correct ? 'Correct!' : 'Incorrect'}
+                    </h4>
+                    <p class="text-sm text-slate-700">${question.explanation}</p>
+                </div>
+            `;
+            explanationContainer.classList.remove('hidden');
+
+            nextBtn.disabled = false;
+            updateUI();
+        }
+
+        // Next Question
+        function nextQuestion() {
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                showResults();
+            }
+            updateUI();
+        }
+
+        // Previous Question
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            }
+            updateUI();
+        }
+
+        // Update UI
+        function updateUI() {
+            currentQuestionSpan.textContent = currentQuestion + 1;
+            currentScoreSpan.textContent = score;
+            questionsAnsweredSpan.textContent = answeredQuestions;
+            
+            const progress = ((currentQuestion + 1) / quizData.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            prevBtn.disabled = currentQuestion === 0;
+        }
+
+        // Show Results
+        function showResults() {
+            quizCompleted = true;
+            document.getElementById('quiz-container').classList.add('hidden');
+            quizResults.classList.remove('hidden');
+            
+            const percentage = Math.round((score / quizData.length) * 100);
+            finalScore.textContent = `${score}/${quizData.length} (${percentage}%)`;
+            
+            let message = '';
+            if (percentage >= 90) {
+                message = 'Excellent! You have a strong understanding of traffic stop procedures.';
+            } else if (percentage >= 80) {
+                message = 'Good job! You understand most of the key concepts.';
+            } else if (percentage >= 70) {
+                message = 'Fair performance. Consider reviewing the material and retaking the quiz.';
+            } else {
+                message = 'Please review the training material carefully and retake the quiz.';
+            }
+            
+            performanceMessage.textContent = message;
+        }
+
+        // Event Listeners
+        nextBtn.addEventListener('click', nextQuestion);
+        prevBtn.addEventListener('click', prevQuestion);
+        restartBtn.addEventListener('click', initQuiz);
+
+        // Initialize quiz on page load
+        initQuiz();
+    </script>
+
         </main>
     </div>
 

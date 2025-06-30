@@ -579,7 +579,291 @@
             });
         }
     });
+
+    // Quiz functionality for fitness and wellness
+    const fitnessQuizData = [
+        {
+            question: "Which of the following is NOT a health-related fitness component?",
+            options: [
+                "Cardiovascular endurance",
+                "Muscular strength",
+                "Reaction time",
+                "Body composition"
+            ],
+            correct: 2,
+            explanation: "Reaction time is a motor fitness component, not a health-related fitness component. Health-related components include cardiovascular endurance, muscular strength, muscular endurance, flexibility, and body composition."
+        },
+        {
+            question: "What does the 'F' in FITT stand for?",
+            options: [
+                "Force",
+                "Frequency", 
+                "Fitness",
+                "Function"
+            ],
+            correct: 1,
+            explanation: "FITT stands for Frequency, Intensity, Time, and Type. Frequency refers to how often you exercise."
+        },
+        {
+            question: "According to fitness guidelines, how many days per week should adults engage in cardiovascular exercise?",
+            options: [
+                "2-3 days",
+                "3-5 days",
+                "5-7 days",
+                "Every day"
+            ],
+            correct: 1,
+            explanation: "Adults should engage in cardiovascular exercise 3-5 days per week for optimal health benefits."
+        },
+        {
+            question: "What percentage of daily calories should come from carbohydrates?",
+            options: [
+                "25-35%",
+                "35-45%",
+                "45-65%",
+                "65-75%"
+            ],
+            correct: 2,
+            explanation: "Carbohydrates should make up 45-65% of daily calories. They are the body's primary source of energy."
+        },
+        {
+            question: "Which macronutrient is most important for muscle repair and growth?",
+            options: [
+                "Carbohydrates",
+                "Protein",
+                "Fats",
+                "Vitamins"
+            ],
+            correct: 1,
+            explanation: "Protein is essential for muscle repair and growth. It provides the amino acids needed to build and maintain muscle tissue."
+        },
+        {
+            question: "How many minutes of moderate-intensity exercise should adults get per week?",
+            options: [
+                "75 minutes",
+                "100 minutes",
+                "150 minutes",
+                "200 minutes"
+            ],
+            correct: 2,
+            explanation: "Adults should get at least 150 minutes of moderate-intensity aerobic activity per week, or 75 minutes of vigorous-intensity activity."
+        },
+        {
+            question: "What is the recommended percentage of daily calories from fat?",
+            options: [
+                "10-20%",
+                "20-35%",
+                "35-50%",
+                "50-65%"
+            ],
+            correct: 1,
+            explanation: "Fats should comprise 20-35% of daily calories. They are important for hormone production and nutrient absorption."
+        },
+        {
+            question: "Which type of exercise is best for improving flexibility?",
+            options: [
+                "Weight lifting",
+                "Running",
+                "Stretching",
+                "Swimming"
+            ],
+            correct: 2,
+            explanation: "Stretching exercises are specifically designed to improve flexibility by increasing the range of motion in joints and muscles."
+        },
+        {
+            question: "What is the primary purpose of the PAR-Q assessment?",
+            options: [
+                "To measure fitness levels",
+                "To screen for exercise readiness and safety",
+                "To plan workout routines",
+                "To track progress"
+            ],
+            correct: 1,
+            explanation: "The PAR-Q (Physical Activity Readiness Questionnaire) is designed to screen individuals for exercise readiness and identify potential health risks before beginning a fitness program."
+        },
+        {
+            question: "Which plate section should be the largest according to MyPlate guidelines?",
+            options: [
+                "Protein",
+                "Vegetables",
+                "Fruits",
+                "Grains"
+            ],
+            correct: 1,
+            explanation: "According to MyPlate guidelines, vegetables should make up the largest portion of your plate, emphasizing the importance of vegetable consumption for good health."
+        }
+    ];
+
+    let currentFitnessQuestion = 0;
+    let fitnessScore = 0;
+    let fitnessAnswered = 0;
+    let selectedFitnessAnswer = null;
+
+    function initFitnessQuiz() {
+        document.getElementById('fitness-total-questions').textContent = fitnessQuizData.length;
+        currentFitnessQuestion = 0;
+        fitnessScore = 0;
+        fitnessAnswered = 0;
+        selectedFitnessAnswer = null;
+        document.getElementById('fitness-quiz-results').classList.add('hidden');
+        document.getElementById('fitness-quiz-container').classList.remove('hidden');
+        showFitnessQuestion();
+        updateFitnessUI();
+    }
+
+    function showFitnessQuestion() {
+        const question = fitnessQuizData[currentFitnessQuestion];
+        selectedFitnessAnswer = null;
+        
+        document.getElementById('fitness-question-container').innerHTML = `
+            <h3 class="text-lg font-semibold mb-4">${question.question}</h3>
+            <div class="space-y-3">
+                ${question.options.map((option, index) => `
+                    <button class="fitness-option-btn w-full text-left p-3 rounded-lg border border-slate-300 hover:bg-green-50 hover:border-green-300 transition-colors" 
+                            data-index="${index}">
+                        ${String.fromCharCode(65 + index)}. ${option}
+                    </button>
+                `).join('')}
+            </div>
+        `;
+
+        document.querySelectorAll('.fitness-option-btn').forEach(btn => {
+            btn.addEventListener('click', selectFitnessAnswer);
+        });
+
+        document.getElementById('fitness-explanation-container').classList.add('hidden');
+        document.getElementById('fitness-next-btn').disabled = true;
+        document.getElementById('fitness-next-btn').textContent = currentFitnessQuestion === fitnessQuizData.length - 1 ? 'Finish Quiz' : 'Next Question';
+    }
+
+    function selectFitnessAnswer(e) {
+        selectedFitnessAnswer = parseInt(e.target.dataset.index);
+        const question = fitnessQuizData[currentFitnessQuestion];
+        
+        document.querySelectorAll('.fitness-option-btn').forEach((btn, index) => {
+            btn.classList.remove('bg-green-100', 'border-green-500', 'bg-green-100', 'border-green-500', 'bg-red-100', 'border-red-500');
+            if (index === question.correct) {
+                btn.classList.add('bg-green-100', 'border-green-500');
+            } else if (index === selectedFitnessAnswer && selectedFitnessAnswer !== question.correct) {
+                btn.classList.add('bg-red-100', 'border-red-500');
+            }
+            btn.disabled = true;
+        });
+
+        if (selectedFitnessAnswer === question.correct) fitnessScore++;
+        fitnessAnswered++;
+
+        document.getElementById('fitness-explanation-container').innerHTML = `
+            <div class="p-4 ${selectedFitnessAnswer === question.correct ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} border rounded-lg">
+                <h4 class="font-semibold ${selectedFitnessAnswer === question.correct ? 'text-green-800' : 'text-red-800'} mb-2">
+                    ${selectedFitnessAnswer === question.correct ? 'Correct!' : 'Incorrect'}
+                </h4>
+                <p class="text-sm text-slate-700">${question.explanation}</p>
+            </div>
+        `;
+        document.getElementById('fitness-explanation-container').classList.remove('hidden');
+        document.getElementById('fitness-next-btn').disabled = false;
+        updateFitnessUI();
+    }
+
+    function nextFitnessQuestion() {
+        if (currentFitnessQuestion < fitnessQuizData.length - 1) {
+            currentFitnessQuestion++;
+            showFitnessQuestion();
+        } else {
+            showFitnessResults();
+        }
+        updateFitnessUI();
+    }
+
+    function prevFitnessQuestion() {
+        if (currentFitnessQuestion > 0) {
+            currentFitnessQuestion--;
+            showFitnessQuestion();
+        }
+        updateFitnessUI();
+    }
+
+    function updateFitnessUI() {
+        document.getElementById('fitness-current-question').textContent = currentFitnessQuestion + 1;
+        document.getElementById('fitness-current-score').textContent = fitnessScore;
+        document.getElementById('fitness-questions-answered').textContent = fitnessAnswered;
+        const progress = ((currentFitnessQuestion + 1) / fitnessQuizData.length) * 100;
+        document.getElementById('fitness-progress-bar').style.width = `${progress}%`;
+        document.getElementById('fitness-prev-btn').disabled = currentFitnessQuestion === 0;
+    }
+
+    function showFitnessResults() {
+        document.getElementById('fitness-quiz-container').classList.add('hidden');
+        document.getElementById('fitness-quiz-results').classList.remove('hidden');
+        const percentage = Math.round((fitnessScore / fitnessQuizData.length) * 100);
+        document.getElementById('fitness-final-score').textContent = `${fitnessScore}/${fitnessQuizData.length} (${percentage}%)`;
+        
+        let message = '';
+        if (percentage >= 90) message = 'Excellent! You have a strong understanding of fitness and wellness principles.';
+        else if (percentage >= 80) message = 'Good job! You understand most of the key health and fitness concepts.';
+        else if (percentage >= 70) message = 'Fair performance. Consider reviewing the material and retaking the quiz.';
+        else message = 'Please review the training material carefully and retake the quiz.';
+        
+        document.getElementById('fitness-performance-message').textContent = message;
+    }
+
+    document.getElementById('fitness-next-btn').addEventListener('click', nextFitnessQuestion);
+    document.getElementById('fitness-prev-btn').addEventListener('click', prevFitnessQuestion);
+    document.getElementById('fitness-restart-quiz').addEventListener('click', initFitnessQuiz);
+
+    // Auto-initialize the fitness quiz
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(initFitnessQuiz, 100);
+    });
 </script>
+
+<!-- Interactive Quiz Section -->
+<section id="interactive-quiz" class="bg-white p-6 rounded-lg shadow-md mt-8">
+    <h2 class="text-2xl font-bold mb-4 text-slate-700">Interactive Quiz: Fitness & Wellness</h2>
+    <p class="mb-6 text-slate-600">Test your understanding of fitness principles, nutrition, and wellness concepts covered in this guide.</p>
+    
+    <div id="fitness-quiz-container" class="space-y-6">
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-sm text-slate-600">
+                Question <span id="fitness-current-question">1</span> of <span id="fitness-total-questions">10</span>
+            </div>
+            <div class="text-sm text-slate-600">
+                Score: <span id="fitness-current-score">0</span>/<span id="fitness-questions-answered">0</span>
+            </div>
+        </div>
+        
+        <div class="w-full bg-slate-200 rounded-full h-2 mb-6">
+            <div id="fitness-progress-bar" class="bg-green-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+        
+        <div id="fitness-question-container" class="p-6 bg-slate-50 rounded-lg">
+            <!-- Questions will be populated by JavaScript -->
+        </div>
+        
+        <div id="fitness-explanation-container" class="hidden p-4 rounded-lg">
+            <!-- Explanations will be shown after each answer -->
+        </div>
+        
+        <div class="flex justify-between">
+            <button id="fitness-prev-btn" class="px-4 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                Previous
+            </button>
+            <button id="fitness-next-btn" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                Next Question
+            </button>
+        </div>
+        
+        <div id="fitness-quiz-results" class="hidden p-6 bg-slate-50 rounded-lg text-center">
+            <h3 class="text-xl font-bold mb-4">Quiz Complete!</h3>
+            <div id="fitness-final-score" class="text-3xl font-bold text-green-600 mb-4"></div>
+            <div id="fitness-performance-message" class="text-slate-600 mb-4"></div>
+            <button id="fitness-restart-quiz" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                Retake Quiz
+            </button>
+        </div>
+    </div>
+</section>
 
 </body>
 </html>

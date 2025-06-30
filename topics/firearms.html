@@ -296,11 +296,251 @@
                     <!-- Questions will be dynamically inserted here -->
                 </div>
             </section>
+            
+            <!-- Section 7: Comprehensive Quiz -->
+            <section id="comprehensive-quiz">
+                <h2 class="text-3xl font-bold mb-6 text-slate-700 border-b-2 border-slate-300 pb-2">Firearms Knowledge Quiz</h2>
+                <p class="mb-6 text-sm">Test your understanding of firearms safety, marksmanship, tactics, and TCOLE requirements. Select your answer, then reveal the correct response and explanation.</p>
+                
+                <div id="firearms-quiz-container" class="space-y-6">
+                    <!-- Quiz questions will be populated by JavaScript -->
+                </div>
+                
+                <div class="mt-6 p-4 bg-red-50 border-l-4 border-red-500">
+                    <div class="flex justify-between items-center">
+                        <span class="font-semibold text-red-800">Quiz Progress:</span>
+                        <span id="firearms-quiz-score" class="text-red-800">0/0 answered</span>
+                    </div>
+                    <div class="mt-2 bg-red-200 rounded-full h-2">
+                        <div id="firearms-quiz-progress-bar" class="bg-red-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+            </section>
 
         </main>
     </div>
 
 <script>
+    // Firearms Quiz Questions
+    const firearmsQuizQuestions = [
+        {
+            question: "What is the #1 firearms safety rule?",
+            options: [
+                "Keep your finger off the trigger until ready to fire",
+                "All guns are always loaded",
+                "Never point the muzzle at anything you don't want to destroy",
+                "Be sure of your target and what is beyond it"
+            ],
+            correct: 1,
+            explanation: "Rule 1 is 'All guns are always loaded.' This fundamental rule ensures you treat every firearm as if it contains ammunition, preventing most accidents."
+        },
+        {
+            question: "What is the most important fundamental of marksmanship?",
+            options: [
+                "Stance",
+                "Grip",
+                "Sight alignment",
+                "Trigger control"
+            ],
+            correct: 3,
+            explanation: "Trigger control is the #1 shooting fundamental. You can have perfect stance, grip, and sight alignment, but poor trigger control will ruin the shot."
+        },
+        {
+            question: "During sight alignment, what should be in sharp focus?",
+            options: [
+                "The target",
+                "The rear sight",
+                "The front sight",
+                "All three equally"
+            ],
+            correct: 2,
+            explanation: "The front sight should be in sharp focus. The target and rear sight will appear slightly blurry, but this is correct for proper sight alignment."
+        },
+        {
+            question: "What is the minimum passing score for TCOLE handgun qualification?",
+            options: [
+                "60%",
+                "70%",
+                "80%",
+                "90%"
+            ],
+            correct: 1,
+            explanation: "The minimum passing score for handgun qualification is 70%. Patrol rifles and precision rifles require 90%."
+        },
+        {
+            question: "According to the 'Plain Feel' doctrine (Minnesota v. Dickerson), when can an officer seize contraband during a frisk?",
+            options: [
+                "Anytime contraband is felt",
+                "Only when its identity is immediately apparent without further manipulation",
+                "After obtaining a search warrant",
+                "Only with the suspect's consent"
+            ],
+            correct: 1,
+            explanation: "The Plain Feel doctrine allows seizure of contraband only if its identity is immediately apparent from touch without further manipulation. You cannot squeeze or manipulate an object to determine if it's contraband."
+        },
+        {
+            question: "What is the difference between cover and concealment?",
+            options: [
+                "There is no difference - they're the same thing",
+                "Cover hides you; concealment stops bullets",
+                "Cover stops bullets; concealment only hides you",
+                "Cover is natural; concealment is man-made"
+            ],
+            correct: 2,
+            explanation: "Cover stops bullets (engine block, concrete wall), while concealment only hides you from view but won't stop rounds (bush, drywall). Always prioritize cover over concealment."
+        },
+        {
+            question: "During an Immediate Action (Speed) Reload, when should you perform this technique?",
+            options: [
+                "When you have fired half your ammunition",
+                "When the slide locks back on an empty magazine",
+                "During any lull in shooting",
+                "Only when ordered by a supervisor"
+            ],
+            correct: 1,
+            explanation: "An Immediate Action Reload is performed when the slide locks back on an empty magazine. You drop the empty magazine while retrieving a fresh one."
+        },
+        {
+            question: "What is the first step in clearing a handgun stoppage?",
+            options: [
+                "Lock the slide to the rear",
+                "Remove the magazine",
+                "Tap the magazine and rack the slide",
+                "Point the gun in a safe direction"
+            ],
+            correct: 2,
+            explanation: "The most common stoppage clearance is 'Tap, Rack' - tap the bottom of the magazine firmly, then rack the slide hard to the rear."
+        },
+        {
+            question: "When using a weapon-mounted light (WML), how should you activate it?",
+            options: [
+                "Keep it on constantly during searches",
+                "Use your trigger finger to activate it",
+                "Use your support hand thumb for intermittent activation",
+                "Only use it for precision shots"
+            ],
+            correct: 2,
+            explanation: "Use your support hand thumb for intermittent activation of a WML. Only use your trigger finger to activate it in emergencies (one-handed operation)."
+        },
+        {
+            question: "What court case established the 'objective reasonableness' standard for use of force?",
+            options: [
+                "Tennessee v. Garner",
+                "Graham v. Connor",
+                "Terry v. Ohio",
+                "Miranda v. Arizona"
+            ],
+            correct: 1,
+            explanation: "Graham v. Connor established the 'objective reasonableness' standard for all uses of force, evaluating force from the perspective of a reasonable officer at the scene."
+        },
+        {
+            question: "How many rounds are required for TCOLE patrol rifle qualification?",
+            options: [
+                "20 rounds",
+                "30 rounds",
+                "40 rounds",
+                "50 rounds"
+            ],
+            correct: 1,
+            explanation: "TCOLE patrol rifle qualification requires 30 rounds fired at a distance of at least 50 yards with a minimum score of 90%."
+        },
+        {
+            question: "What is the proper stance for handgun shooting?",
+            options: [
+                "Feet together, body upright",
+                "Wide stance, leaning backwards",
+                "Square to target with aggressive forward lean and bent knees",
+                "Sideways stance like old Western movies"
+            ],
+            correct: 2,
+            explanation: "The proper stance is square to the target with an aggressive forward lean and bent knees - an athletic stance with arms at or near full extension."
+        }
+    ];
+
+    let firearmsQuizAnswers = {};
+    let firearmsQuestionsAnswered = 0;
+
+    function initializeFirearmsQuiz() {
+        const container = document.getElementById('firearms-quiz-container');
+        
+        firearmsQuizQuestions.forEach((q, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'quiz-question bg-white p-4 rounded-lg shadow-sm';
+            questionDiv.innerHTML = `
+                <h4 class="font-semibold mb-3">${index + 1}. ${q.question}</h4>
+                <div class="space-y-2 mb-3">
+                    ${q.options.map((option, optIndex) => `
+                        <label class="flex items-center cursor-pointer p-2 rounded hover:bg-slate-100 transition-colors">
+                            <input type="radio" name="fq${index}" value="${optIndex}" class="mr-3" onchange="selectFirearmsAnswer(${index}, ${optIndex})">
+                            <span class="text-sm">${option}</span>
+                        </label>
+                    `).join('')}
+                </div>
+                <button onclick="revealFirearmsAnswer(${index})" class="reveal-btn bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 transition-colors" disabled>
+                    Reveal Answer
+                </button>
+                <div id="firearms-answer-${index}" class="answer-explanation mt-3 p-3 rounded-lg hidden">
+                    <div class="font-semibold mb-2"></div>
+                    <div class="text-sm"></div>
+                </div>
+            `;
+            container.appendChild(questionDiv);
+        });
+        
+        updateFirearmsQuizProgress();
+    }
+
+    function selectFirearmsAnswer(questionIndex, selectedOption) {
+        firearmsQuizAnswers[questionIndex] = selectedOption;
+        
+        // Enable reveal button
+        const revealBtn = document.querySelector(`#firearms-quiz-container .quiz-question:nth-child(${questionIndex + 1}) .reveal-btn`);
+        revealBtn.disabled = false;
+        
+        updateFirearmsQuizProgress();
+    }
+
+    function revealFirearmsAnswer(questionIndex) {
+        const question = firearmsQuizQuestions[questionIndex];
+        const userAnswer = firearmsQuizAnswers[questionIndex];
+        const isCorrect = userAnswer === question.correct;
+        
+        const answerDiv = document.getElementById(`firearms-answer-${questionIndex}`);
+        const correctOption = question.options[question.correct];
+        const userOption = question.options[userAnswer];
+        
+        answerDiv.innerHTML = `
+            <div class="font-semibold mb-2 ${isCorrect ? 'text-green-700' : 'text-red-700'}">
+                ${isCorrect ? '✓ Correct!' : '✗ Incorrect'}
+            </div>
+            ${!isCorrect ? `<div class="text-sm mb-2"><strong>Your answer:</strong> ${userOption}</div>` : ''}
+            <div class="text-sm mb-2"><strong>Correct answer:</strong> ${correctOption}</div>
+            <div class="text-sm text-slate-600">${question.explanation}</div>
+        `;
+        
+        answerDiv.className = `answer-explanation mt-3 p-3 rounded-lg ${isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`;
+        answerDiv.classList.remove('hidden');
+        
+        // Disable reveal button
+        const revealBtn = document.querySelector(`#firearms-quiz-container .quiz-question:nth-child(${questionIndex + 1}) .reveal-btn`);
+        revealBtn.disabled = true;
+        revealBtn.textContent = 'Answer Revealed';
+        
+        if (!firearmsQuestionsAnswered || Object.keys(firearmsQuizAnswers).length > firearmsQuestionsAnswered) {
+            firearmsQuestionsAnswered = Object.keys(firearmsQuizAnswers).length;
+            updateFirearmsQuizProgress();
+        }
+    }
+
+    function updateFirearmsQuizProgress() {
+        const totalQuestions = firearmsQuizQuestions.length;
+        const answeredQuestions = Object.keys(firearmsQuizAnswers).length;
+        const progressPercentage = (answeredQuestions / totalQuestions) * 100;
+        
+        document.getElementById('firearms-quiz-score').textContent = `${answeredQuestions}/${totalQuestions} answered`;
+        document.getElementById('firearms-quiz-progress-bar').style.width = `${progressPercentage}%`;
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         const reviewContainer = document.getElementById('review-questions');
         const reviewQuestions = [
@@ -341,6 +581,9 @@
                 }
             });
         }
+        
+        // Initialize firearms quiz
+        initializeFirearmsQuiz();
     });
 </script>
 

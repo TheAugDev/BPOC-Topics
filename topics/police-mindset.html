@@ -344,7 +344,311 @@
                      </ul>
                 </div>
             </section>
+
+            <!-- Interactive Quiz Section -->
+            <section id="interactive-quiz" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">Interactive Quiz: Police Mindset & Tactics</h2>
+                <p class="mb-6 text-slate-600">Test your understanding of police mindset, decision-making models, situational awareness, and tactical considerations covered in this guide.</p>
+                
+                <div id="quiz-container" class="space-y-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="text-sm text-slate-600">
+                            Question <span id="current-question">1</span> of <span id="total-questions">12</span>
+                        </div>
+                        <div class="text-sm text-slate-600">
+                            Score: <span id="current-score">0</span>/<span id="questions-answered">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full bg-slate-200 rounded-full h-2 mb-6">
+                        <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    
+                    <div id="question-container" class="p-6 bg-slate-50 rounded-lg">
+                        <!-- Questions will be populated by JavaScript -->
+                    </div>
+                    
+                    <div id="explanation-container" class="hidden p-4 rounded-lg">
+                        <!-- Explanations will be shown after each answer -->
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <button id="prev-btn" class="px-4 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Previous
+                        </button>
+                        <button id="next-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Next Question
+                        </button>
+                    </div>
+                    
+                    <div id="quiz-results" class="hidden p-6 bg-slate-50 rounded-lg text-center">
+                        <h3 class="text-xl font-bold mb-4">Quiz Complete!</h3>
+                        <div id="final-score" class="text-3xl font-bold text-blue-600 mb-4"></div>
+                        <div id="performance-message" class="text-slate-600 mb-4"></div>
+                        <button id="restart-quiz" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            Retake Quiz
+                        </button>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
-</body>
-</html>
+
+    <script>
+        // Quiz Data for Police Mindset & Tactics
+        const policeMindsetQuizData = [
+            {
+                question: "What is the primary purpose of the Learning Circle concept?",
+                options: [
+                    "To track training hours",
+                    "To embrace continuous growth and learning from experiences",
+                    "To organize police equipment",
+                    "To schedule patrol routes"
+                ],
+                correct: 1,
+                explanation: "The Learning Circle emphasizes the importance of continuous growth and learning from both positive and negative experiences to improve as a police officer."
+            },
+            {
+                question: "What does WIN stand for in the Critical Decision-Making Model?",
+                options: [
+                    "Work, Integrate, Navigate",
+                    "What's Important Now",
+                    "Warn, Identify, Neutralize", 
+                    "Wait, Inspect, Navigate"
+                ],
+                correct: 1,
+                explanation: "WIN stands for 'What's Important Now' and is a core concept in the Critical Decision-Making Model that helps officers focus on the most critical elements in any situation."
+            },
+            {
+                question: "In the SAFE acronym for officer mindsets, what does the 'A' represent?",
+                options: [
+                    "Awareness",
+                    "Attack",
+                    "Assessment",
+                    "Action"
+                ],
+                correct: 1,
+                explanation: "In the SAFE acronym, 'A' stands for Attack, indicating a situation where the officer or others are being actively attacked."
+            },
+            {
+                question: "What are the four risk zones that officers should scan?",
+                options: [
+                    "Front, Back, Left, Right",
+                    "Near, Far, Left, Right",
+                    "Immediate, Intermediate, Extended, Unknown",
+                    "Primary, Secondary, Tertiary, Emergency"
+                ],
+                correct: 2,
+                explanation: "The four risk zones are Immediate (0-5 feet), Intermediate (5-25 feet), Extended (25+ feet), and Unknown (areas out of sight). This systematic scanning helps maintain situational awareness."
+            },
+            {
+                question: "What is the recommended approach when conducting a field interview?",
+                options: [
+                    "Always be aggressive to maintain control",
+                    "Use a professional, respectful approach while maintaining safety",
+                    "Never ask questions without a warrant",
+                    "Only interview suspects at the police station"
+                ],
+                correct: 1,
+                explanation: "Field interviews should be conducted professionally and respectfully while maintaining officer safety. This approach builds community trust while allowing officers to gather necessary information."
+            },
+            {
+                question: "What should an officer do FIRST when conducting a search incidental to arrest?",
+                options: [
+                    "Search the suspect's pockets",
+                    "Ask the 'magic question' about weapons",
+                    "Handcuff the suspect",
+                    "Call for backup"
+                ],
+                correct: 1,
+                explanation: "Officers should always ask the 'magic question' first: 'Before I search, do you have ANY weapons or anything that can poke me?' This helps prevent injuries and shows professionalism."
+            },
+            {
+                question: "In what mode should officers operate during routine interactions?",
+                options: [
+                    "Recognize-React mode",
+                    "Verbal Persuasion mode",
+                    "Combat mode",
+                    "Passive mode"
+                ],
+                correct: 1,
+                explanation: "Officers should operate in Verbal Persuasion mode during routine interactions, using communication and professionalism to gain compliance. Recognize-React mode is reserved for when SAFE violations occur."
+            },
+            {
+                question: "What does imagery training help officers develop?",
+                options: [
+                    "Better photography skills",
+                    "Mental rehearsal and preparation for various scenarios",
+                    "Computer skills",
+                    "Report writing abilities"
+                ],
+                correct: 1,
+                explanation: "Imagery training involves mental rehearsal of various scenarios, helping officers prepare mentally for different situations they may encounter, improving their response and decision-making."
+            },
+            {
+                question: "When should an officer switch to Recognize-React mode?",
+                options: [
+                    "At the beginning of every shift",
+                    "When a SAFE violation occurs",
+                    "Only during felony stops",
+                    "Never during routine patrol"
+                ],
+                correct: 1,
+                explanation: "Officers should switch to Recognize-React mode when a SAFE violation occurs: Security risk, Attack, Flight/fleeing, or Excessive repetition of non-compliance."
+            },
+            {
+                question: "What is the best position to search a suspect from?",
+                options: [
+                    "In front of the suspect",
+                    "To the side of the suspect",
+                    "From behind the suspect (position of control)",
+                    "It doesn't matter"
+                ],
+                correct: 2,
+                explanation: "Officers should search from behind the suspect, which provides a position of control and tactical advantage while reducing the risk of the suspect grabbing the officer or any weapons."
+            },
+            {
+                question: "What area should officers search FIRST during a search incidental to arrest?",
+                options: [
+                    "Front pockets",
+                    "Back waistband",
+                    "Ankle area",
+                    "Chest area"
+                ],
+                correct: 1,
+                explanation: "Officers should always start with the back waistband area as this is the most common location for concealed weapons and poses the greatest threat to officer safety."
+            },
+            {
+                question: "What is the key principle behind the Critical Decision-Making Model?",
+                options: [
+                    "Making decisions as quickly as possible",
+                    "Never making decisions under pressure",
+                    "Systematic, structured thinking under pressure",
+                    "Always waiting for backup before deciding"
+                ],
+                correct: 2,
+                explanation: "The Critical Decision-Making Model emphasizes systematic, structured thinking under pressure, helping officers make sound decisions even in high-stress situations by following a proven framework."
+            }
+        ];
+
+        // Quiz functionality
+        let currentQuestion = 0;
+        let score = 0;
+        let answeredQuestions = 0;
+        let selectedAnswer = null;
+
+        function initQuiz() {
+            document.getElementById('total-questions').textContent = policeMindsetQuizData.length;
+            currentQuestion = 0;
+            score = 0;
+            answeredQuestions = 0;
+            selectedAnswer = null;
+            document.getElementById('quiz-results').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            showQuestion();
+            updateUI();
+        }
+
+        function showQuestion() {
+            const question = policeMindsetQuizData[currentQuestion];
+            selectedAnswer = null;
+            
+            document.getElementById('question-container').innerHTML = `
+                <h3 class="text-lg font-semibold mb-4">${question.question}</h3>
+                <div class="space-y-3">
+                    ${question.options.map((option, index) => `
+                        <button class="option-btn w-full text-left p-3 rounded-lg border border-slate-300 hover:bg-blue-50 hover:border-blue-300 transition-colors" 
+                                data-index="${index}">
+                            ${String.fromCharCode(65 + index)}. ${option}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', selectAnswer);
+            });
+
+            document.getElementById('explanation-container').classList.add('hidden');
+            document.getElementById('next-btn').disabled = true;
+            document.getElementById('next-btn').textContent = currentQuestion === policeMindsetQuizData.length - 1 ? 'Finish Quiz' : 'Next Question';
+        }
+
+        function selectAnswer(e) {
+            selectedAnswer = parseInt(e.target.dataset.index);
+            const question = policeMindsetQuizData[currentQuestion];
+            
+            document.querySelectorAll('.option-btn').forEach((btn, index) => {
+                btn.classList.remove('bg-blue-100', 'border-blue-500', 'bg-green-100', 'border-green-500', 'bg-red-100', 'border-red-500');
+                if (index === question.correct) {
+                    btn.classList.add('bg-green-100', 'border-green-500');
+                } else if (index === selectedAnswer && selectedAnswer !== question.correct) {
+                    btn.classList.add('bg-red-100', 'border-red-500');
+                }
+                btn.disabled = true;
+            });
+
+            if (selectedAnswer === question.correct) score++;
+            answeredQuestions++;
+
+            document.getElementById('explanation-container').innerHTML = `
+                <div class="p-4 ${selectedAnswer === question.correct ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} border rounded-lg">
+                    <h4 class="font-semibold ${selectedAnswer === question.correct ? 'text-green-800' : 'text-red-800'} mb-2">
+                        ${selectedAnswer === question.correct ? 'Correct!' : 'Incorrect'}
+                    </h4>
+                    <p class="text-sm text-slate-700">${question.explanation}</p>
+                </div>
+            `;
+            document.getElementById('explanation-container').classList.remove('hidden');
+            document.getElementById('next-btn').disabled = false;
+            updateUI();
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < policeMindsetQuizData.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                showResults();
+            }
+            updateUI();
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            }
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('current-question').textContent = currentQuestion + 1;
+            document.getElementById('current-score').textContent = score;
+            document.getElementById('questions-answered').textContent = answeredQuestions;
+            const progress = ((currentQuestion + 1) / policeMindsetQuizData.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('prev-btn').disabled = currentQuestion === 0;
+        }
+
+        function showResults() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('quiz-results').classList.remove('hidden');
+            const percentage = Math.round((score / policeMindsetQuizData.length) * 100);
+            document.getElementById('final-score').textContent = `${score}/${policeMindsetQuizData.length} (${percentage}%)`;
+            
+            let message = '';
+            if (percentage >= 90) message = 'Excellent! You have a strong understanding of police mindset and tactical concepts.';
+            else if (percentage >= 80) message = 'Good job! You understand most of the key mindset and tactical principles.';
+            else if (percentage >= 70) message = 'Fair performance. Consider reviewing the material and retaking the quiz.';
+            else message = 'Please review the training material carefully and retake the quiz.';
+            
+            document.getElementById('performance-message').textContent = message;
+        }
+
+        document.getElementById('next-btn').addEventListener('click', nextQuestion);
+        document.getElementById('prev-btn').addEventListener('click', prevQuestion);
+        document.getElementById('restart-quiz').addEventListener('click', initQuiz);
+
+        initQuiz();
+    </script>

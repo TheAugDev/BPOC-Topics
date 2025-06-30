@@ -349,7 +349,289 @@
                     </details>
                 </div>
             </div>
+
+            <!-- Interactive Quiz Section -->
+            <section id="interactive-quiz" class="bg-white p-6 rounded-lg shadow-md mt-8">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">Interactive Quiz: Texas Court System</h2>
+                <p class="mb-6 text-slate-600">Test your understanding of the Texas court system structure, jurisdiction, and case flow covered in this guide.</p>
+                
+                <div id="quiz-container" class="space-y-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="text-sm text-slate-600">
+                            Question <span id="current-question">1</span> of <span id="total-questions">10</span>
+                        </div>
+                        <div class="text-sm text-slate-600">
+                            Score: <span id="current-score">0</span>/<span id="questions-answered">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full bg-slate-200 rounded-full h-2 mb-6">
+                        <div id="progress-bar" class="bg-slate-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    
+                    <div id="question-container" class="p-6 bg-slate-50 rounded-lg">
+                        <!-- Questions will be populated by JavaScript -->
+                    </div>
+                    
+                    <div id="explanation-container" class="hidden p-4 rounded-lg">
+                        <!-- Explanations will be shown after each answer -->
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <button id="prev-btn" class="px-4 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Previous
+                        </button>
+                        <button id="next-btn" class="px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Next Question
+                        </button>
+                    </div>
+                    
+                    <div id="quiz-results" class="hidden p-6 bg-slate-50 rounded-lg text-center">
+                        <h3 class="text-xl font-bold mb-4">Quiz Complete!</h3>
+                        <div id="final-score" class="text-3xl font-bold text-slate-600 mb-4"></div>
+                        <div id="performance-message" class="text-slate-600 mb-4"></div>
+                        <button id="restart-quiz" class="px-6 py-3 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors">
+                            Retake Quiz
+                        </button>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
-</body>
-</html>
+
+    <script>
+        // Quiz Data for Texas Court System
+        const courtSystemQuizData = [
+            {
+                question: "Which court has final appellate jurisdiction for criminal cases in Texas?",
+                options: [
+                    "Texas Supreme Court",
+                    "Texas Court of Criminal Appeals",
+                    "Court of Appeals",
+                    "District Court"
+                ],
+                correct: 1,
+                explanation: "The Texas Court of Criminal Appeals has final appellate jurisdiction for criminal cases in Texas. The Texas Supreme Court handles civil matters."
+            },
+            {
+                question: "What type of cases does the Texas Supreme Court primarily handle?",
+                options: [
+                    "Criminal appeals",
+                    "Civil appeals and administrative matters",
+                    "Felony trials",
+                    "Municipal ordinance violations"
+                ],
+                correct: 1,
+                explanation: "The Texas Supreme Court is the highest civil court in Texas, handling civil appeals and administrative matters. Criminal appeals go to the Court of Criminal Appeals."
+            },
+            {
+                question: "Which courts have jurisdiction over felony cases?",
+                options: [
+                    "Justice of the Peace Courts",
+                    "Municipal Courts",
+                    "District Courts",
+                    "County Courts at Law"
+                ],
+                correct: 2,
+                explanation: "District Courts have jurisdiction over felony cases in Texas. They are the primary trial courts for serious criminal offenses."
+            },
+            {
+                question: "What is the monetary jurisdiction limit for County Courts at Law in civil cases?",
+                options: [
+                    "Up to $10,000",
+                    "Up to $100,000",
+                    "Up to $200,000",
+                    "No limit"
+                ],
+                correct: 2,
+                explanation: "County Courts at Law typically have civil jurisdiction up to $200,000, though this can vary by county and specific court designation."
+            },
+            {
+                question: "Which courts handle Class C misdemeanors?",
+                options: [
+                    "District Courts only",
+                    "County Courts at Law only", 
+                    "Justice of the Peace and Municipal Courts",
+                    "All courts have this jurisdiction"
+                ],
+                correct: 2,
+                explanation: "Justice of the Peace Courts and Municipal Courts have concurrent jurisdiction over Class C misdemeanors, which are punishable by fine only."
+            },
+            {
+                question: "What type of jurisdiction do Courts of Appeals have?",
+                options: [
+                    "Original jurisdiction only",
+                    "Intermediate appellate jurisdiction",
+                    "Final appellate jurisdiction",
+                    "Administrative jurisdiction only"
+                ],
+                correct: 1,
+                explanation: "Courts of Appeals serve as intermediate appellate courts, reviewing cases from trial courts before they potentially go to the highest appellate courts."
+            },
+            {
+                question: "Which court would handle a Class A misdemeanor case?",
+                options: [
+                    "Justice of the Peace Court",
+                    "Municipal Court",
+                    "County Court at Law",
+                    "District Court"
+                ],
+                correct: 2,
+                explanation: "County Courts at Law have jurisdiction over Class A and Class B misdemeanors. Class C misdemeanors go to JP or Municipal courts."
+            },
+            {
+                question: "What is the primary function of Justice of the Peace Courts?",
+                options: [
+                    "Felony trials",
+                    "Small claims, Class C misdemeanors, and magistrate duties",
+                    "Appeals only",
+                    "Administrative law"
+                ],
+                correct: 1,
+                explanation: "Justice of the Peace Courts handle small claims civil cases, Class C misdemeanors, magistrate functions, and other limited jurisdiction matters."
+            },
+            {
+                question: "Municipal Courts have exclusive jurisdiction over what type of cases?",
+                options: [
+                    "All traffic violations",
+                    "Municipal ordinance violations",
+                    "Civil cases under $10,000",
+                    "Class B misdemeanors"
+                ],
+                correct: 1,
+                explanation: "Municipal Courts have exclusive original jurisdiction over municipal ordinance criminal cases, such as city code violations."
+            },
+            {
+                question: "If someone wanted to appeal a District Court criminal conviction, where would the case go first?",
+                options: [
+                    "Texas Supreme Court",
+                    "Texas Court of Criminal Appeals",
+                    "Court of Appeals",
+                    "County Court at Law"
+                ],
+                correct: 2,
+                explanation: "Criminal appeals from District Courts first go to the intermediate Court of Appeals before potentially proceeding to the Texas Court of Criminal Appeals."
+            }
+        ];
+
+        // Quiz functionality
+        let currentQuestion = 0;
+        let score = 0;
+        let answeredQuestions = 0;
+        let selectedAnswer = null;
+
+        function initQuiz() {
+            document.getElementById('total-questions').textContent = courtSystemQuizData.length;
+            currentQuestion = 0;
+            score = 0;
+            answeredQuestions = 0;
+            selectedAnswer = null;
+            document.getElementById('quiz-results').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            showQuestion();
+            updateUI();
+        }
+
+        function showQuestion() {
+            const question = courtSystemQuizData[currentQuestion];
+            selectedAnswer = null;
+            
+            document.getElementById('question-container').innerHTML = `
+                <h3 class="text-lg font-semibold mb-4">${question.question}</h3>
+                <div class="space-y-3">
+                    ${question.options.map((option, index) => `
+                        <button class="option-btn w-full text-left p-3 rounded-lg border border-slate-300 hover:bg-slate-50 hover:border-slate-400 transition-colors" 
+                                data-index="${index}">
+                            ${String.fromCharCode(65 + index)}. ${option}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', selectAnswer);
+            });
+
+            document.getElementById('explanation-container').classList.add('hidden');
+            document.getElementById('next-btn').disabled = true;
+            document.getElementById('next-btn').textContent = currentQuestion === courtSystemQuizData.length - 1 ? 'Finish Quiz' : 'Next Question';
+        }
+
+        function selectAnswer(e) {
+            selectedAnswer = parseInt(e.target.dataset.index);
+            const question = courtSystemQuizData[currentQuestion];
+            
+            document.querySelectorAll('.option-btn').forEach((btn, index) => {
+                btn.classList.remove('bg-slate-100', 'border-slate-500', 'bg-green-100', 'border-green-500', 'bg-red-100', 'border-red-500');
+                if (index === question.correct) {
+                    btn.classList.add('bg-green-100', 'border-green-500');
+                } else if (index === selectedAnswer && selectedAnswer !== question.correct) {
+                    btn.classList.add('bg-red-100', 'border-red-500');
+                }
+                btn.disabled = true;
+            });
+
+            if (selectedAnswer === question.correct) score++;
+            answeredQuestions++;
+
+            document.getElementById('explanation-container').innerHTML = `
+                <div class="p-4 ${selectedAnswer === question.correct ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} border rounded-lg">
+                    <h4 class="font-semibold ${selectedAnswer === question.correct ? 'text-green-800' : 'text-red-800'} mb-2">
+                        ${selectedAnswer === question.correct ? 'Correct!' : 'Incorrect'}
+                    </h4>
+                    <p class="text-sm text-slate-700">${question.explanation}</p>
+                </div>
+            `;
+            document.getElementById('explanation-container').classList.remove('hidden');
+            document.getElementById('next-btn').disabled = false;
+            updateUI();
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < courtSystemQuizData.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                showResults();
+            }
+            updateUI();
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            }
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('current-question').textContent = currentQuestion + 1;
+            document.getElementById('current-score').textContent = score;
+            document.getElementById('questions-answered').textContent = answeredQuestions;
+            const progress = ((currentQuestion + 1) / courtSystemQuizData.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('prev-btn').disabled = currentQuestion === 0;
+        }
+
+        function showResults() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('quiz-results').classList.remove('hidden');
+            const percentage = Math.round((score / courtSystemQuizData.length) * 100);
+            document.getElementById('final-score').textContent = `${score}/${courtSystemQuizData.length} (${percentage}%)`;
+            
+            let message = '';
+            if (percentage >= 90) message = 'Excellent! You have a strong understanding of the Texas court system.';
+            else if (percentage >= 80) message = 'Good job! You understand most of the court structure and jurisdiction.';
+            else if (percentage >= 70) message = 'Fair performance. Consider reviewing the material and retaking the quiz.';
+            else message = 'Please review the training material carefully and retake the quiz.';
+            
+            document.getElementById('performance-message').textContent = message;
+        }
+
+        document.getElementById('next-btn').addEventListener('click', nextQuestion);
+        document.getElementById('prev-btn').addEventListener('click', prevQuestion);
+        document.getElementById('restart-quiz').addEventListener('click', initQuiz);
+
+        initQuiz();
+    </script>
