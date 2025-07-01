@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Texas Transportation Code - Complete Interactive Study Guide (Modules 1 & 2)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Blue & Gray with Amber accents -->
+    <!-- Application Structure Plan: A comprehensive single-page application covering the Texas Transportation Code Module 1. The structure follows the THP BPOC manual organization with collapsible sections for each major topic. Interactive elements include practice scenarios, visual examples, and comprehensive quizzes based strictly on the manual content. -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            scroll-behavior: smooth;
+        }
+        
+        /* Navigation styles */
+        .nav-menu {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .nav-item {
+            transition: all 0.2s ease;
+            border-radius: 0.5rem;
+        }
+        
+        .nav-item:hover {
+            background-color: #f3f4f6;
+            transform: translateY(-1px);
+        }
+        
+        /* Flashcard styles */
+        .flashcard {
+            position: relative;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .flashcard.is-flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .flashcard-face, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 1.5rem;
+        }
+        
+        .flashcard-back {
+            transform: rotateY(180deg);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        /* Details and summary styles */
+        details > summary { 
+            cursor: pointer;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        details > summary:hover {
+            background-color: #f8fafc;
+            transform: translateX(4px);
+        }
+        
+        details[open] > summary {
+            background-color: #f1f5f9;
+        }
+        
+        details > summary svg {
+            transition: transform 0.2s ease;
+        }
+        
+        details[open] > summary svg {
+            transform: rotate(180deg);
+        }
+        
+        /* Scenario and content boxes */
+        .apply-it-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .word-association {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            border-left: 4px solid #0891b2;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0.5rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dps-arrest-title {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border-left: 4px solid #ef4444;
+            padding: 0.75rem 1rem;
+            margin: 0.5rem 0;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            color: #dc2626;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Quiz styles */
+        .quiz-option {
+            transition: all 0.2s ease;
+            border: 2px solid #d1d5db;
+        }
+        
+        .quiz-option:hover {
+            border-color: #3b82f6;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+        }
+        
+        .quiz-option.correct {
+            background-color: #10b981 !important;
+            border-color: #059669 !important;
+            color: white !important;
+        }
+        
+        .quiz-option.incorrect {
+            background-color: #ef4444 !important;
+            border-color: #dc2626 !important;
+            color: white !important;
+        }
+        
+        .quiz-choices.answered .quiz-option {
+            pointer-events: none;
+        }
+        
+        /* Progress indicator */
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem !important;
+            }
+            
+            h1 {
+                font-size: 2rem !important;
+            }
+            
+            h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            h3 {
+                font-size: 1.25rem !important;
+            }
+            
+            /* Improve touch targets for mobile */
+            details > summary {
+                padding: 1rem;
+                font-size: 1.1rem;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+            }
+            
+            /* Better spacing for mobile */
+            .space-y-8 > * + * {
+                margin-top: 1.5rem !important;
+            }
+            
+            .space-y-6 > * + * {
+                margin-top: 1.25rem !important;
+            }
+            
+            .space-y-4 > * + * {
+                margin-top: 1rem !important;
+            }
+            
+            /* Improve readability on mobile */
+            p, li {
+                line-height: 1.6;
+            }
+            
+            .text-sm {
+                font-size: 0.9rem !important;
+            }
+            
+            /* Grid adjustments for mobile */
+            .grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            /* Card adjustments */
+            .bg-white {
+                padding: 1rem !important;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.5rem !important;
+            }
+            
+            h1 {
+                font-size: 1.75rem !important;
+            }
+            
+            .bg-white {
+                margin: 0 !important;
+                border-radius: 0.5rem;
+            }
+        }
+        .quiz-option-multi {
+            cursor: pointer;
+        }
+        .quiz-option-multi.selected {
+            background-color: #3B82F6; /* blue-500 */
+            color: white;
+            border-color: #2563EB;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-2">Texas Traffic Law Study Guide</h1>
+            <p class="text-lg text-gray-600 mb-4">Modules 1 & 2: Complete TRC Penal Code, Chapters 472, 502-504, 521-522</p>
+            
+            <!-- Progress Bar -->
+            <div class="max-w-md mx-auto bg-gray-200 rounded-full h-2 mb-6">
+                <div id="progress-bar" class="progress-bar bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
+            </div>
+            <p class="text-sm text-gray-500">Study Progress: <span id="progress-text">0%</span></p>
+        </header>
+
+        <!-- Navigation Menu -->
+        <nav class="nav-menu mb-8 p-4 rounded-lg">
+            <div class="flex flex-wrap justify-center gap-2 md:gap-4">
+                <!-- Module 1 -->
+                <a href="#penal-code" class="nav-item px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Penal Code</a>
+                <a href="#chapter-472" class="nav-item px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Ch. 472</a>
+                <a href="#chapter-502" class="nav-item px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Ch. 502</a>
+                <a href="#chapter-503" class="nav-item px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Ch. 503</a>
+                <a href="#chapter-504" class="nav-item px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Ch. 504</a>
+                <!-- Module 2 -->
+                <a href="#chapter-521" class="nav-item px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Ch. 521</a>
+                <a href="#chapter-522" class="nav-item px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Ch. 522</a>
+                <a href="#comprehensive-review" class="nav-item px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Review Quiz</a>
+                <a href="#module-2-review" class="nav-item px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Module 2 Quiz</a>
+            </div>
+        </nav>
+
+        <main class="space-y-8">
+            <!-- Section 1.1: Texas Penal Code -->
+            <section id="penal-code" class="bg-white p-6 rounded-xl shadow-md animate-slide-in">
+                <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-blue-800">Section 1.1: Texas Penal Code Definitions</h2>
+                <p class="text-gray-600 mb-6">Click on each card to reveal key definitions and their importance in traffic law enforcement.</p>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                    <div class="flashcard h-48" onclick="this.classList.toggle('is-flipped')">
+                        <div class="flashcard-face bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-lg">
+                            <div>
+                                <h3 class="text-xl font-bold mb-2">Bodily Injury</h3>
+                                <p class="text-sm opacity-90">Click to learn more</p>
+                            </div>
+                        </div>
+                        <div class="flashcard-back bg-gradient-to-br from-blue-600 to-blue-800 text-white shadow-lg">
+                            <div>
+                                <p class="text-sm mb-3"><strong>Definition:</strong> Physical pain, illness, or any impairment of physical condition.</p>
+                                <p class="text-sm"><strong>Importance:</strong> Enhances offenses, e.g., Class C to Class B for failing to move over for an emergency vehicle causing bodily injury.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flashcard h-48" onclick="this.classList.toggle('is-flipped')">
+                        <div class="flashcard-face bg-gradient-to-br from-red-500 to-red-700 text-white shadow-lg">
+                            <div>
+                                <h3 class="text-xl font-bold mb-2">Serious Bodily Injury</h3>
+                                <p class="text-sm opacity-90">Click to learn more</p>
+                            </div>
+                        </div>
+                        <div class="flashcard-back bg-gradient-to-br from-red-600 to-red-800 text-white shadow-lg">
+                            <div>
+                                <p class="text-sm mb-3"><strong>Definition:</strong> Injury creating substantial risk of death, or causing death, serious permanent disfigurement, or protracted loss/impairment of a bodily member/organ.</p>
+                                <p class="text-sm"><strong>Importance:</strong> Elevates offenses like Failure to Stop and Render Aid to a 2nd Degree Felony.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flashcard h-48" onclick="this.classList.toggle('is-flipped')">
+                        <div class="flashcard-face bg-gradient-to-br from-green-500 to-green-700 text-white shadow-lg">
+                            <div>
+                                <h3 class="text-xl font-bold mb-2">Individual</h3>
+                                <p class="text-sm opacity-90">Click to learn more</p>
+                            </div>
+                        </div>
+                        <div class="flashcard-back bg-gradient-to-br from-green-600 to-green-800 text-white shadow-lg">
+                            <div>
+                                <p class="text-sm mb-3"><strong>Definition:</strong> A human being who is alive, including an unborn child from fertilization until birth.</p>
+                                <p class="text-sm"><strong>Importance:</strong> Allows charges like Intoxication Manslaughter for the death of an unborn child.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flashcard h-48" onclick="this.classList.toggle('is-flipped')">
+                        <div class="flashcard-face bg-gradient-to-br from-purple-500 to-purple-700 text-white shadow-lg">
+                            <div>
+                                <h3 class="text-xl font-bold mb-2">Public Place</h3>
+                                <p class="text-sm opacity-90">Click to learn more</p>
+                            </div>
+                        </div>
+                        <div class="flashcard-back bg-gradient-to-br from-purple-600 to-purple-800 text-white shadow-lg">
+                            <div>
+                                <p class="text-sm mb-3"><strong>Definition:</strong> Any place to which the public or a substantial group has access, including streets, highways, and common areas of buildings.</p>
+                                <p class="text-sm"><strong>Importance:</strong> Determines jurisdiction and applicability of many traffic-related offenses.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flashcard h-48" onclick="this.classList.toggle('is-flipped')">
+                        <div class="flashcard-face bg-gradient-to-br from-orange-500 to-orange-700 text-white shadow-lg">
+                            <div>
+                                <h3 class="text-xl font-bold mb-2">Death</h3>
+                                <p class="text-sm opacity-90">Click to learn more</p>
+                            </div>
+                        </div>
+                        <div class="flashcard-back bg-gradient-to-br from-orange-600 to-orange-800 text-white shadow-lg">
+                            <div>
+                                <p class="text-sm mb-3"><strong>Definition:</strong> Includes death of an unborn child at any stage of gestation.</p>
+                                <p class="text-sm"><strong>Importance:</strong> Critical for vehicular homicide charges and intoxication manslaughter cases involving unborn children.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Crash Investigation & Related Offenses -->
+                <div class="border-t pt-6">
+                    <h3 class="text-xl font-bold mb-4 text-blue-800">Crash Investigation & Related Offenses</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                            <h4 class="font-bold text-red-800 mb-2">Manslaughter (PC § 19.04)</h4>
+                            <p class="text-sm mb-2"><strong>Definition:</strong> Recklessly causing death of another individual.</p>
+                            <p class="text-sm"><strong>Punishment:</strong> 2nd Degree Felony (2-20 years, up to $10,000 fine)</p>
+                        </div>
+                        
+                        <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                            <h4 class="font-bold text-orange-800 mb-2">Criminally Negligent Homicide (PC § 19.05)</h4>
+                            <p class="text-sm mb-2"><strong>Definition:</strong> Criminal negligence causing death of another individual.</p>
+                            <p class="text-sm"><strong>Punishment:</strong> State Jail Felony (180 days - 2 years, up to $10,000 fine)</p>
+                        </div>
+                        
+                        <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                            <h4 class="font-bold text-purple-800 mb-2">Intoxication Assault (PC § 49.07)</h4>
+                            <p class="text-sm mb-2"><strong>Definition:</strong> While intoxicated, causes serious bodily injury by accident or mistake.</p>
+                            <p class="text-sm"><strong>Punishment:</strong> 3rd Degree Felony (2-10 years, up to $10,000 fine)</p>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h4 class="font-bold text-gray-800 mb-2">Intoxication Manslaughter (PC § 49.08)</h4>
+                            <p class="text-sm mb-2"><strong>Definition:</strong> While intoxicated, causes death by accident or mistake.</p>
+                            <p class="text-sm"><strong>Punishment:</strong> 2nd Degree Felony (2-20 years, up to $10,000 fine)</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 1.2: Chapter 472 - Warning Signs -->
+            <section id="chapter-472" class="bg-white p-6 rounded-xl shadow-md animate-slide-in">
+                <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-blue-800">Section 1.2: Chapter 472 - Warning Signs & Barricades</h2>
+                
+                <div class="bg-gradient-to-r from-green-50 to-green-100 p-6 rounded-lg border border-green-200 mb-6">
+                    <h3 class="font-bold text-lg mb-3 text-green-800">§ 472.022 - Obeying Warning Signs and Barricades</h3>
+                    <p class="mb-4 text-gray-700">A person commits an offense if they disregard a warning sign (including a flagger) or drive around a barricade.</p>
+                    
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-orange-800 mb-2">🚧 Construction Zone</h4>
+                            <p class="text-sm"><strong>Double Fine (up to $400):</strong> If in a construction zone with workers present.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-red-800 mb-2">🌊 Water Barricade</h4>
+                            <p class="text-sm"><strong>Class B Misdemeanor:</strong> If barricade was for water over the roadway.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Apply It Scenarios -->
+                <div class="space-y-4">
+                    <details class="bg-yellow-50 rounded-lg border border-yellow-200">
+                        <summary class="p-4 font-semibold text-yellow-800 cursor-pointer flex items-center justify-between">
+                            Apply It Scenario - Construction Zone 📋
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </summary>
+                        <div class="p-4 pt-0">
+                            <p class="mb-2"><strong>Scenario:</strong> Driver goes around orange cones in active construction zone where workers are present.</p>
+                            <p class="mb-2"><strong>Violation:</strong> § 472.022 - Disregarding warning signs/barricades</p>
+                            <p class="mb-2"><strong>Enhancement:</strong> Double fine (up to $400) due to workers present</p>
+                            <p><strong>Officer Action:</strong> Document worker presence, take photos of barricade setup, issue enhanced citation.</p>
+                        </div>
+                    </details>
+                    
+                    <details class="bg-blue-50 rounded-lg border border-blue-200">
+                        <summary class="p-4 font-semibold text-blue-800 cursor-pointer flex items-center justify-between">
+                            Apply It Scenario - Water Barricade 📋
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </summary>
+                        <div class="p-4 pt-0">
+                            <p class="mb-2"><strong>Scenario:</strong> Vehicle drives around "Road Closed - Water Over Roadway" barricade.</p>
+                            <p class="mb-2"><strong>Violation:</strong> § 472.022 - Class B Misdemeanor</p>
+                            <p class="mb-2"><strong>Punishment:</strong> Up to 180 days jail, up to $2,000 fine</p>
+                            <p><strong>Officer Safety:</strong> Be aware of dangerous road conditions, consider rescue resources if needed.</p>
+                        </div>
+                    </details>
+                </div>
+                
+                <div class="word-association mt-6">
+                    <h4 class="font-bold mb-3">Word Association - Chapter 472</h4>
+                    <div class="grid md:grid-cols-2 gap-2 text-sm">
+                        <div><strong>Warning Sign:</strong> Includes flaggers</div>
+                        <div><strong>Barricade:</strong> Physical barrier</div>
+                        <div><strong>Construction Zone:</strong> Double fine if workers present</div>
+                        <div><strong>Water Barricade:</strong> Class B Misdemeanor</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 1.3: Chapter 502 - Registration -->
+            <section id="chapter-502" class="bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-2xl font-bold mb-4 border-b pb-2">Section 1.3: Chapter 502 - Vehicle Registration</h2>
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h3 class="font-bold text-lg mb-2">General Rule & Expired Plates</h3>
+                    <p><strong>Registration Required (502.040):</strong> A person has <strong class="text-xl">30 Days</strong> to register a vehicle after purchase or becoming a resident.</p>
+                    <p class="mt-2"><strong>Expired License Plate (502.407):</strong> Offense occurs <strong class="text-red-600">AFTER the 5th business day</strong> post-expiration. No stop before then.</p>
+                </div>
+            </section>
+
+            <!-- Section 1.4: Chapter 503 - Dealer Plates -->
+            <section id="chapter-503" class="bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-2xl font-bold mb-4 border-b pb-2">Section 1.4: Chapter 503 - Dealer Plates & Tags</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-indigo-100 border-l-4 border-indigo-500 p-4 rounded-lg">
+                        <h3 class="font-bold text-lg mb-2">Metal Dealer Plate</h3>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>Can be used for personal use.</li>
+                            <li>Cannot be on a service vehicle or commercial vehicle with a load.</li>
+                            <li>Requires valid state inspection.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-pink-100 border-l-4 border-pink-500 p-4 rounded-lg">
+                        <h3 class="font-bold text-lg mb-2">Dealer Temp Tag</h3>
+                         <ul class="list-disc list-inside space-y-1">
+                            <li><strong>CANNOT</strong> be for personal use.</li>
+                            <li>Uses: demo, transit, road test, loaner.</li>
+                            <li>Inspection <strong>NOT</strong> required.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-green-100 border-l-4 border-green-500 p-4 rounded-lg">
+                        <h3 class="font-bold text-lg mb-2">Buyer's Temp Tag</h3>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>Only <strong>ONE</strong> tag allowed.</li>
+                            <li>Max <strong>60 days</strong> validity.</li>
+                            <li>Requires valid state inspection.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 1.5: Chapter 504 - License Plates -->
+            <section id="chapter-504" class="bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-2xl font-bold mb-4 border-b pb-2">Section 1.5: Chapter 504 - License Plates</h2>
+                <div class="space-y-4">
+                    <details class="bg-gray-50 p-4 rounded-lg">
+                        <summary class="font-semibold cursor-pointer flex justify-between items-center">License Plate Display Rules (504.943)<svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg></summary>
+                        <div class="mt-4 grid md:grid-cols-2 gap-6">
+                            <div><h4 class="font-semibold">Two Plates (Cars, Trucks):</h4><ul class="list-disc list-inside mt-1"><li>Front and rear.</li><li>Upright horizontal.</li><li>≥ 12" from ground.</li></ul></div>
+                            <div><h4 class="font-semibold">One Plate (Motorcycles, Trailers):</h4><ul class="list-disc list-inside mt-1"><li>As close as practical to rear.</li><li>≥ 12" from ground.</li><li>Vertical display is allowed.</li></ul></div>
+                        </div>
+                    </details>
+                    <details class="bg-gray-50 p-4 rounded-lg">
+                        <summary class="font-semibold cursor-pointer flex justify-between items-center">Wrong, Fictitious, Altered, or Obscured Plates (504.945)<svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg></summary>
+                        <div class="mt-4 text-gray-700 space-y-3">
+                            <p><strong>Wrong Plate:</strong> Plate from a different vehicle.</p>
+                            <p><strong>Fictitious Plate:</strong> A fake plate. <strong class="text-red-600">Class B Misdemeanor.</strong></p>
+                            <p><strong>Obscured Plate:</strong> A covering, coating, or material that distorts visibility, or alters/obscures the state name or plate number. Includes plate frames/brackets.</p>
+                            <p><strong>Enhancement:</strong> Any violation becomes a <strong class="text-red-600">Class B Misdemeanor</strong> if the person <span class="font-bold">knowingly</span> altered or made the plate illegible.</p>
+                            <p class="font-semibold mt-2">Exceptions for Obstruction:</p>
+                            <p class="text-sm">Trailer hitches, toll transponders, wheelchair lifts, towed trailers, and bike racks installed in a normal/customary manner.</p>
+                        </div>
+                    </details>
+                     <details class="bg-gray-50 p-4 rounded-lg">
+                        <summary class="font-semibold cursor-pointer flex justify-between items-center">Deceptively Similar Plates & Flippers<svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg></summary>
+                        <div class="mt-4 text-gray-700 space-y-3">
+                            <p><strong>Deceptively Similar Plate (504.946):</strong> A plate not issued by DMV that a reasonable person would presume is real. Displaying is a Class C Misdemeanor. Manufacturing/selling is a 3rd Degree Felony.</p>
+                            <p><strong>License Plate Flipper (504.9465):</strong> Possessing with criminal negligence is a Class B Misdemeanor. Selling is a Class A Misdemeanor.</p>
+                        </div>
+                    </details>
+                </div>
+            </section>
+            
+            <!-- Module 1 Review -->
+            <section id="module-1-review" class="bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-3xl font-bold mb-6 border-b pb-3 text-center">Module 1 - Final Review Quiz</h2>
+                <div class="space-y-6">
+                    <!-- Question 1 -->
+                    <div class="bg-gray-50 p-4 rounded-lg quiz-container"><p class="font-semibold mb-2">1. A person who drives around a barricade placed for water over the roadway commits a Class B Misdemeanor.</p><div class="flex space-x-4 quiz-choices" id="q1-quiz"><button data-correct="true" class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">True</button><button class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">False</button></div><p id="q1-feedback" class="mt-2 text-sm font-medium hidden"><strong>Answer:</strong> True. (Sec. 472.022)</p></div>
+                    <!-- Question 2 -->
+                    <div class="bg-gray-50 p-4 rounded-lg quiz-container"><p class="font-semibold mb-2">2. How many days does a new state resident have to register their vehicles in Texas?</p><button class="show-answer-btn mt-2 bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700">Show Answer</button><p class="answer-feedback mt-2 text-sm font-medium hidden"><strong>Answer:</strong> 30 Days. (Sec. 502.040)</p></div>
+                    <!-- Question 3 -->
+                    <div class="bg-gray-50 p-4 rounded-lg quiz-container"><p class="font-semibold mb-2">3. A private individual is not permitted to register an off-highway vehicle.</p><div class="flex space-x-4 quiz-choices" id="q3-quiz"><button data-correct="true" class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">True</button><button class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">False</button></div><p id="q3-feedback" class="mt-2 text-sm font-medium hidden"><strong>Answer:</strong> True. (Sec. 502.140)</p></div>
+                    <!-- Question 4 -->
+                    <div class="bg-gray-50 p-4 rounded-lg quiz-container"><p class="font-semibold mb-2">4. A farm trailer with a gross weight of less than 4,000 pounds is not required to display a license plate.</p><div class="flex space-x-4 quiz-choices" id="q4-quiz"><button data-correct="true" class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">True</button><button class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">False</button></div><p id="q4-feedback" class="mt-2 text-sm font-medium hidden"><strong>Answer:</strong> True. (Sec. 502.146)</p></div>
+                    <!-- Question 5 -->
+                    <div class="bg-gray-50 p-4 rounded-lg quiz-container"><p class="font-semibold mb-2">5. A professional rodeo cowboy using farm plates on his way to a rodeo is engaged in gainful employment and commits a violation.</p><div class="flex space-x-4 quiz-choices" id="q5-quiz"><button class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">True</button><button data-correct="true" class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">False</button></div><p id="q5-feedback" class="mt-2 text-sm font-medium hidden"><strong>Answer:</strong> False. Both Farm Truck and Farm Trailer plates can be used for participating in equine activities, which includes rodeos. (Sec. 502.146, 502.433)</p></div>
+                    <!-- Question 6 -->
+                    <div class="bg-gray-50 p-4 rounded-lg quiz-container"><p class="font-semibold mb-2">6. An expired registration does not become a violation until after how long?</p><button class="show-answer-btn mt-2 bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700">Show Answer</button><p class="answer-feedback mt-2 text-sm font-medium hidden"><strong>Answer:</strong> After the 5th business day. (Sec. 502.407)</p></div>
+                    <!-- Question 7 -->
+                    <div class="bg-gray-50 p-4 rounded-lg quiz-container"><p class="font-semibold mb-2">7. Where is a metal dealer license plate required to be displayed?</p><button class="show-answer-btn mt-2 bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700">Show Answer</button><p class="answer-feedback mt-2 text-sm font-medium hidden"><strong>Answer:</strong> In the rear license plate area. (Sec. 503.061)</p></div>
+                    <!-- Question 8 -->
+                    <div class="bg-gray-50 p-4 rounded-lg quiz-container"><p class="font-semibold mb-2">8. A dealer temporary tag may be used when a vehicle is being road tested by a prospective buyer.</p><div class="flex space-x-4 quiz-choices" id="q8-quiz"><button data-correct="true" class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">True</button><button class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">False</button></div><p id="q8-feedback" class="mt-2 text-sm font-medium hidden"><strong>Answer:</strong> True. (Sec. 503.062)</p></div>
+                    <!-- Question 9 -->
+                    <div class="bg-gray-50 p-4 rounded-lg quiz-container"><p class="font-semibold mb-2">9. A dealer temporary tag may be used when a dealer is loaning a vehicle to a person while their vehicle is being repaired.</p><div class="flex space-x-4 quiz-choices" id="q9-quiz"><button data-correct="true" class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">True</button><button class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">False</button></div><p id="q9-feedback" class="mt-2 text-sm font-medium hidden"><strong>Answer:</strong> True. (Sec. 503.062)</p></div>
+                    <!-- Question 10 -->
+                    <div class="bg-gray-50 p-4 rounded-lg quiz-container"><p class="font-semibold mb-2">10. A buyer’s temporary tag is valid for a maximum of how many days?</p><button class="show-answer-btn mt-2 bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700">Show Answer</button><p class="answer-feedback mt-2 text-sm font-medium hidden"><strong>Answer:</strong> 60 days. (Sec. 503.063)</p></div>
+                    <!-- Question 11 -->
+                    <div class="bg-gray-50 p-4 rounded-lg quiz-container"><p class="font-semibold mb-2">11. A dealership may issue a second buyer's temporary tag if the first one expires.</p><div class="flex space-x-4 quiz-choices" id="q11-quiz"><button class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">True</button><button data-correct="true" class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">False</button></div><p id="q11-feedback" class="mt-2 text-sm font-medium hidden"><strong>Answer:</strong> False. Only one buyer's tag may be issued. (Sec. 503.063)</p></div>
+                    <!-- Question 12 -->
+                    <div class="bg-gray-50 p-4 rounded-lg quiz-container"><p class="font-semibold mb-2">12. Texas license plates may be displayed in the front windshield.</p><div class="flex space-x-4 quiz-choices" id="q12-quiz"><button class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">True</button><button data-correct="true" class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">False</button></div><p id="q12-feedback" class="mt-2 text-sm font-medium hidden"><strong>Answer:</strong> False. They must be at the exterior front and rear of the vehicle. (Sec. 504.943)</p></div>
+                    <!-- Question 13 -->
+                    <div class="bg-gray-50 p-4 rounded-lg quiz-container"><p class="font-semibold mb-2">13. A trailer may display its license plate vertically.</p><div class="flex space-x-4 quiz-choices" id="q13-quiz"><button data-correct="true" class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">True</button><button class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">False</button></div><p id="q13-feedback" class="mt-2 text-sm font-medium hidden"><strong>Answer:</strong> True. There is no requirement for a horizontal position for vehicles with one plate. (Sec. 504.943)</p></div>
+                    <!-- Question 14 -->
+                    <div class="bg-gray-50 p-4 rounded-lg quiz-container"><p class="font-semibold mb-2">14. A person may buy license plates from a non-DMV vendor as long as they display the correct plate number.</p><div class="flex space-x-4 quiz-choices" id="q14-quiz"><button class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">True</button><button data-correct="true" class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">False</button></div><p id="q14-feedback" class="mt-2 text-sm font-medium hidden"><strong>Answer:</strong> False. This would be a "Deceptively Similar" or "Fictitious" license plate. (Sec. 504.945, 504.946)</p></div>
+                    <!-- Question 15 -->
+                    <div class="bg-gray-50 p-4 rounded-lg quiz-container"><p class="font-semibold mb-2">15. A person may display a deceptively similar license plate on the front of their vehicle as long as a DMV-issued plate is on the rear.</p><div class="flex space-x-4 quiz-choices" id="q15-quiz"><button class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">True</button><button data-correct="true" class="quiz-option flex-1 bg-white border-2 border-gray-300 p-2 rounded-lg font-semibold hover:bg-gray-200">False</button></div><p id="q15-feedback" class="mt-2 text-sm font-medium hidden"><strong>Answer:</strong> False. A vehicle requiring two plates must display two plates issued by the department. (Sec. 504.943)</p></div>
+                </div>
+            </section>
+
+            <!-- Section 1.3: Chapter 502 - Registration -->
+            <section id="comprehensive-review" class="bg-white p-6 rounded-xl shadow-md animate-slide-in">
+                <h2 class="text-3xl font-bold mb-6 border-b pb-3 text-center text-blue-800">Module 1 - Comprehensive Review Quiz</h2>
+                <p class="text-center text-gray-600 mb-8">Test your knowledge of Texas Transportation Code Module 1. Click your answer to see immediate feedback.</p>
+                
+                <div class="space-y-6">
+                    <!-- Enhanced quiz questions with better formatting -->
+                    <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-6 rounded-lg quiz-container border border-gray-200">
+                        <p class="font-semibold mb-4 text-lg">1. A person who drives around a barricade placed for water over the roadway commits a Class B Misdemeanor.</p>
+                        <div class="flex flex-col sm:flex-row gap-3 quiz-choices">
+                            <button data-correct="true" class="quiz-option flex-1 bg-white border-2 border-gray-300 p-3 rounded-lg font-medium hover:bg-gray-50 transition-all">True</button>
+                            <button class="quiz-option flex-1 bg-white border-2 border-gray-300 p-3 rounded-lg font-medium hover:bg-gray-50 transition-all">False</button>
+                        </div>
+                        <div class="answer-feedback mt-4 p-3 bg-green-50 border border-green-200 rounded-lg hidden">
+                            <p class="text-green-800"><strong>Correct!</strong> Under § 472.022, driving around a barricade for water over roadway is a Class B Misdemeanor.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-lg quiz-container border border-blue-200">
+                        <p class="font-semibold mb-4 text-lg">2. How many days does a new state resident have to register their vehicles in Texas?</p>
+                        <button class="show-answer-btn bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">Show Answer</button>
+                        <div class="answer-feedback mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg hidden">
+                            <p class="text-blue-800"><strong>Answer:</strong> 30 Days (§ 502.040)</p>
+                        </div>
+                    </div>
+
+                    <!-- Add more enhanced quiz questions here -->
+                    <div class="bg-gradient-to-r from-purple-50 to-purple-100 p-6 rounded-lg quiz-container border border-purple-200">
+                        <p class="font-semibold mb-4 text-lg">3. A dealer temporary tag CANNOT be used for personal transportation.</p>
+                        <div class="flex flex-col sm:flex-row gap-3 quiz-choices">
+                            <button data-correct="true" class="quiz-option flex-1 bg-white border-2 border-gray-300 p-3 rounded-lg font-medium hover:bg-gray-50 transition-all">True</button>
+                            <button class="quiz-option flex-1 bg-white border-2 border-gray-300 p-3 rounded-lg font-medium hover:bg-gray-50 transition-all">False</button>
+                        </div>
+                        <div class="answer-feedback mt-4 p-3 bg-green-50 border border-green-200 rounded-lg hidden">
+                            <p class="text-green-800"><strong>Correct!</strong> Dealer temporary tags are for business use only: demo, transit, road test, or loaner vehicles.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Module 2: Driver's Licenses and Commercial Driver's Licenses -->
+            
+            <!-- Section 2.1: TRC Chapter 521 - Driver's License Act -->
+            <section id="chapter-521" class="bg-white p-6 rounded-xl shadow-md animate-slide-in">
+                <h2 class="text-3xl font-bold text-purple-800 mb-6 flex items-center">
+                    <svg class="w-8 h-8 mr-3 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Chapter 521: Driver's License Act
+                </h2>
+
+                <!-- Key Definitions for Ch. 521 -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold text-purple-700 mb-4">Key Definitions - Interactive Flashcards</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Commercial Motor Vehicle -->
+                        <div class="flashcard bg-gradient-to-br from-purple-50 to-blue-50 p-4 rounded-lg shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg">
+                            <div class="flashcard-front">
+                                <h4 class="font-bold text-purple-800">Commercial Motor Vehicle</h4>
+                                <p class="text-sm text-gray-600 mt-2">Click to reveal definition</p>
+                            </div>
+                            <div class="flashcard-back hidden">
+                                <p class="text-sm"><strong>Commercial Motor Vehicle:</strong> A motor vehicle designed or used to transport passengers or property and:</p>
+                                <ul class="text-xs mt-2 list-disc list-inside">
+                                    <li>GVWR ≥ 26,001 lbs, OR</li>
+                                    <li>Designed to transport ≥ 16 passengers (including driver), OR</li>
+                                    <li>Used to transport hazardous materials requiring placards</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Driver License -->
+                        <div class="flashcard bg-gradient-to-br from-purple-50 to-blue-50 p-4 rounded-lg shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg">
+                            <div class="flashcard-front">
+                                <h4 class="font-bold text-purple-800">Driver License</h4>
+                                <p class="text-sm text-gray-600 mt-2">Click to reveal definition</p>
+                            </div>
+                            <div class="flashcard-back hidden">
+                                <p class="text-sm"><strong>Driver License:</strong> A license to operate a motor vehicle issued under Chapter 521 by the Texas Department of Public Safety, other states, or foreign countries.</p>
+                            </div>
+                        </div>
+
+                        <!-- Graduated Driver License -->
+                        <div class="flashcard bg-gradient-to-br from-purple-50 to-blue-50 p-4 rounded-lg shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg">
+                            <div class="flashcard-front">
+                                <h4 class="font-bold text-purple-800">Graduated Driver License (GDL)</h4>
+                                <p class="text-sm text-gray-600 mt-2">Click to reveal definition</p>
+                            </div>
+                            <div class="flashcard-back hidden">
+                                <p class="text-sm"><strong>Graduated Driver License:</strong> A driver license issued to a person 16 or 17 years old that includes restrictions on the person's driving privileges.</p>
+                            </div>
+                        </div>
+
+                        <!-- Hardship License -->
+                        <div class="flashcard bg-gradient-to-br from-purple-50 to-blue-50 p-4 rounded-lg shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg">
+                            <div class="flashcard-front">
+                                <h4 class="font-bold text-purple-800">Hardship License</h4>
+                                <p class="text-sm text-gray-600 mt-2">Click to reveal definition</p>
+                            </div>
+                            <div class="flashcard-back hidden">
+                                <p class="text-sm"><strong>Hardship License:</strong> A restricted license that permits a person to drive only between specified places and during specified time periods.</p>
+                            </div>
+                        </div>
+
+                        <!-- Learner License -->
+                        <div class="flashcard bg-gradient-to-br from-purple-50 to-blue-50 p-4 rounded-lg shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg">
+                            <div class="flashcard-front">
+                                <h4 class="font-bold text-purple-800">Learner License</h4>
+                                <p class="text-sm text-gray-600 mt-2">Click to reveal definition</p>
+                            </div>
+                            <div class="flashcard-back hidden">
+                                <p class="text-sm"><strong>Learner License:</strong> A driver license issued to a person who:</p>
+                                <ul class="text-xs mt-1 list-disc list-inside">
+                                    <li>Is 15 or older</li>
+                                    <li>Has passed vision and knowledge exams</li>
+                                    <li>Must be accompanied by licensed adult 21+ in front seat</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Motor Vehicle -->
+                        <div class="flashcard bg-gradient-to-br from-purple-50 to-blue-50 p-4 rounded-lg shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg">
+                            <div class="flashcard-front">
+                                <h4 class="font-bold text-purple-800">Motor Vehicle</h4>
+                                <p class="text-sm text-gray-600 mt-2">Click to reveal definition</p>
+                            </div>
+                            <div class="flashcard-back hidden">
+                                <p class="text-sm"><strong>Motor Vehicle:</strong> A self-propelled vehicle or a vehicle that is propelled by electric power from overhead trolley wires. Does NOT include device moved by human power or used exclusively on stationary rails or tracks.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Driver License Requirements & Exemptions -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold text-purple-700 mb-4">Driver License Requirements & Exemptions</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Requirements -->
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                            <h4 class="font-bold text-red-800 mb-3">🚫 License REQUIRED For:</h4>
+                            <ul class="text-sm space-y-1">
+                                <li>• Operating a motor vehicle on a highway</li>
+                                <li>• Any person who does not qualify for an exemption</li>
+                                <li>• Commercial motor vehicle operations (CDL required)</li>
+                                <li>• Motorcycle operations (Class M license required)</li>
+                            </ul>
+                        </div>
+
+                        <!-- Exemptions -->
+                        <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                            <h4 class="font-bold text-green-800 mb-3">✅ License EXEMPTIONS:</h4>
+                            <ul class="text-sm space-y-1">
+                                <li>• Non-resident with valid license from home state/country</li>
+                                <li>• Military personnel from other states on duty in Texas</li>
+                                <li>• Student from another state attending school in Texas</li>
+                                <li>• Non-resident farm workers (30 days)</li>
+                                <li>• Implement of husbandry operators</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Age Requirements & License Types -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold text-purple-700 mb-4">Age Requirements & License Types</h3>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse border border-purple-300">
+                            <thead>
+                                <tr class="bg-purple-100">
+                                    <th class="border border-purple-300 p-3 text-left">Age</th>
+                                    <th class="border border-purple-300 p-3 text-left">License Type</th>
+                                    <th class="border border-purple-300 p-3 text-left">Requirements/Restrictions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-purple-50">
+                                    <td class="border border-purple-300 p-3">15 years</td>
+                                    <td class="border border-purple-300 p-3"><strong>Learner License</strong></td>
+                                    <td class="border border-purple-300 p-3">Must be accompanied by licensed adult 21+ in front seat</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-purple-300 p-3">16-17 years</td>
+                                    <td class="border border-purple-300 p-3"><strong>Graduated Driver License (GDL)</strong></td>
+                                    <td class="border border-purple-300 p-3">Restrictions on passengers and night driving</td>
+                                </tr>
+                                <tr class="bg-purple-50">
+                                    <td class="border border-purple-300 p-3">18+ years</td>
+                                    <td class="border border-purple-300 p-3"><strong>Full Driver License</strong></td>
+                                    <td class="border border-purple-300 p-3">No restrictions (subject to endorsements needed)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Apply It Scenarios for Ch. 521 -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold text-purple-700 mb-4">Apply It: Chapter 521 Scenarios</h3>
+                    
+                    <details class="mb-4 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                        <summary class="font-bold text-yellow-800 cursor-pointer flex items-center">
+                            <svg class="w-5 h-5 mr-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                            Scenario 1: Out-of-State Student
+                        </summary>
+                        <div class="mt-3 text-sm">
+                            <p><strong>Situation:</strong> You stop a 20-year-old driver who says they're from Oklahoma and attending UT. They've been in Texas for 8 months and have a valid Oklahoma license.</p>
+                            <p class="mt-2"><strong>Question:</strong> Do they need a Texas driver license?</p>
+                            <div class="mt-3 p-3 bg-green-100 rounded">
+                                <p><strong>Answer:</strong> No violation. Students from other states attending school in Texas are exempt from obtaining a Texas license as long as their home state license remains valid.</p>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details class="mb-4 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                        <summary class="font-bold text-yellow-800 cursor-pointer flex items-center">
+                            <svg class="w-5 h-5 mr-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                            Scenario 2: New Texas Resident
+                        </summary>
+                        <div class="mt-3 text-sm">
+                            <p><strong>Situation:</strong> A driver shows you a California license and says they moved to Texas 6 months ago for a new job.</p>
+                            <p class="mt-2"><strong>Question:</strong> What's the violation?</p>
+                            <div class="mt-3 p-3 bg-red-100 rounded">
+                                <p><strong>Answer:</strong> Violation of TRC 521.021. New Texas residents must obtain a Texas license within 90 days of establishing residency.</p>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details class="mb-4 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                        <summary class="font-bold text-yellow-800 cursor-pointer flex items-center">
+                            <svg class="w-5 h-5 mr-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                            Scenario 3: 16-Year-Old with GDL
+                        </summary>
+                        <div class="mt-3 text-sm">
+                            <p><strong>Situation:</strong> You stop a 16-year-old driver at 1 AM with two teenage friends in the car. They have a valid Graduated Driver License.</p>
+                            <p class="mt-2"><strong>Question:</strong> What violations might apply?</p>
+                            <div class="mt-3 p-3 bg-red-100 rounded">
+                                <p><strong>Answer:</strong> Potential GDL violation. Check specific restrictions on nighttime driving and passenger limitations for GDL holders.</p>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- Word Associations for Ch. 521 -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold text-purple-700 mb-4">Word Associations - Ch. 521</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-purple-800 mb-2">🏫 STUDENT = EXEMPT</h4>
+                            <p class="text-sm">Students from other states attending Texas schools don't need Texas licenses</p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-purple-800 mb-2">⚗️ COMMERCIAL = CDL</h4>
+                            <p class="text-sm">Commercial motor vehicles require Commercial Driver's License (Chapter 522)</p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-purple-800 mb-2">🏠 90 DAYS = NEW RESIDENT</h4>
+                            <p class="text-sm">New Texas residents have 90 days to get Texas license</p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-purple-800 mb-2">🎓 GDL = RESTRICTIONS</h4>
+                            <p class="text-sm">Graduated Driver License has passenger and time restrictions</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Quiz for Ch. 521 -->
+                <div class="quiz-container bg-blue-50 p-6 rounded-lg border border-blue-200">
+                    <h3 class="text-xl font-bold text-blue-800 mb-4">Quick Quiz: Chapter 521</h3>
+                    <div class="quiz-question mb-4">
+                        <p class="font-semibold mb-3">A 19-year-old college student from Louisiana has been attending school in Texas for 6 months. Do they need a Texas driver license?</p>
+                        <div class="quiz-choices space-y-2">
+                            <label class="block cursor-pointer">
+                                <input type="radio" name="q521_1" value="a" class="mr-2">
+                                <span class="hover:text-blue-600">Yes, all residents must have Texas licenses</span>
+                            </label>
+                            <label class="block cursor-pointer">
+                                <input type="radio" name="q521_1" value="b" class="mr-2">
+                                <span class="hover:text-blue-600">No, students from other states are exempt</span>
+                            </label>
+                            <label class="block cursor-pointer">
+                                <input type="radio" name="q521_1" value="c" class="mr-2">
+                                <span class="hover:text-blue-600">Only if they work in Texas</span>
+                            </label>
+                        </div>
+                        <div class="answer-feedback mt-4 p-3 bg-green-50 border border-green-200 rounded-lg hidden">
+                            <p class="text-green-800"><strong>Correct!</strong> Students from other states attending school in Texas are exempt from obtaining a Texas license as long as their home state license remains valid.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2.2: TRC Chapter 522 - Commercial Driver's License Act -->
+            <section id="chapter-522" class="bg-white p-6 rounded-xl shadow-md animate-slide-in">
+                <h2 class="text-3xl font-bold text-purple-800 mb-6 flex items-center">
+                    <svg class="w-8 h-8 mr-3 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2v0a2 2 0 01-2-2v-5H8z"></path>
+                    </svg>
+                    Chapter 522: Commercial Driver's License Act
+                </h2>
+
+                <!-- Key Definitions for Ch. 522 -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold text-purple-700 mb-4">Key Definitions - Interactive Flashcards</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- CDL -->
+                        <div class="flashcard bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-lg shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg">
+                            <div class="flashcard-front">
+                                <h4 class="font-bold text-indigo-800">Commercial Driver's License (CDL)</h4>
+                                <p class="text-sm text-gray-600 mt-2">Click to reveal definition</p>
+                            </div>
+                            <div class="flashcard-back hidden">
+                                <p class="text-sm"><strong>CDL:</strong> A license issued to drive a commercial motor vehicle. Required for vehicles meeting specific weight, passenger, or hazmat criteria.</p>
+                            </div>
+                        </div>
+
+                        <!-- CLP -->
+                        <div class="flashcard bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-lg shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg">
+                            <div class="flashcard-front">
+                                <h4 class="font-bold text-indigo-800">Commercial Learner's Permit (CLP)</h4>
+                                <p class="text-sm text-gray-600 mt-2">Click to reveal definition</p>
+                            </div>
+                            <div class="flashcard-back hidden">
+                                <p class="text-sm"><strong>CLP:</strong> A permit that allows a person to drive a commercial motor vehicle when accompanied by a valid CDL holder.</p>
+                            </div>
+                        </div>
+
+                        <!-- Combination Vehicle -->
+                        <div class="flashcard bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-lg shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg">
+                            <div class="flashcard-front">
+                                <h4 class="font-bold text-indigo-800">Combination Vehicle</h4>
+                                <p class="text-sm text-gray-600 mt-2">Click to reveal definition</p>
+                            </div>
+                            <div class="flashcard-back hidden">
+                                <p class="text-sm"><strong>Combination Vehicle:</strong> A commercial motor vehicle consisting of a power unit and towed unit(s) with a GVWR greater than 10,000 pounds.</p>
+                            </div>
+                        </div>
+
+                        <!-- Disqualification -->
+                        <div class="flashcard bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-lg shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg">
+                            <div class="flashcard-front">
+                                <h4 class="font-bold text-indigo-800">Disqualification</h4>
+                                <p class="text-sm text-gray-600 mt-2">Click to reveal definition</p>
+                            </div>
+                            <div class="flashcard-back hidden">
+                                <p class="text-sm"><strong>Disqualification:</strong> Withdrawal of the privilege to drive a commercial motor vehicle, separate from regular license suspension/revocation.</p>
+                            </div>
+                        </div>
+
+                        <!-- Endorsement -->
+                        <div class="flashcard bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-lg shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg">
+                            <div class="flashcard-front">
+                                <h4 class="font-bold text-indigo-800">Endorsement</h4>
+                                <p class="text-sm text-gray-600 mt-2">Click to reveal definition</p>
+                            </div>
+                            <div class="flashcard-back hidden">
+                                <p class="text-sm"><strong>Endorsement:</strong> An authorization on a CDL required to drive certain types of commercial vehicles (hazmat, passenger, school bus, etc.).</p>
+                            </div>
+                        </div>
+
+                        <!-- GVWR -->
+                        <div class="flashcard bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-lg shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg">
+                            <div class="flashcard-front">
+                                <h4 class="font-bold text-indigo-800">GVWR</h4>
+                                <p class="text-sm text-gray-600 mt-2">Click to reveal definition</p>
+                            </div>
+                            <div class="flashcard-back hidden">
+                                <p class="text-sm"><strong>GVWR:</strong> Gross Vehicle Weight Rating - the maximum weight specified by the manufacturer as the loaded weight of a single vehicle.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CDL Classes & Requirements -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold text-purple-700 mb-4">CDL Classes & Requirements</h3>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse border border-indigo-300">
+                            <thead>
+                                <tr class="bg-indigo-100">
+                                    <th class="border border-indigo-300 p-3 text-left">CDL Class</th>
+                                    <th class="border border-indigo-300 p-3 text-left">Vehicle Type</th>
+                                    <th class="border border-indigo-300 p-3 text-left">Weight Requirements</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-indigo-50">
+                                    <td class="border border-indigo-300 p-3"><strong>Class A</strong></td>
+                                    <td class="border border-indigo-300 p-3">Combination vehicles</td>
+                                    <td class="border border-indigo-300 p-3">GVWR ≥ 26,001 lbs + towed unit ≥ 10,001 lbs</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-indigo-300 p-3"><strong>Class B</strong></td>
+                                    <td class="border border-indigo-300 p-3">Large trucks</td>
+                                    <td class="border border-indigo-300 p-3">GVWR ≥ 26,001 lbs (single vehicle)</td>
+                                </tr>
+                                <tr class="bg-indigo-50">
+                                    <td class="border border-indigo-300 p-3"><strong>Class C</strong></td>
+                                    <td class="border border-indigo-300 p-3">Small commercial vehicles</td>
+                                    <td class="border border-indigo-300 p-3">GVWR < 26,001 lbs but requires endorsement</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Common CDL Endorsements -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold text-purple-700 mb-4">Common CDL Endorsements</h3>
+                    
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                            <h4 class="font-bold text-red-800">H - Hazmat</h4>
+                            <p class="text-sm mt-1">Transporting hazardous materials requiring placards</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                            <h4 class="font-bold text-blue-800">P - Passenger</h4>
+                            <p class="text-sm mt-1">Vehicles designed to transport 16+ passengers (including driver)</p>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                            <h4 class="font-bold text-yellow-800">S - School Bus</h4>
+                            <p class="text-sm mt-1">School buses designed to transport pre-primary through 12th grade students</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                            <h4 class="font-bold text-green-800">N - Tank Vehicle</h4>
+                            <p class="text-sm mt-1">Vehicles transporting liquids/gases in bulk containers ≥ 1,000 gallons</p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                            <h4 class="font-bold text-purple-800">T - Double/Triple</h4>
+                            <p class="text-sm mt-1">Vehicles pulling double or triple trailers</p>
+                        </div>
+                        <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+                            <h4 class="font-bold text-indigo-800">X - Hazmat + Tank</h4>
+                            <p class="text-sm mt-1">Combination of H and N endorsements</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CDL Disqualifications -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold text-purple-700 mb-4">CDL Disqualifications</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Major Offenses -->
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                            <h4 class="font-bold text-red-800 mb-3">🚨 Major Offenses (1 year disqualification):</h4>
+                            <ul class="text-sm space-y-1">
+                                <li>• DWI/DUI while driving any motor vehicle</li>
+                                <li>• Refusal to submit to BAC test</li>
+                                <li>• Leaving the scene of an accident</li>
+                                <li>• Felony involving motor vehicle</li>
+                                <li>• Driving CMV while CDL suspended/revoked</li>
+                            </ul>
+                        </div>
+
+                        <!-- Serious Offenses -->
+                        <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                            <h4 class="font-bold text-orange-800 mb-3">⚠️ Serious Offenses (60 days after 2nd):</h4>
+                            <ul class="text-sm space-y-1">
+                                <li>• Excessive speeding (15+ mph over limit)</li>
+                                <li>• Reckless/erratic driving</li>
+                                <li>• Improper lane changes</li>
+                                <li>• Following too closely</li>
+                                <li>• Driving CMV without CDL</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Apply It Scenarios for Ch. 522 -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold text-purple-700 mb-4">Apply It: Chapter 522 Scenarios</h3>
+                    
+                    <details class="mb-4 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                        <summary class="font-bold text-yellow-800 cursor-pointer flex items-center">
+                            <svg class="w-5 h-5 mr-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                            Scenario 1: School Bus Driver
+                        </summary>
+                        <div class="mt-3 text-sm">
+                            <p><strong>Situation:</strong> You stop a school bus driver who shows you a regular Class C license. The bus is designed to transport 20 students.</p>
+                            <p class="mt-2"><strong>Question:</strong> What's the violation?</p>
+                            <div class="mt-3 p-3 bg-red-100 rounded">
+                                <p><strong>Answer:</strong> Operating a commercial motor vehicle without proper CDL. School buses require a CDL with S (school bus) endorsement due to passenger capacity.</p>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details class="mb-4 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                        <summary class="font-bold text-yellow-800 cursor-pointer flex items-center">
+                            <svg class="w-5 h-5 mr-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                            Scenario 2: Hazmat Transport
+                        </summary>
+                        <div class="mt-3 text-sm">
+                            <p><strong>Situation:</strong> A driver operating a truck with hazmat placards shows you a CDL without an H endorsement.</p>
+                            <p class="mt-2"><strong>Question:</strong> Is this a violation?</p>
+                            <div class="mt-3 p-3 bg-red-100 rounded">
+                                <p><strong>Answer:</strong> Yes. Transporting hazardous materials requiring placards requires an H (hazmat) endorsement on the CDL.</p>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details class="mb-4 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                        <summary class="font-bold text-yellow-800 cursor-pointer flex items-center">
+                            <svg class="w-5 h-5 mr-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                            Scenario 3: DWI in Personal Vehicle
+                        </summary>
+                        <div class="mt-3 text-sm">
+                            <p><strong>Situation:</strong> A CDL holder is arrested for DWI while driving their personal car on the weekend.</p>
+                            <p class="mt-2"><strong>Question:</strong> Does this affect their CDL?</p>
+                            <div class="mt-3 p-3 bg-red-100 rounded">
+                                <p><strong>Answer:</strong> Yes. DWI in ANY motor vehicle results in CDL disqualification for 1 year, even if not driving a commercial vehicle at the time.</p>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- Word Associations for Ch. 522 -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold text-purple-700 mb-4">Word Associations - Ch. 522</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-indigo-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-indigo-800 mb-2">🚛 26,001 = CDL REQUIRED</h4>
+                            <p class="text-sm">GVWR of 26,001+ pounds requires CDL</p>
+                        </div>
+                        <div class="bg-indigo-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-indigo-800 mb-2">🚌 16 PASSENGERS = CDL</h4>
+                            <p class="text-sm">Vehicles designed for 16+ passengers need CDL with P endorsement</p>
+                        </div>
+                        <div class="bg-indigo-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-indigo-800 mb-2">☢️ PLACARDS = H ENDORSEMENT</h4>
+                            <p class="text-sm">Hazmat requiring placards needs H endorsement</p>
+                        </div>
+                        <div class="bg-indigo-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-indigo-800 mb-2">🍺 DWI = 1 YEAR</h4>
+                            <p class="text-sm">DWI in any vehicle = 1 year CDL disqualification</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Quiz for Ch. 522 -->
+                <div class="quiz-container bg-blue-50 p-6 rounded-lg border border-blue-200">
+                    <h3 class="text-xl font-bold text-blue-800 mb-4">Quick Quiz: Chapter 522</h3>
+                    <div class="quiz-question mb-4">
+                        <p class="font-semibold mb-3">A truck driver with a regular Class C license is operating a vehicle with a GVWR of 28,000 pounds. What's the violation?</p>
+                        <div class="quiz-choices space-y-2">
+                            <label class="block cursor-pointer">
+                                <input type="radio" name="q522_1" value="a" class="mr-2">
+                                <span class="hover:text-blue-600">No violation - Class C is sufficient</span>
+                            </label>
+                            <label class="block cursor-pointer">
+                                <input type="radio" name="q522_1" value="b" class="mr-2">
+                                <span class="hover:text-blue-600">Operating CMV without proper CDL</span>
+                            </label>
+                            <label class="block cursor-pointer">
+                                <input type="radio" name="q522_1" value="c" class="mr-2">
+                                <span class="hover:text-blue-600">Only a weight violation</span>
+                            </label>
+                        </div>
+                        <div class="answer-feedback mt-4 p-3 bg-green-50 border border-green-200 rounded-lg hidden">
+                            <p class="text-green-800"><strong>Correct!</strong> Vehicles with GVWR ≥ 26,001 pounds require a CDL. This truck requires at least a Class B CDL.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Module 2 Comprehensive Quiz -->
+            <section id="module-2-review" class="bg-white p-6 rounded-xl shadow-md animate-slide-in">
+                <h2 class="text-3xl font-bold text-purple-800 mb-6 flex items-center">
+                    <svg class="w-8 h-8 mr-3 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                    </svg>
+                    Module 2 Comprehensive Review
+                </h2>
+
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700">Test your knowledge of TRC Chapters 521 (Driver's License Act) and 522 (Commercial Driver's License Act).</p>
+                </div>
+
+                <!-- Quiz Questions -->
+                <div class="space-y-8">
+                    <!-- Question 1 -->
+                    <div class="quiz-container bg-purple-50 p-6 rounded-lg border border-purple-200">
+                        <h3 class="text-lg font-bold text-purple-800 mb-4">Question 1: License Exemptions</h3>
+                        <div class="quiz-question">
+                            <p class="font-semibold mb-3">Which of the following people would be EXEMPT from needing a Texas driver license?</p>
+                            <div class="quiz-choices space-y-2">
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q1" value="a" class="mr-2">
+                                    <span class="hover:text-purple-600">A California resident who moved to Texas 6 months ago</span>
+                                </label>
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q1" value="b" class="mr-2">
+                                    <span class="hover:text-purple-600">A Louisiana college student attending UT for 8 months</span>
+                                </label>
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q1" value="c" class="mr-2">
+                                    <span class="hover:text-purple-600">A Florida retiree who bought a home in Texas</span>
+                                </label>
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q1" value="d" class="mr-2">
+                                    <span class="hover:text-purple-600">A New York resident working in Texas for 2 years</span>
+                                </label>
+                            </div>
+                            <div class="answer-feedback mt-4 p-3 bg-green-50 border border-green-200 rounded-lg hidden">
+                                <p class="text-green-800"><strong>Correct!</strong> Students from other states attending school in Texas are exempt from obtaining a Texas license as long as their home state license remains valid.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="quiz-container bg-purple-50 p-6 rounded-lg border border-purple-200">
+                        <h3 class="text-lg font-bold text-purple-800 mb-4">Question 2: CDL Requirements</h3>
+                        <div class="quiz-question">
+                            <p class="font-semibold mb-3">Which vehicle would require a Commercial Driver's License (CDL)?</p>
+                            <div class="quiz-choices space-y-2">
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q2" value="a" class="mr-2">
+                                    <span class="hover:text-purple-600">A pickup truck with GVWR of 8,000 pounds</span>
+                                </label>
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q2" value="b" class="mr-2">
+                                    <span class="hover:text-purple-600">A church van designed to transport 12 passengers</span>
+                                </label>
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q2" value="c" class="mr-2">
+                                    <span class="hover:text-purple-600">A school bus designed to transport 25 students</span>
+                                </label>
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q2" value="d" class="mr-2">
+                                    <span class="hover:text-purple-600">A personal RV with GVWR of 20,000 pounds</span>
+                                </label>
+                            </div>
+                            <div class="answer-feedback mt-4 p-3 bg-green-50 border border-green-200 rounded-lg hidden">
+                                <p class="text-green-800"><strong>Correct!</strong> School buses designed to transport 16+ passengers (including driver) require a CDL with S (school bus) endorsement.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="quiz-container bg-purple-50 p-6 rounded-lg border border-purple-200">
+                        <h3 class="text-lg font-bold text-purple-800 mb-4">Question 3: CDL Disqualification</h3>
+                        <div class="quiz-question">
+                            <p class="font-semibold mb-3">A CDL holder is convicted of DWI while driving their personal car. What happens to their CDL?</p>
+                            <div class="quiz-choices space-y-2">
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q3" value="a" class="mr-2">
+                                    <span class="hover:text-purple-600">Nothing - they weren't driving a commercial vehicle</span>
+                                </label>
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q3" value="b" class="mr-2">
+                                    <span class="hover:text-purple-600">1 year disqualification from operating commercial vehicles</span>
+                                </label>
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q3" value="c" class="mr-2">
+                                    <span class="hover:text-purple-600">60 day suspension</span>
+                                </label>
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q3" value="d" class="mr-2">
+                                    <span class="hover:text-purple-600">Only points on their regular license</span>
+                                </label>
+                            </div>
+                            <div class="answer-feedback mt-4 p-3 bg-green-50 border border-green-200 rounded-lg hidden">
+                                <p class="text-green-800"><strong>Correct!</strong> DWI while driving ANY motor vehicle results in a 1-year CDL disqualification, regardless of which vehicle they were driving.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div class="quiz-container bg-purple-50 p-6 rounded-lg border border-purple-200">
+                        <h3 class="text-lg font-bold text-purple-800 mb-4">Question 4: Graduated Driver License</h3>
+                        <div class="quiz-question">
+                            <p class="font-semibold mb-3">What is true about a Graduated Driver License (GDL)?</p>
+                            <div class="quiz-choices space-y-2">
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q4" value="a" class="mr-2">
+                                    <span class="hover:text-purple-600">It's only for drivers under 16</span>
+                                </label>
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q4" value="b" class="mr-2">
+                                    <span class="hover:text-purple-600">It has no restrictions on driving</span>
+                                </label>
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q4" value="c" class="mr-2">
+                                    <span class="hover:text-purple-600">It's issued to 16-17 year olds with driving restrictions</span>
+                                </label>
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q4" value="d" class="mr-2">
+                                    <span class="hover:text-purple-600">It's the same as a learner license</span>
+                                </label>
+                            </div>
+                            <div class="answer-feedback mt-4 p-3 bg-green-50 border border-green-200 rounded-lg hidden">
+                                <p class="text-green-800"><strong>Correct!</strong> A Graduated Driver License is issued to 16-17 year olds and includes restrictions on passengers and driving times.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div class="quiz-container bg-purple-50 p-6 rounded-lg border border-purple-200">
+                        <h3 class="text-lg font-bold text-purple-800 mb-4">Question 5: CDL Endorsements</h3>
+                        <div class="quiz-question">
+                            <p class="font-semibold mb-3">Which endorsement would be required to transport gasoline in a tank truck?</p>
+                            <div class="quiz-choices space-y-2">
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q5" value="a" class="mr-2">
+                                    <span class="hover:text-purple-600">P (Passenger)</span>
+                                </label>
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q5" value="b" class="mr-2">
+                                    <span class="hover:text-purple-600">S (School Bus)</span>
+                                </label>
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q5" value="c" class="mr-2">
+                                    <span class="hover:text-purple-600">X (Hazmat + Tank)</span>
+                                </label>
+                                <label class="block cursor-pointer">
+                                    <input type="radio" name="m2q5" value="d" class="mr-2">
+                                    <span class="hover:text-purple-600">T (Double/Triple)</span>
+                                </label>
+                            </div>
+                            <div class="answer-feedback mt-4 p-3 bg-green-50 border border-green-200 rounded-lg hidden">
+                                <p class="text-green-800"><strong>Correct!</strong> Gasoline is a hazardous material requiring placards (H endorsement) and it's being transported in a tank (N endorsement). The X endorsement combines both H and N.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 2 Quiz Results -->
+                <div id="module2-results" class="hidden mt-8 p-6 bg-green-50 border border-green-200 rounded-lg">
+                    <h3 class="text-xl font-bold text-green-800 mb-4">Module 2 Quiz Complete!</h3>
+                    <p class="text-green-700 mb-4">Great job completing the Module 2 review! You've covered the essential concepts of:</p>
+                    <ul class="list-disc list-inside text-green-700 space-y-1 mb-4">
+                        <li>TRC Chapter 521 - Driver's License Act requirements and exemptions</li>
+                        <li>TRC Chapter 522 - Commercial Driver's License requirements</li>
+                        <li>CDL classes, endorsements, and disqualification procedures</li>
+                        <li>License exemptions for students and other special cases</li>
+                    </ul>
+                    <div class="flex justify-center">
+                        <button onclick="location.reload()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+                            Restart Module 2 Quiz
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="text-center mt-12 text-gray-500 text-sm bg-white p-6 rounded-lg shadow-sm">
+            <p class="mb-2">This study guide is based on the Texas Highway Patrol BPOC Student Manual.</p>
+            <p>For educational purposes only. Always refer to the most current legal statutes.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Progress tracking
+            let completedSections = 0;
+            const totalSections = 7; // Penal Code, 472, 502, 503, 504, 521, 522
+            
+            function updateProgress() {
+                const percentage = Math.round((completedSections / totalSections) * 100);
+                document.getElementById('progress-bar').style.width = percentage + '%';
+                document.getElementById('progress-text').textContent = percentage + '%';
+            }
+            
+            // Section completion tracking
+            const sections = document.querySelectorAll('section[id]');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-slide-in');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            sections.forEach(section => observer.observe(section));
+            
+            // Smooth scrolling for navigation
+            document.querySelectorAll('.nav-item').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+            
+            // Enhanced quiz functionality
+            function handleSingleChoiceQuiz(quizContainer) {
+                const feedbackElement = quizContainer.querySelector('.answer-feedback');
+                
+                quizContainer.addEventListener('click', (e) => {
+                    if (!e.target.classList.contains('quiz-option')) return;
+                    if (quizContainer.querySelector('.quiz-choices').classList.contains('answered')) return;
+
+                    quizContainer.querySelector('.quiz-choices').classList.add('answered');
+                    const clickedButton = e.target;
+                    const buttons = quizContainer.querySelectorAll('.quiz-option');
+
+                    buttons.forEach(button => {
+                        const isCorrect = button.getAttribute('data-correct') === 'true';
+                        if (isCorrect) {
+                            button.classList.add('correct');
+                        } else if (button === clickedButton) {
+                            button.classList.add('incorrect');
+                        }
+                        button.style.pointerEvents = 'none';
+                    });
+                    
+                    if (feedbackElement) {
+                        setTimeout(() => {
+                            feedbackElement.classList.remove('hidden');
+                        }, 300);
+                    }
+                });
+            }
+            
+            // Function for "Show Answer" buttons
+            function handleShowAnswer(quizContainer) {
+                const button = quizContainer.querySelector('.show-answer-btn');
+                const feedback = quizContainer.querySelector('.answer-feedback');
+                if(button && feedback) {
+                    button.addEventListener('click', () => {
+                        feedback.classList.remove('hidden');
+                        button.style.display = 'none';
+                    });
+                }
+            }
+
+            // Initialize all quizzes
+            document.querySelectorAll('.quiz-container').forEach(container => {
+                if (container.querySelector('.quiz-choices')) {
+                    handleSingleChoiceQuiz(container);
+                } else if (container.querySelector('.show-answer-btn')) {
+                    handleShowAnswer(container);
+                }
+            });
+
+            // Enhanced details/summary functionality
+            const detailsElements = document.querySelectorAll('details');
+            detailsElements.forEach(details => {
+                details.addEventListener('toggle', event => {
+                    const summary = details.querySelector('summary');
+                    const icon = summary.querySelector('svg');
+                    if(icon) {
+                        if (details.open) {
+                            icon.style.transform = 'rotate(180deg)';
+                        } else {
+                            icon.style.transform = 'rotate(0deg)';
+                        }
+                    }
+                });
+            });
+            
+            // Enhanced flashcard functionality
+            document.querySelectorAll('.flashcard').forEach(card => {
+                card.addEventListener('click', () => {
+                    const front = card.querySelector('.flashcard-front');
+                    const back = card.querySelector('.flashcard-back');
+                    
+                    if (front && back) {
+                        // Toggle visibility
+                        if (front.style.display === 'none') {
+                            front.style.display = 'block';
+                            back.classList.add('hidden');
+                        } else {
+                            front.style.display = 'none';
+                            back.classList.remove('hidden');
+                        }
+                    }
+                    
+                    // Add a subtle animation when flipped
+                    card.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+                    setTimeout(() => {
+                        card.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+                    }, 600);
+                });
+            });
+
+            // Handle Module 2 comprehensive quiz
+            function handleModule2Quiz() {
+                const quizContainers = document.querySelectorAll('#module-2-review .quiz-container');
+                let answeredQuestions = 0;
+                const totalQuestions = quizContainers.length;
+
+                quizContainers.forEach(container => {
+                    const choices = container.querySelectorAll('input[type="radio"]');
+                    choices.forEach(choice => {
+                        choice.addEventListener('change', () => {
+                            // Show feedback for this question
+                            const feedback = container.querySelector('.answer-feedback');
+                            if (feedback) {
+                                feedback.classList.remove('hidden');
+                            }
+                            
+                            // Check if this question was just answered for the first time
+                            if (!container.dataset.answered) {
+                                container.dataset.answered = 'true';
+                                answeredQuestions++;
+                                
+                                // If all questions answered, show results
+                                if (answeredQuestions === totalQuestions) {
+                                    setTimeout(() => {
+                                        const results = document.getElementById('module2-results');
+                                        if (results) {
+                                            results.classList.remove('hidden');
+                                            results.scrollIntoView({ behavior: 'smooth' });
+                                        }
+                                    }, 1000);
+                                }
+                            }
+                        });
+                    });
+                });
+            }
+
+            // Initialize Module 2 quiz
+            handleModule2Quiz();
+            
+            updateProgress();
+        });
+    </script>
+
+</body>
+</html>
