@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Racial Profiling Interactive Study Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            min-height: 100vh;
+        }
+        
+        /* Tab System */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tab-btn {
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+        }
+        
+        .tab-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 0.5rem 0.5rem 0 0;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        /* Card Flip Animation */
+        .card-flip {
+            perspective: 1000px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .card-flip:hover {
+            transform: scale(1.02);
+        }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s ease-in-out;
+            transform-style: preserve-3d;
+        }
+        
+        .card-flip.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-front {
+            background: linear-gradient(135deg, #374151, #1f2937);
+        }
+        
+        .card-back {
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
+            transform: rotateY(180deg);
+        }
+        
+        /* Details Content */
+        .details-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, padding 0.3s ease-out;
+            background: rgba(31, 41, 55, 0.8);
+            border-radius: 0 0 0.5rem 0.5rem;
+        }
+        
+        .details-content.open {
+            padding: 1rem;
+            border-top: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        /* Enhanced Buttons */
+        .toggle-btn {
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #374151, #1f2937);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .toggle-btn:hover {
+            background: linear-gradient(135deg, #4b5563, #374151);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .toggle-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Scenario Cards */
+        .scenario-card {
+            background: linear-gradient(135deg, #374151, #1f2937);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .scenario-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        /* Case Law Cards */
+        .case-card {
+            background: linear-gradient(135deg, #374151, #1f2937);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .case-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .tab-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+            
+            .card-flip {
+                height: 12rem;
+            }
+            
+            .card-front, .card-back {
+                padding: 1rem;
+            }
+            
+            .card-front h3 {
+                font-size: 1.125rem;
+            }
+            
+            .card-back p {
+                font-size: 0.875rem;
+            }
+        }
+        
+        /* Focus States for Accessibility */
+        .tab-btn:focus,
+        .toggle-btn:focus,
+        .card-flip:focus {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+        
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Arrow Animation */
+        .arrow {
+            transition: transform 0.3s ease;
+        }
+        
+        .arrow.rotated {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-white">Racial Profiling & Investigative Stops</h1>
+            <p class="text-lg text-gray-400 mt-2">Basic Peace Officer Course | Chapter 6 Interactive Study Guide</p>
+        </header>
+
+        <!-- Tabs -->
+        <div class="mb-8">
+            <div class="flex flex-wrap justify-center border-b border-gray-700">
+                <button class="tab-btn border-b-2 hover:border-blue-500 hover:text-blue-400 focus:outline-none transition-all duration-300" 
+                        onclick="openTab(event, 'concepts')" 
+                        role="tab" 
+                        aria-selected="true" 
+                        aria-controls="concepts">
+                    Key Concepts
+                </button>
+                <button class="tab-btn border-b-2 border-transparent text-gray-300 hover:border-blue-500 hover:text-blue-400 focus:outline-none transition-all duration-300" 
+                        onclick="openTab(event, 'legal')" 
+                        role="tab" 
+                        aria-selected="false" 
+                        aria-controls="legal">
+                    Legal Framework
+                </button>
+                <button class="tab-btn border-b-2 border-transparent text-gray-300 hover:border-blue-500 hover:text-blue-400 focus:outline-none transition-all duration-300" 
+                        onclick="openTab(event, 'cases')" 
+                        role="tab" 
+                        aria-selected="false" 
+                        aria-controls="cases">
+                    Case Law
+                </button>
+                <button class="tab-btn border-b-2 border-transparent text-gray-300 hover:border-blue-500 hover:text-blue-400 focus:outline-none transition-all duration-300" 
+                        onclick="openTab(event, 'scenarios')" 
+                        role="tab" 
+                        aria-selected="false" 
+                        aria-controls="scenarios">
+                    Scenarios
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div id="concepts" class="tab-content active">
+            <h2 class="text-2xl font-bold mb-6 text-center text-blue-400">Key Concepts & Definitions</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="card-flip h-48" onclick="this.classList.toggle('flipped')" onkeydown="if(event.key==='Enter'||event.key===' '){this.classList.toggle('flipped')}" tabindex="0" role="button" aria-label="Flip card to reveal definition of racial profiling">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <h3 class="text-xl font-semibold text-center">What is Racial Profiling?</h3>
+                            <p class="text-sm font-normal text-gray-400 mt-2 text-center">(Click or press Enter to reveal)</p>
+                        </div>
+                        <div class="card-back">
+                            <p class="text-sm text-center">A law enforcement-initiated action based on an individual's race, ethnicity, or national origin rather than on the individual's behavior or on information identifying them as having engaged in criminal activity. (CCP 28.0051)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-flip h-48" onclick="this.classList.toggle('flipped')" onkeydown="if(event.key==='Enter'||event.key===' '){this.classList.toggle('flipped')}" tabindex="0" role="button" aria-label="Flip card to reveal definition of reasonable suspicion">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <h3 class="text-xl font-semibold text-center">What is Reasonable Suspicion?</h3>
+                            <p class="text-sm font-normal text-gray-400 mt-2 text-center">(Click or press Enter to reveal)</p>
+                        </div>
+                        <div class="card-back">
+                            <p class="text-sm text-center">Sufficient articulable facts & circumstances, and reasonable inferences from those facts, which would lead a reasonable officer to conclude that criminal activity is afoot. The basis for temporary detentions (Terry Stops).</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-flip h-48" onclick="this.classList.toggle('flipped')" onkeydown="if(event.key==='Enter'||event.key===' '){this.classList.toggle('flipped')}" tabindex="0" role="button" aria-label="Flip card to reveal definition of probable cause">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <h3 class="text-xl font-semibold text-center">What is Probable Cause?</h3>
+                            <p class="text-sm font-normal text-gray-400 mt-2 text-center">(Click or press Enter to reveal)</p>
+                        </div>
+                        <div class="card-back">
+                            <p class="text-sm text-center">A reasonable person standard to believe that a crime has been, is being, or will be committed. It is a higher standard than reasonable suspicion and is required for arrests and searches.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 space-y-4">
+                <div class="scenario-card rounded-lg overflow-hidden">
+                    <button class="toggle-btn w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" 
+                            onclick="toggleDetails(this)" 
+                            aria-expanded="false" 
+                            aria-controls="profiling-origin">
+                        <span>Where did "Profiling" Start?</span>
+                        <span class="arrow transform transition-transform duration-300">&#9662;</span>
+                    </button>
+                    <div id="profiling-origin" class="details-content px-4 pb-4 text-gray-300" role="region" aria-labelledby="profiling-origin">
+                        <p class="mt-2">The concept originated with the DEA's "Drug Courier Profile" in the 1970s, initially for use at airports. It was based on behavioral characteristics, not race.</p>
+                        <ul class="list-disc list-inside space-y-1 mt-2 text-sm">
+                            <li>Unusual nervousness</li>
+                            <li>Ticket paid in cash</li>
+                            <li>Travel to/from a known drug source destination</li>
+                            <li>Carrying little or no luggage</li>
+                            <li>Excessive travel, immediate phone use on landing</li>
+                        </ul>
+                        <p class="mt-2">This was later adapted (and sometimes misapplied) to vehicle stops.</p>
+                    </div>
+                </div>
+                <div class="scenario-card rounded-lg overflow-hidden">
+                    <button class="toggle-btn w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" 
+                            onclick="toggleDetails(this)" 
+                            aria-expanded="false" 
+                            aria-controls="arguments-against">
+                        <span>Arguments Against Racial Profiling</span>
+                        <span class="arrow transform transition-transform duration-300">&#9662;</span>
+                    </button>
+                    <div id="arguments-against" class="details-content px-4 pb-4 text-gray-300" role="region" aria-labelledby="arguments-against">
+                        <ul class="list-disc list-inside space-y-2 mt-2">
+                            <li>It's a direct conflict with American democratic principles.</li>
+                            <li>It is dehumanizing and erodes public trust, harming law enforcement's effectiveness.</li>
+                            <li>It's self-fulfilling bad logic: focusing on one group leads to disproportionate enforcement, reinforcing false beliefs.</li>
+                            <li>It wastes resources by overlooking criminals of all races.</li>
+                            <li>It generates suspicion and antagonism, making future legitimate stops more volatile.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="scenario-card rounded-lg overflow-hidden">
+                    <button class="toggle-btn w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" 
+                            onclick="toggleDetails(this)" 
+                            aria-expanded="false" 
+                            aria-controls="typical-elements">
+                        <span>Elements of a Typical Racially Motivated Stop</span>
+                        <span class="arrow transform transition-transform duration-300">&#9662;</span>
+                    </button>
+                    <div id="typical-elements" class="details-content px-4 pb-4 text-gray-300" role="region" aria-labelledby="typical-elements">
+                        <ul class="list-disc list-inside space-y-2 mt-2">
+                            <li>Stop is based on a minor or contrived pretext traffic violation.</li>
+                            <li>Driver/passengers are questioned about matters unrelated to the violation.</li>
+                            <li>Occupants are ordered out of the vehicle.</li>
+                            <li>Officers visually check all observable parts of the vehicle.</li>
+                            <li>Consent to search is requested; if refused, intimidation or delay tactics may be used (e.g., waiting for K-9).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="legal" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6 text-center text-blue-400">Texas Legal Framework</h2>
+            <div class="space-y-4">
+                <div class="bg-gray-800 rounded-lg">
+                    <button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>CCP Art. 28.0053: Law Enforcement Policy Requirements</span><span class="transform transition-transform duration-300">&#9662;</span></button>
+                    <div class="details-content px-4 pb-4 text-gray-300">
+                        <p class="mt-2 font-semibold">Each agency MUST adopt a detailed written policy that:</p>
+                        <ul class="list-disc list-inside space-y-2 mt-2">
+                            <li>Clearly defines and strictly prohibits racial profiling (CCP 28.0052).</li>
+                            <li>Implements a complaint process and provides public education on it.</li>
+                            <li>Requires corrective action for officers found in violation.</li>
+                            <li>Requires data collection for all motor vehicle stops (citations, warnings, arrests).</li>
+                            <li>Requires chief administrator to submit an annual report to TCOLE and the governing body.</li>
+                        </ul>
+                    </div>
+                </div>
+                 <div class="bg-gray-800 rounded-lg">
+                    <button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>CCP Art. 28.0054: Peace Officer Reporting Requirements</span><span class="transform transition-transform duration-300">&#9662;</span></button>
+                    <div class="details-content px-4 pb-4 text-gray-300">
+                        <p class="mt-2 font-semibold">For each motor vehicle stop, an officer MUST report:</p>
+                        <ul class="list-disc list-inside space-y-2 mt-2">
+                            <li>Physical description of the person detained (gender, race/ethnicity).</li>
+                            <li>The initial reason for the stop.</li>
+                            <li>Whether a search was conducted and the basis for it (e.g., consent, PC).</li>
+                            <li>Description of any contraband found.</li>
+                            <li>Whether an arrest was made and the basis/offense.</li>
+                            <li>Location of the stop.</li>
+                            <li>Whether a warning or citation was issued.</li>
+                            <li>Whether physical force resulting in bodily injury was used.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="bg-gray-800 rounded-lg">
+                    <button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>PC 38.02: Failure to Identify</span><span class="transform transition-transform duration-300">&#9662;</span></button>
+                    <div class="details-content px-4 pb-4 text-gray-300">
+                        <ul class="list-disc list-inside space-y-2 mt-2">
+                           <li><strong>Offense if a person:</strong>
+                                <ul class="list-decimal list-inside ml-4">
+                                    <li>Intentionally refuses to give name, residence, or DOB to a peace officer who has lawfully arrested them. (Class C Misdemeanor)</li>
+                                    <li>Intentionally gives a false or fictitious name, residence, or DOB when lawfully arrested, lawfully detained, or is a witness. (Class B Misdemeanor)</li>
+                                </ul>
+                           </li>
+                           <li>A person cannot be required to ID without a chargeable offense. The refusal to ID only becomes an offense *after* an arrest or during a traffic stop.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="bg-gray-800 rounded-lg">
+                    <button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>Grants for Cameras & Data Storage</span><span class="transform transition-transform duration-300">&#9662;</span></button>
+                    <div class="details-content px-4 pb-4 text-gray-300">
+                        <ul class="list-disc list-inside space-y-2 mt-2">
+                           <li><strong>CCP 28.0102:</strong> Agencies may apply to the governor's office for grants to defray the cost of body-worn cameras. Agencies receiving a grant must match 25% of the funds.</li>
+                           <li><strong>CCP 28.0103:</strong> Agencies with body cameras may apply for grants to help with the cost of data storage.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <h3 class="font-bold text-xl text-white">Occupations Code 1701.253 & 1701.402</h3>
+                    <p class="text-gray-300 mt-2">Requires TCOLE to establish a statewide comprehensive education and training program on racial profiling. An officer must complete this training as a requirement for an intermediate proficiency certificate.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="cases" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6 text-center text-blue-400">Key Court Cases</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="case-card rounded-lg p-6">
+                    <h3 class="font-bold text-xl text-white mb-2">Whren v. United States (1996)</h3>
+                    <p class="text-blue-400 text-sm mb-3 font-medium">Pretext Stops</p>
+                    <p class="text-gray-300"><strong>Holding:</strong> Any traffic offense is a legitimate basis for a stop, regardless of an officer's subjective motivations. Pretext stops are constitutional.</p>
+                </div>
+                <div class="case-card rounded-lg p-6">
+                    <h3 class="font-bold text-xl text-white mb-2">Terry v. Ohio (1968)</h3>
+                    <p class="text-blue-400 text-sm mb-3 font-medium">Stop and Frisk</p>
+                    <p class="text-gray-300"><strong>Holding:</strong> Police may stop a person on reasonable suspicion of criminal activity, and may frisk for weapons if there is reasonable suspicion the person is armed and dangerous.</p>
+                </div>
+                <div class="case-card rounded-lg p-6">
+                    <h3 class="font-bold text-xl text-white mb-2">Pennsylvania v. Mimms (1977)</h3>
+                    <p class="text-blue-400 text-sm mb-3 font-medium">Ordering Driver Out</p>
+                    <p class="text-gray-300"><strong>Holding:</strong> Police can order the driver of a lawfully stopped car out of the vehicle for officer safety.</p>
+                </div>
+                <div class="case-card rounded-lg p-6">
+                    <h3 class="font-bold text-xl text-white mb-2">Maryland v. Wilson (1997)</h3>
+                    <p class="text-blue-400 text-sm mb-3 font-medium">Ordering Passengers Out</p>
+                    <p class="text-gray-300"><strong>Holding:</strong> Extends the *Mimms* rule to passengers. Police may order passengers out of a lawfully stopped vehicle.</p>
+                </div>
+                <div class="case-card rounded-lg p-6">
+                    <h3 class="font-bold text-xl text-white mb-2">Arizona v. Johnson (2009)</h3>
+                    <p class="text-blue-400 text-sm mb-3 font-medium">Frisking Passengers</p>
+                    <p class="text-gray-300"><strong>Holding:</strong> Police may frisk a passenger during a lawful traffic stop if they have reasonable suspicion that the person is armed and dangerous.</p>
+                </div>
+                <div class="case-card rounded-lg p-6">
+                    <h3 class="font-bold text-xl text-white mb-2">Rodriguez v. United States (2015)</h3>
+                    <p class="text-blue-400 text-sm mb-3 font-medium">Duration of Stop</p>
+                    <p class="text-gray-300"><strong>Holding:</strong> A police stop cannot be prolonged beyond the time needed to handle the matter for which the stop was made, unless new reasonable suspicion develops.</p>
+                </div>
+                <div class="case-card rounded-lg p-6">
+                    <h3 class="font-bold text-xl text-white mb-2">Florida v. Royer (1983)</h3>
+                    <p class="text-blue-400 text-sm mb-3 font-medium">Detention & Movement</p>
+                    <p class="text-gray-300"><strong>Holding:</strong> Police cannot move a suspect to another location during a Terry stop without a legitimate law-enforcement purpose. Consent to search is not valid if given while illegally detained.</p>
+                </div>
+                <div class="case-card rounded-lg p-6">
+                    <h3 class="font-bold text-xl text-white mb-2">Curtis v. State (Tex. App. 2006)</h3>
+                    <p class="text-blue-400 text-sm mb-3 font-medium">Innocent Explanations</p>
+                    <p class="text-gray-300"><strong>Holding:</strong> The possibility of an innocent explanation does not deprive an officer of the capacity to have reasonable suspicion. The purpose of an investigation is to resolve ambiguity.</p>
+                </div>
+                <div class="case-card rounded-lg p-6">
+                    <h3 class="font-bold text-xl text-white mb-2">Derichsweiler v. State (Tex. Crim. App. 2011)</h3>
+                    <p class="text-blue-400 text-sm mb-3 font-medium">No Specific Offense Needed</p>
+                    <p class="text-gray-300"><strong>Holding:</strong> An investigative stop can be justified by non-criminal but suspicious behavior. An officer does not need to name a particular offense, but just have RS that the person was about to engage in criminal activity.</p>
+                </div>
+                <div class="case-card rounded-lg p-6">
+                    <h3 class="font-bold text-xl text-white mb-2">City of Indianapolis v. Edmond (2000)</h3>
+                    <p class="text-blue-400 text-sm mb-3 font-medium">Roadblocks/Checkpoints</p>
+                    <p class="text-gray-300"><strong>Holding:</strong> Roadside checkpoints for the primary purpose of general crime control are unconstitutional. Texas law is more restrictive and does NOT allow DWI checkpoints, only DL/insurance checks.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="scenarios" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6 text-center text-blue-400">Interactive Scenarios</h2>
+            <div class="space-y-6">
+                <div class="scenario-card rounded-lg p-6">
+                    <p class="font-bold text-lg text-white mb-3">Scenario 1</p>
+                    <p class="text-gray-300 mb-4">An officer on DWI patrol notices a truck with a non-working rear brake light. The officer initiates a stop based on this pretext to conduct a DWI inquiry. The driver, Mr. Smith, immediately becomes irate, accusing the officer of a racially motivated stop. Mr. Smith has not been drinking and poses no safety threat, but is very angry.</p>
+                    <div class="mt-4">
+                        <button class="toggle-btn w-full text-left p-3 font-semibold text-md bg-gray-700 hover:bg-gray-600 rounded-lg focus:outline-none flex justify-between items-center" 
+                                onclick="toggleDetails(this)" 
+                                aria-expanded="false" 
+                                aria-controls="scenario1-analysis">
+                            <span>Analysis</span>
+                            <span class="arrow transform transition-transform duration-300">&#9662;</span>
+                        </button>
+                        <div id="scenario1-analysis" class="details-content px-4 py-2 text-gray-300" role="region">
+                            <p class="mt-2"><strong>Is the initial traffic stop legal?</strong> Yes. Under *Whren v. US*, any observed traffic violation (the broken brake light) is a legitimate basis for a stop, making the pretextual nature of the stop constitutional.</p>
+                            <p class="mt-2"><strong>Were there signs of racial profiling?</strong> Based on the facts given, no. The stop was initiated based on an observable equipment violation, not the driver's race. However, Mr. Smith's perception is critical. The officer should use professional communication skills to de-escalate, explain the reason for the stop clearly (the brake light), and conduct the stop efficiently and professionally to avoid furthering the perception of bias.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="scenario-card rounded-lg p-6">
+                    <p class="font-bold text-lg text-white mb-3">Scenario 2</p>
+                    <p class="text-gray-300 mb-4">An officer sees an old, battered car in a wealthy neighborhood at night. The officer is suspicious but has no violation. The officer then notices the rear license plate light is out. The officer uses this minor violation to stop the car and, upon approach, sees illegal drugs on the passenger seat.</p>
+                    <div class="mt-4">
+                        <button class="toggle-btn w-full text-left p-3 font-semibold text-md bg-gray-700 hover:bg-gray-600 rounded-lg focus:outline-none flex justify-between items-center" 
+                                onclick="toggleDetails(this)" 
+                                aria-expanded="false" 
+                                aria-controls="scenario2-analysis">
+                            <span>Analysis</span>
+                            <span class="arrow transform transition-transform duration-300">&#9662;</span>
+                        </button>
+                        <div id="scenario2-analysis" class="details-content px-4 py-2 text-gray-300" role="region">
+                            <p class="mt-2"><strong>Was the arrest and seizure of the drugs legal?</strong> Yes. The stop was justified by the traffic violation (inoperable license plate light), per *Whren v. US*. The drugs were then discovered in plain view, which is a valid exception to the warrant requirement. The officer's initial suspicion about the car being in a wealthy area is irrelevant to the legality of the stop itself, as long as a valid, objective violation occurred.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="scenario-card rounded-lg p-6">
+                    <p class="font-bold text-lg text-white mb-3">Scenario 3</p>
+                    <p class="text-gray-300 mb-4">An officer sees an SUV with four young, bearded Middle Eastern men wearing turbans. The vehicle is obeying the speed limit while others are speeding. The officer initiates a stop based on a "feeling" that he should investigate what the men are doing.</p>
+                    <div class="mt-4">
+                        <button class="toggle-btn w-full text-left p-3 font-semibold text-md bg-gray-700 hover:bg-gray-600 rounded-lg focus:outline-none flex justify-between items-center" 
+                                onclick="toggleDetails(this)" 
+                                aria-expanded="false" 
+                                aria-controls="scenario3-analysis">
+                            <span>Analysis</span>
+                            <span class="arrow transform transition-transform duration-300">&#9662;</span>
+                        </button>
+                        <div id="scenario3-analysis" class="details-content px-4 py-2 text-gray-300" role="region">
+                            <p class="mt-2"><strong>Would this be considered "racial profiling?"</strong> Yes. The stop is not based on any observed violation of law or articulable facts that would create reasonable suspicion of criminal activity. It is based solely on the occupants' appearance (race/ethnicity/attire) and the officer's "feeling." This is the definition of racial profiling and is an illegal stop.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="scenario-card rounded-lg p-6">
+                    <p class="font-bold text-lg text-white mb-3">Scenario 4</p>
+                    <p class="text-gray-300 mb-4">A homeowner in an exclusive neighborhood reports a "suspicious" Range Rover occupied by two young Black males with out-of-state plates. The neighborhood has a proactive crime watch. An officer responds and locates the vehicle, which is not violating any laws.</p>
+                    <div class="mt-4">
+                        <button class="toggle-btn w-full text-left p-3 font-semibold text-md bg-gray-700 hover:bg-gray-600 rounded-lg focus:outline-none flex justify-between items-center" 
+                                onclick="toggleDetails(this)" 
+                                aria-expanded="false" 
+                                aria-controls="scenario4-analysis">
+                            <span>Analysis</span>
+                            <span class="arrow transform transition-transform duration-300">&#9662;</span>
+                        </button>
+                        <div id="scenario4-analysis" class="details-content px-4 py-2 text-gray-300" role="region">
+                            <p class="mt-2"><strong>Should the officer stop the vehicle?</strong> No. A citizen's call about a "suspicious" vehicle, when the suspicion is based on the race of the occupants and their presence in a certain neighborhood, does not amount to reasonable suspicion. There are no articulable facts that criminal activity is afoot. Initiating a stop would be illegal racial profiling.</p>
+                            <p class="mt-2"><strong>How should the officer handle the call?</strong> The officer can continue to observe the vehicle. If the officer develops their own independent reasonable suspicion (e.g., observing a traffic violation, seeing the occupants casing houses), then a stop would be justified. The officer could also attempt a voluntary encounter if the vehicle is parked, but must be clear that the occupants are free to leave and not obligated to speak with the officer.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            let i, tabcontent, tablinks;
+            
+            // Hide all tab content
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove("active");
+            }
+            
+            // Remove active state from all tab buttons
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active", "border-blue-500", "text-blue-400");
+                tablinks[i].classList.add("border-transparent", "text-gray-300");
+                tablinks[i].setAttribute("aria-selected", "false");
+            }
+            
+            // Show selected tab content
+            const selectedTab = document.getElementById(tabName);
+            selectedTab.style.display = "block";
+            selectedTab.classList.add("active");
+            
+            // Add active state to clicked tab button
+            evt.currentTarget.classList.add("active", "border-blue-500", "text-blue-400");
+            evt.currentTarget.classList.remove("border-transparent", "text-gray-300");
+            evt.currentTarget.setAttribute("aria-selected", "true");
+        }
+        
+        // Initialize the first tab on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstTab = document.querySelector('.tab-btn');
+            if (firstTab) {
+                firstTab.click();
+            }
+        });
+        
+        function toggleDetails(button) {
+            const detailsContent = button.nextElementSibling;
+            const arrow = button.querySelector('.arrow');
+            const isOpen = detailsContent.style.maxHeight && detailsContent.style.maxHeight !== '0px';
+            
+            if (isOpen) {
+                // Close the details
+                detailsContent.style.maxHeight = '0px';
+                detailsContent.classList.remove('open');
+                arrow.classList.remove('rotated');
+                button.setAttribute('aria-expanded', 'false');
+                
+                // Smooth transition
+                setTimeout(() => {
+                    if (detailsContent.style.maxHeight === '0px') {
+                        detailsContent.style.maxHeight = null;
+                    }
+                }, 500);
+            } else {
+                // Open the details
+                detailsContent.style.maxHeight = detailsContent.scrollHeight + 'px';
+                detailsContent.classList.add('open');
+                arrow.classList.add('rotated');
+                button.setAttribute('aria-expanded', 'true');
+                
+                // Smooth scroll to make sure content is visible
+                setTimeout(() => {
+                    const rect = button.getBoundingClientRect();
+                    const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+                    
+                    if (!isVisible) {
+                        button.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start',
+                            inline: 'nearest'
+                        });
+                    }
+                }, 100);
+            }
+        }
+        
+        // Enhanced keyboard navigation for cards
+        document.addEventListener('keydown', function(event) {
+            if (event.target.classList.contains('card-flip')) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    event.target.classList.toggle('flipped');
+                }
+            }
+        });
+        
+        // Add touch support for mobile devices
+        document.addEventListener('touchstart', function() {
+            // Enable touch events for better mobile experience
+        });
+        
+        // Smooth scrolling for better UX
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

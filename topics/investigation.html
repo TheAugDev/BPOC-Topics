@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criminal Investigation Study Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .details-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-white">Criminal Investigation</h1>
+            <p class="text-lg text-gray-400 mt-2">Interrogation, Rights, & Timelines</p>
+        </header>
+
+        <!-- Tabs -->
+        <div class="mb-8">
+            <div class="flex flex-wrap justify-center border-b border-gray-700">
+                <button class="tab-btn py-2 px-4 text-gray-300 border-b-2 border-transparent hover:border-blue-500 hover:text-blue-400 focus:outline-none active" onclick="openTab(event, 'tactics')">1. Interrogation Tactics</button>
+                <button class="tab-btn py-2 px-4 text-gray-300 border-b-2 border-transparent hover:border-blue-500 hover:text-blue-400 focus:outline-none" onclick="openTab(event, 'rights')">2. Constitutional Rights</button>
+                <button class="tab-btn py-2 px-4 text-gray-300 border-b-2 border-transparent hover:border-blue-500 hover:text-blue-400 focus:outline-none" onclick="openTab(event, 'timelines')">3. Case Timelines</button>
+                <button class="tab-btn py-2 px-4 text-gray-300 border-b-2 border-transparent hover:border-blue-500 hover:text-blue-400 focus:outline-none" onclick="openTab(event, 'scenarios')">4. Practical Scenarios</button>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div id="tactics" class="tab-content active">
+            <h2 class="text-2xl font-bold mb-6 text-center text-blue-400">Tactics for Interviewing Suspects</h2>
+            <div class="space-y-4">
+                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>General Do's and Don'ts</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300"><ul class="list-disc list-inside space-y-2 mt-2">
+                    <li><strong>DO:</strong> Eliminate physical barriers and distractions.</li>
+                    <li><strong>DO:</strong> Know what information you have and what you need to obtain.</li>
+                    <li><strong>DO:</strong> Allow the suspect to tell their complete story at least once before confronting discrepancies.</li>
+                    <li><strong>DON'T:</strong> Interrupt them as they talk; they become more comfortable and share more.</li>
+                    <li><strong>DON'T:</strong> Ask rapid-fire questions; allow them time to answer.</li>
+                    <li><strong>DON'T:</strong> Ask leading or suggestive questions.</li>
+                    <li><strong>DON'T:</strong> Supply answers within your questions.</li>
+                </ul></div></div>
+                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>Establishing Rapport</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300"><ul class="list-disc list-inside space-y-2 mt-2">
+                    <li>This is the most important phase. Spend plenty of time on it.</li>
+                    <li>Get to know the subject by asking questions unrelated to the case.</li>
+                    <li>Be sincere and find a way to empathize. Sincerity breeds trust.</li>
+                    <li>Don't be judgmental. Act as though any admission was expected. A suspect's biggest fear is being judged as worthless.</li>
+                    <li>Make it a conversation to make them feel comfortable.</li>
+                </ul></div></div>
+                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>Confrontation & Gaining a Confession</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300"><ul class="list-disc list-inside space-y-2 mt-2">
+                    <li><strong>Let Them Commit:</strong> Don't be in a hurry to confront lies. Let them commit to a story first. Lock them into an account so you can come back with direct questions on inconsistencies.</li>
+                    <li><strong>Concentrate on Motives:</strong> Offer a possible motive that allows a suspect to confess while saving face. Watch for signs of agreement.</li>
+                    <li><strong>Be Confident:</strong> When you confront them, you must be confident and definite. The slightest hint of doubt makes a confession unlikely.</li>
+                    <li><strong>Stay in Control:</strong> Control your emotions and the conversation. Be patient.</li>
+                    <li><strong>Leave Them an Out:</strong> Allow them a face-saving way to confess if possible.</li>
+                    <li><strong>Avoid Threats/Bluffing:</strong> Unless you are very confident of success.</li>
+                </ul></div></div>
+                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>Street Interviews</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300"><ul class="list-disc list-inside space-y-2 mt-2">
+                    <li>Time is limited, but interviews should not be rushed.</li>
+                    <li>Establishing rapport is still important. Use previous relationships if you have them.</li>
+                    <li>Point out when their story does not make sense.</li>
+                    <li>If there are multiple suspects, use them against one another.</li>
+                    <li>Use the same techniques as a detective, just with a shorter rapport-building time.</li>
+                </ul></div></div>
+            </div>
+        </div>
+
+        <div id="rights" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6 text-center text-blue-400">Constitutional Rights & Statements</h2>
+            <div class="space-y-4">
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="font-bold text-xl text-center">When Does Miranda Apply?</h3>
+                    <p class="text-center mt-2">The 5th Amendment protects against self-incrimination. Miranda Warnings are required when two factors are present:</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4 mt-4">
+                        <div class="bg-blue-600 p-4 rounded-lg text-center"><strong>1. CUSTODY</strong><br><span class="text-sm">The person is under arrest or deprived of freedom in any significant way.</span></div>
+                        <div class="font-bold text-2xl">+</div>
+                        <div class="bg-blue-600 p-4 rounded-lg text-center"><strong>2. INTERROGATION</strong><br><span class="text-sm">The person is being questioned about the offense.</span></div>
+                    </div>
+                </div>
+                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>The Miranda Rights (CCP 38.22)</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300"><ul class="list-decimal list-inside space-y-2 mt-2">
+                    <li>You have the right to remain silent and not make any statement at all.</li>
+                    <li>Any statement you make may be used as evidence against you in court.</li>
+                    <li>You have the right to have a lawyer present to advise you prior to and during any questioning.</li>
+                    <li>If you are unable to employ a lawyer, you have the right to have a lawyer appointed.</li>
+                    <li>You have the right to terminate the interview at any time.</li>
+                </ul></div></div>
+                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>Invoking Rights (Maryland v. Shatzer)</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300">
+                    <p class="mt-2">If a suspect invokes their right to an attorney, all questioning must stop.</p>
+                    <p class="mt-2">Police cannot re-initiate contact until:</p>
+                    <ul class="list-disc list-inside space-y-1 mt-1">
+                        <li>An attorney is present, OR</li>
+                        <li>There is at least a 14-day break in Miranda custody, OR</li>
+                        <li>The suspect re-initiates contact with law enforcement.</li>
+                    </ul>
+                </div></div>
+                 <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>Admissibility of Statements (CCP 38.21 & 38.22)</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300">
+                    <p class="mt-2"><strong>CCP 38.21:</strong> A statement may be used if it was made freely and voluntarily, without compulsion or persuasion.</p>
+                    <p class="mt-2"><strong>CCP 38.22:</strong> For a written statement from custodial interrogation to be admissible, it must show on its face that the Miranda warning was given and the rights were knowingly, intelligently, and voluntarily waived.</p>
+                     <p class="mt-2">Oral or sign language statements from custodial interrogation must be electronically recorded (video/audio), include the Miranda warning on the recording, and all material voices must be identified.</p>
+                </div></div>
+                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>Warrantless Felony Arrests (CCP 14.03 & 14.04)</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300">
+                    <p class="mt-2">An officer may arrest without a warrant under certain conditions:</p>
+                    <ul class="list-disc list-inside space-y-2 mt-2">
+                        <li><strong>CCP 14.03:</strong> A person makes an admissible statement to the officer that establishes probable cause they committed a felony.</li>
+                        <li><strong>CCP 14.04:</strong> An officer has satisfactory proof from a credible person that a felony has been committed, AND the offender is about to escape, so there is no time to get a warrant.</li>
+                    </ul>
+                </div></div>
+            </div>
+        </div>
+        
+        <div id="timelines" class="tab-content">
+             <h2 class="text-2xl font-bold mb-6 text-center text-blue-400">Constructing a Case Timeline</h2>
+             <div class="space-y-4">
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="font-bold text-xl">Why Build a Timeline?</h3>
+                    <p class="mt-2">A timeline helps organize important case events. It allows you to visualize the sequence of events, identify gaps or contradictions in stories, and structure your investigation and final report.</p>
+                </div>
+                 <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="font-bold text-xl">How to Construct a Timeline</h3>
+                    <ul class="list-decimal list-inside space-y-2 mt-2">
+                        <li><strong>Note Important Events:</strong> Start by noting all important events with any known times.</li>
+                        <li><strong>Place Unknowns:</strong> Place events with unknown times logically between the known ones.</li>
+                        <li><strong>Plot Investigation Efforts:</strong> Add your own actions (arrival, interviews, evidence collection) to the timeline.</li>
+                        <li><strong>Use a Vertical Structure:</strong> A vertical plot of events allows for more detailed notes next to each entry, covering the Who, What, Where, When, and How/Why for each point in time.</li>
+                    </ul>
+                </div>
+                 <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="font-bold text-xl">Example Timeline Structure</h3>
+                    <div class="mt-4 p-4 border border-gray-600 rounded-lg bg-gray-900">
+                        <div class="flex border-b border-gray-500 pb-2">
+                            <div class="w-1/4 font-bold">TIME</div>
+                            <div class="w-3/4 font-bold">EVENT (Who, What, Where, When, How/Why)</div>
+                        </div>
+                        <div class="flex border-b border-gray-700 py-2">
+                            <div class="w-1/4">17:05</div>
+                            <div class="w-3/4">Call received from reporter (Jane Doe) re: family fight at 123 Main St.</div>
+                        </div>
+                        <div class="flex border-b border-gray-700 py-2">
+                            <div class="w-1/4">17:10</div>
+                            <div class="w-3/4">Officer Smith arrives on scene.</div>
+                        </div>
+                         <div class="flex border-b border-gray-700 py-2">
+                            <div class="w-1/4">17:18</div>
+                            <div class="w-3/4">Officer Smith separates parties; begins interview with victim (Mary Roe).</div>
+                        </div>
+                         <div class="flex py-2">
+                            <div class="w-1/4">17:39</div>
+                            <div class="w-3/4">Suspect (John Roe) placed under arrest for Assault FV.</div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </div>
+
+        <div id="scenarios" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6 text-center text-blue-400">Practical Scenarios</h2>
+            <div class="space-y-6">
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="font-bold text-xl">Role Play Scenario: Domestic Dispute</h3>
+                    <p class="mt-2 text-gray-400 text-sm">Officers are dispatched to a family fight in progress. The reporter is a family member at a party who says the male and female residents are in a physical fight. No weapons mentioned.</p>
+                    <div class="mt-4">
+                        <button class="w-full text-left p-3 font-semibold text-md bg-gray-700 hover:bg-gray-600 rounded-lg focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>Role Player Instructions</span><span class="transform transition-transform duration-300">&#9662;</span></button>
+                        <div class="details-content px-4 py-2 text-gray-300">
+                            <ul class="list-disc list-inside space-y-3 mt-2">
+                                <li><strong>Witness/Reporter:</strong> You are a family member. You only saw arguing, but it escalated when they went inside. You heard the female yell "stop!" and "let me go!" You called police due to their history of fighting. Be cooperative.</li>
+                                <li><strong>Witness 2:</strong> You are a friend of the female from work. You did not see anything and do not want to be involved. Only answer direct questions.</li>
+                                <li><strong>Complainant (Female):</strong> You and your husband were arguing. In the kitchen, he tried to block you from leaving. You admit nothing physical happened today, despite past incidents. You don't know why police were called.</li>
+                                <li><strong>Possible Offender (Male):</strong> You were arguing about text messages on her phone. In the kitchen, you reached for her phone and she grabbed for it, accidentally scratching you in the process.</li>
+                            </ul>
+                        </div>
+                    </div>
+                     <p class="mt-4"><strong>Officer's Task:</strong> Control the scene, separate witnesses, compare stories, and determine if an offense occurred and if an arrest is necessary. Apply interview techniques to get past the initial stories and find the truth.</p>
+                </div>
+                 <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="font-bold text-xl">Discussion Scenario: "What About Frank?"</h3>
+                    <p class="mt-2 text-gray-400 text-sm">At the start of an interview, you ask Frank if he is injured. He tells you no, and you do not notice any injuries on him during the interview.</p>
+                    <p class="mt-4"><strong>Task:</strong> After watching an (implied) video of Frank's interview, what follow-up questions should have been asked? Were there open ends in his story that need to be addressed? How does his account compare to other evidence?</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            let i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active", "border-blue-500", "text-blue-400");
+                tablinks[i].classList.add("border-transparent", "text-gray-300");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.classList.add("active", "border-blue-500", "text-blue-400");
+            evt.currentTarget.classList.remove("border-transparent", "text-gray-300");
+        }
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelector('.tab-btn').click();
+        });
+        function toggleDetails(button) {
+            const detailsContent = button.nextElementSibling;
+            const arrow = button.querySelector('span:last-child');
+            if (detailsContent.style.maxHeight) {
+                detailsContent.style.maxHeight = null;
+                arrow.style.transform = 'rotate(0deg)';
+            } else {
+                detailsContent.style.maxHeight = detailsContent.scrollHeight + "px";
+                arrow.style.transform = 'rotate(180deg)';
+            }
+        }
+    </script>
+
+</body>
+</html>
