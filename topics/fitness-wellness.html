@@ -4,16 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fitness & Wellness Interactive Guide</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../dist/output.css">
     <!-- Chosen Palette: Green & Gray with Blue accents -->
-    <!-- Application Structure Plan: A single-page application focused on officer fitness and wellness. The structure is thematic, starting with foundational definitions, moving to practical exercise principles (FITT), then covering nutrition, and finally providing interactive self-assessment tools. This logical flow guides the user from knowledge to application. Key interactions include collapsible sections for detailed guidelines and interactive checklists for the PAR-Q and other self-assessments, making the content more engaging and personally relevant. -->
-    <!-- Visualization & Content Choices: 
-        - Fitness Components: Report Info -> Lists of fitness types. Goal -> Inform & Differentiate. Viz -> Two styled cards clearly separating "Health-Related" and "Motor" fitness components. Justification -> Visual separation helps clarify the two distinct but related categories.
-        - FITT Guidelines: Report Info -> Text blocks for different training types. Goal -> Instruct. Viz -> A master collapsible section for FITT, with nested collapsible details for Cardiovascular, Strength, and Flexibility training. Justification -> This nested structure allows users to see the high-level concept and then drill down into specifics for each type of exercise without being overwhelmed.
-        - Nutrition: Report Info -> Text on macronutrients and diet strategies. Goal -> Educate. Viz -> A combination of styled cards for different nutrients (Carbs, Protein, Fat) and a prominent "MyPlate" graphic. Justification -> Breaking down nutrients into individual cards makes the information digestible, while the MyPlate graphic provides a simple, memorable visual for building a healthy meal.
-        - Self-Assessments: Report Info -> Static questionnaire forms. Goal -> Engage & Assess. Viz -> Interactive checklists using HTML and JavaScript. Interaction -> Users can click checkboxes to answer questions, and the score can be tallied dynamically. Justification -> Transforms a passive reading task into an active, engaging self-evaluation.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body { font-family: 'Inter', sans-serif; }
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -30,24 +22,85 @@
         details[open] > summary {
             background-color: #f1f5f9;
         }
-        .assessment-question {
-            display: flex;
-            align-items: center;
-            padding: 0.5rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        .assessment-question:last-child {
-            border-bottom: none;
-        }
-        .assessment-question input[type="checkbox"] {
-            margin-right: 1rem;
-            height: 1.25rem;
-            width: 1.25rem;
-        }
         
         /* Mobile Optimizations */
         @media (max-width: 768px) {
             .container {
+                padding: 1rem !important;
+            }
+            
+            h1 {
+                font-size: 2rem !important;
+            }
+            
+            h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            h3 {
+                font-size: 1.25rem !important;
+            }
+            
+            /* Improve touch targets for mobile */
+            details > summary {
+                padding: 1rem;
+                font-size: 1.1rem;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+            }
+            
+            /* Better spacing for mobile */
+            .space-y-8 > * + * {
+                margin-top: 1.5rem !important;
+            }
+            
+            .space-y-6 > * + * {
+                margin-top: 1.25rem !important;
+            }
+            
+            .space-y-4 > * + * {
+                margin-top: 1rem !important;
+            }
+            
+            /* Improve readability on mobile */
+            p, li {
+                line-height: 1.6;
+            }
+            
+            .text-sm {
+                font-size: 0.9rem !important;
+            }
+            
+            /* Grid adjustments for mobile */
+            .grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            /* Card adjustments */
+            .bg-white {
+                padding: 1rem !important;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.5rem !important;
+            }
+            
+            h1 {
+                font-size: 1.75rem !important;
+            }
+            
+            .bg-white {
+                margin: 0 !important;
+                border-radius: 0.5rem;
+            }
+        }
+    </style>
+</head>
                 padding: 1rem !important;
             }
             
@@ -377,7 +430,12 @@
                         <summary>Healthy Eating Strategies (MyPlate)</summary>
                         <div class="p-4 border-t mt-2 text-sm">
                             <div class="flex flex-col md:flex-row gap-4 items-center">
-                                <img src="https://i.imgur.com/gOkpGMy.png" alt="Choose My Plate graphic" class="w-48 h-48">
+                                <div class="w-48 h-48 bg-gradient-to-br from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
+                                    <div class="text-white text-center">
+                                        <div class="text-xl font-bold mb-2">MyPlate</div>
+                                        <div class="text-sm">Nutrition Guide</div>
+                                    </div>
+                                </div>
                                 <div class="flex-1">
                                     <h4 class="font-semibold mb-2">Build a Healthy Plate:</h4>
                                     <ul class="list-disc list-inside space-y-1">
@@ -808,12 +866,17 @@
         document.getElementById('fitness-performance-message').textContent = message;
     }
 
-    document.getElementById('fitness-next-btn').addEventListener('click', nextFitnessQuestion);
-    document.getElementById('fitness-prev-btn').addEventListener('click', prevFitnessQuestion);
-    document.getElementById('fitness-restart-quiz').addEventListener('click', initFitnessQuiz);
-
     // Auto-initialize the fitness quiz
     document.addEventListener('DOMContentLoaded', function() {
+        // Attach event listeners after DOM is loaded
+        const nextBtn = document.getElementById('fitness-next-btn');
+        const prevBtn = document.getElementById('fitness-prev-btn');
+        const restartBtn = document.getElementById('fitness-restart-quiz');
+        
+        if (nextBtn) nextBtn.addEventListener('click', nextFitnessQuestion);
+        if (prevBtn) prevBtn.addEventListener('click', prevFitnessQuestion);
+        if (restartBtn) restartBtn.addEventListener('click', initFitnessQuiz);
+        
         setTimeout(initFitnessQuiz, 100);
     });
 </script>

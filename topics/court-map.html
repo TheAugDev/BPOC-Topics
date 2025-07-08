@@ -4,41 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Guide to the Texas Court System</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../dist/output.css">
     <!-- Chosen Palette: Slate Blue & Cool Gray -->
-    <!-- Application Structure Plan: A single-page application using a vertical, hierarchical layout to mirror the Texas court structure. The design flows from the highest appellate courts at the top down to the local trial courts. This is intuitive as it reflects the path of appeals. Each court level is an interactive, collapsible section, allowing users to drill down for more detail without being overwhelmed. Arrows and connecting lines guide the user's eye, clarifying the relationships between the courts. -->
-    <!-- Visualization & Content Choices: 
-        - Court Hierarchy: Report Info -> A complex flowchart diagram. Goal -> Organize & Explain Structure. Viz -> A custom, responsive hierarchy built with HTML/Tailwind flexbox and grid. Justification -> This is more accessible and mobile-friendly than a static image and allows for interactive elements.
-        - Jurisdictional Details: Report Info -> Text annotations on the chart. Goal -> Inform. Viz -> Bulleted lists within each court's collapsible section. Interaction -> Clicking a court level reveals its specific duties (e.g., felony jurisdiction, civil amount limits). Justification -> Hiding details until requested (progressive disclosure) prevents information overload and makes the complex system easier to learn piece by piece.
-        - Appeal Paths: Report Info -> Lines connecting courts. Goal -> Show Flow. Viz -> CSS borders and pseudo-elements to create visual connectors between the court cards. Justification -> Visually reinforces the path a case takes through the court system, from trial to appeal.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body { font-family: 'Inter', sans-serif; }
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         details > summary { 
             cursor: pointer;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
             transition: background-color 0.2s;
+            font-weight: 600;
+        }
+        details > summary:hover {
+            background-color: #f8fafc;
         }
         details[open] > summary {
-            background-color: #f0f4f8; /* A light blue-gray for open state */
-        }
-        .court-card {
-            border: 2px solid #cbd5e1;
-            transition: box-shadow 0.2s;
-        }
-        .court-card:hover {
-             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        .connector {
-            width: 2px;
-            background-color: #94a3b8;
-            margin: 0 auto;
-        }
-        .connector-h {
-            height: 2px;
-            background-color: #94a3b8;
-            width: 100%;
+            background-color: #f1f5f9;
         }
         
         /* Mobile Optimizations */
@@ -66,7 +48,6 @@
                 min-height: 48px;
                 display: flex;
                 align-items: center;
-                border-radius: 0.5rem;
             }
             
             /* Better spacing for mobile */
@@ -97,30 +78,9 @@
                 gap: 1rem !important;
             }
             
-            /* Court card adjustments */
-            .court-card {
+            /* Card adjustments */
+            .bg-white {
                 padding: 1rem !important;
-                margin: 0.5rem 0 !important;
-            }
-            
-            /* Connector adjustments for mobile */
-            .connector {
-                width: 1px;
-                height: 1rem;
-            }
-            
-            .connector-h {
-                height: 1px;
-                margin: 0.5rem 0;
-            }
-            
-            /* Flex adjustments */
-            .flex {
-                flex-direction: column !important;
-            }
-            
-            .md\\:flex-row {
-                flex-direction: column !important;
             }
         }
         
@@ -134,30 +94,14 @@
                 font-size: 1.75rem !important;
             }
             
-            .court-card {
-                padding: 0.75rem !important;
+            .bg-white {
+                margin: 0 !important;
                 border-radius: 0.5rem;
-            }
-            
-            details > summary {
-                padding: 0.75rem;
-                font-size: 1rem;
-            }
-        }
-        
-        /* Landscape mobile orientation */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .container {
-                padding: 0.5rem !important;
-            }
-            
-            h1 {
-                font-size: 1.5rem !important;
             }
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body class="bg-slate-100 text-slate-800">
 
     <div class="container mx-auto p-4 md:p-8 max-w-5xl">
         <header class="text-center mb-10">

@@ -3,1445 +3,557 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Texas Penal Code Study Guide</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Chosen Palette: Slate & Amber -->
-    <!-- Application Structure Plan: A responsive single-page application with a fixed sidebar for navigation and a main content area. This dashboard-style layout allows users to quickly jump between different legal topics without losing context. The structure is thematic (Foundations, Offenses Against Persons, etc.) rather than mirroring the PDF's linear flow, which enhances usability for studying specific subjects. Key interactions include clickable flowchart nodes (for DWI and UCW) and interactive charts for value-based crimes, which dynamically update content to engage the user and improve information retention. -->
-    <!-- Visualization & Content Choices: 
-        - Punishment Levels: Report Info -> Table of fines/confinement. Goal -> Compare. Viz -> Interactive bar chart (Chart.js) to visually represent the severity of punishments. Interaction -> Hovering over bars shows tooltips with precise data. Justification -> A visual comparison is more impactful for retention than a simple table.
-        - Theft/Mischief Levels: Report Info -> Tables with monetary values. Goal -> Compare thresholds. Viz -> Interactive horizontal bar charts (Chart.js). Interaction -> Clicking on a bar could filter or highlight related text. Justification -> Visually demonstrates the large jumps in value that escalate offense levels.
-        - DWI/UCW Flowcharts: Report Info -> Static diagrams. Goal -> Organize decision-making process. Viz -> Custom-built, interactive diagrams using HTML/CSS (Tailwind). Interaction -> Users click through the decision nodes, which highlight the active path. Justification -> Actively engaging with the flowchart logic reinforces the legal process far better than a static image.
-        - Textual Rules (Assault, Defenses): Report Info -> Text blocks. Goal -> Inform. Viz -> Styled cards and tables using HTML/Tailwind. Interaction -> Key terms are bolded, sections are logically grouped. Justification -> Clean, organized text is crucial for readability and comprehension.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <title>Texas Penal Code Study Guide</title>
+    <link rel="stylesheet" href="../dist/output.css">
     <style>
         body { font-family: 'Inter', sans-serif; }
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        .nav-link {
-            transition: all 0.2s ease-in-out;
-        }
-        .nav-link.active {
-            background-color: #f59e0b;
-            color: #1e293b;
+        details > summary { 
+            cursor: pointer;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
             font-weight: 600;
         }
-        .flowchart-node, .flowchart-choice div {
-            transition: all 0.3s ease;
-            cursor: pointer;
+        details > summary:hover {
+            background-color: #f8fafc;
         }
-        .flowchart-node:hover, .flowchart-choice div:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
-        .flowchart-node.active-path, .flowchart-choice div.active-path {
-            background-color: #f59e0b;
-            color: #1e293b;
-            border-color: #b45309;
-        }
-        .flowchart-node.dimmed, .flowchart-choice div.dimmed {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-        .flowchart-connector {
-            width: 2px;
-            margin: 0 auto;
-            background-color: #94a3b8;
-        }
-        details > summary { cursor: pointer; }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 300px;
-            max-height: 400px;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 400px;
-            }
+        details[open] > summary {
+            background-color: #f1f5f9;
         }
         
-        /* Mobile optimizations */
-        @media (max-width: 767px) {
-            /* Ensure sidebar collapses properly on mobile */
-            #sidebar {
-                order: 1;
-            }
-            #main-content {
-                order: 2;
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem !important;
             }
             
-            /* Better touch targets for mobile */
-            .nav-link {
-                min-height: 44px;
+            h1 {
+                font-size: 2rem !important;
+            }
+            
+            h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            h3 {
+                font-size: 1.25rem !important;
+            }
+            
+            /* Improve touch targets for mobile */
+            details > summary {
+                padding: 1rem;
+                font-size: 1.1rem;
+                min-height: 48px;
                 display: flex;
                 align-items: center;
             }
             
-            .flowchart-node, .flowchart-choice div {
-                min-height: 44px;
-                padding: 12px;
-            }
-            
-            /* Improve table readability on mobile */
-            table {
-                font-size: 14px;
-            }
-            
             /* Better spacing for mobile */
+            .space-y-8 > * + * {
+                margin-top: 1.5rem !important;
+            }
+            
             .space-y-6 > * + * {
-                margin-top: 1.5rem;
+                margin-top: 1.25rem !important;
             }
             
-            /* Optimize card grids for mobile */
-            .grid.md\\:grid-cols-2 {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            
-            .grid.md\\:grid-cols-3 {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            
-            /* Better mobile charts */
-            .chart-container {
-                height: 250px;
-                padding: 0 10px;
-            }
-            
-            /* Mobile-friendly details/summary */
-            details > summary {
-                padding: 12px 16px;
-                font-size: 16px; /* Prevent zoom on iOS */
-            }
-        }
-        
-        /* Tablet optimizations */
-        @media (min-width: 768px) and (max-width: 1023px) {
-            .grid.lg\\:grid-cols-2 {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
+            .space-y-4 > * + * {
+                margin-top: 1rem !important;
             }
         }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800">
 
-    <div class="flex flex-col md:flex-row min-h-screen">
-        <!-- Sidebar Navigation -->
-        <aside id="sidebar" class="w-full md:w-64 bg-slate-800 text-white p-3 md:p-4 space-y-2 flex-shrink-0 md:sticky md:top-0 md:h-screen md:overflow-y-auto">
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <header class="text-center mb-8">
             <div class="mb-4">
-                <a href="../index.html" class="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium w-full justify-center touch-manipulation">
+                <a href="../index.html" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
                     <span class="mr-2">←</span> Back to Main
                 </a>
             </div>
-            <h1 class="text-xl md:text-2xl font-bold text-amber-400">Penal Code Guide</h1>
-            <p class="text-xs text-slate-400 pb-2">Texas BPOC Training</p>
-            <nav id="main-nav" class="space-y-1">
-                <a href="#foundations" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700 touch-manipulation">Foundations</a>
-                <a href="#general-provisions" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700 touch-manipulation">General Provisions</a>
-                <a href="#criminal-responsibility" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700 touch-manipulation">Criminal Responsibility</a>
-                <a href="#offenses-persons" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700 touch-manipulation">Offenses Against Persons</a>
-                <a href="#offenses-property" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700 touch-manipulation">Offenses Against Property</a>
-                <a href="#public-order" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700 touch-manipulation">Public Order & Safety</a>
-                <a href="#offenses-children" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700 touch-manipulation">Offenses Involving Children</a>
-                <a href="#punishments" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700 touch-manipulation">Punishments & Enhancements</a>
-                <a href="#quiz" class="nav-link block w-full text-left p-2 rounded-md hover:bg-slate-700 touch-manipulation">Interactive Quiz</a>
-            </nav>
-        </aside>
+            <h1 class="text-4xl font-bold text-slate-800">Texas Penal Code</h1>
+            <p class="text-slate-600 mt-2">Study Guide for Law Enforcement</p>
+        </header>
 
-        <!-- Main Content -->
-        <main id="main-content" class="flex-1 p-3 md:p-8 overflow-y-auto">
-            <!-- Content will be injected here by JavaScript -->
+        <main class="space-y-8">
+            <!-- Section 1: Overview -->
+            <section id="overview" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">1. Penal Code Overview</h2>
+                <p class="mb-4">The Texas Penal Code defines criminal offenses and their punishments. It's organized into titles covering different aspects of criminal law.</p>
+                <div class="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                    <h4 class="font-bold text-blue-800">Key Titles</h4>
+                    <ul class="list-disc list-inside mt-2 text-sm space-y-1">
+                        <li>Title 1: Introductory Provisions</li>
+                        <li>Title 2: General Principles of Criminal Responsibility</li>
+                        <li>Title 3: Punishments</li>
+                        <li>Title 4: Inchoate Offenses</li>
+                        <li>Title 5: Offenses Against the Person</li>
+                        <li>Title 6: Offenses Against the Family</li>
+                        <li>Title 7: Offenses Against Property</li>
+                        <li>Title 8: Offenses Against Public Administration</li>
+                        <li>Title 9: Offenses Against Public Order and Decency</li>
+                        <li>Title 10: Offenses Against Public Health, Safety, and Morals</li>
+                        <li>Title 11: Organized Crime</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 2: Classifications -->
+            <section id="classifications" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">2. Offense Classifications</h2>
+                
+                <div class="space-y-4">
+                    <details class="border border-slate-200 rounded-lg">
+                        <summary class="bg-slate-50 p-4 font-semibold">Felonies</summary>
+                        <div class="p-4 border-t text-sm">
+                            <ul class="space-y-2">
+                                <li><strong>Capital Felony:</strong> Death penalty or life imprisonment without parole</li>
+                                <li><strong>First Degree Felony:</strong> Life imprisonment or 5-99 years and fine up to $10,000</li>
+                                <li><strong>Second Degree Felony:</strong> 2-20 years and fine up to $10,000</li>
+                                <li><strong>Third Degree Felony:</strong> 2-10 years and fine up to $10,000</li>
+                                <li><strong>State Jail Felony:</strong> 180 days to 2 years and fine up to $10,000</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="border border-slate-200 rounded-lg">
+                        <summary class="bg-slate-50 p-4 font-semibold">Misdemeanors</summary>
+                        <div class="p-4 border-t text-sm">
+                            <ul class="space-y-2">
+                                <li><strong>Class A Misdemeanor:</strong> Up to 1 year in jail and fine up to $4,000</li>
+                                <li><strong>Class B Misdemeanor:</strong> Up to 180 days in jail and fine up to $2,000</li>
+                                <li><strong>Class C Misdemeanor:</strong> Fine up to $500 (no jail time)</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <!-- Section 3: Key Offenses -->
+            <section id="key-offenses" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">3. Key Offenses</h2>
+                
+                <div class="space-y-4">
+                    <details class="border border-slate-200 rounded-lg">
+                        <summary class="bg-slate-50 p-4 font-semibold">Assault Offenses</summary>
+                        <div class="p-4 border-t text-sm">
+                            <ul class="space-y-2">
+                                <li><strong>Assault (22.01):</strong> Intentionally, knowingly, or recklessly causing bodily injury</li>
+                                <li><strong>Aggravated Assault (22.02):</strong> Serious bodily injury or use of deadly weapon</li>
+                                <li><strong>Sexual Assault (22.011):</strong> Non-consensual sexual contact</li>
+                                <li><strong>Aggravated Sexual Assault (22.021):</strong> Sexual assault with aggravating factors</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="border border-slate-200 rounded-lg">
+                        <summary class="bg-slate-50 p-4 font-semibold">Theft Offenses</summary>
+                        <div class="p-4 border-t text-sm">
+                            <ul class="space-y-2">
+                                <li><strong>Theft (31.03):</strong> Unlawfully appropriating property with intent to deprive</li>
+                                <li><strong>Burglary (30.02):</strong> Entering building without consent with intent to commit felony</li>
+                                <li><strong>Robbery (29.02):</strong> Theft with threat or use of force</li>
+                                <li><strong>Aggravated Robbery (29.03):</strong> Robbery with deadly weapon or serious bodily injury</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="border border-slate-200 rounded-lg">
+                        <summary class="bg-slate-50 p-4 font-semibold">Drug Offenses</summary>
+                        <div class="p-4 border-t text-sm">
+                            <ul class="space-y-2">
+                                <li><strong>Possession (Health & Safety Code):</strong> Controlled substance possession</li>
+                                <li><strong>Manufacture/Delivery:</strong> Making or distributing controlled substances</li>
+                                <li><strong>Possession with Intent:</strong> Possession with intent to distribute</li>
+                                <li><strong>Drug-Free Zones:</strong> Enhanced penalties near schools, playgrounds</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="border border-slate-200 rounded-lg">
+                        <summary class="bg-slate-50 p-4 font-semibold">Public Order Offenses</summary>
+                        <div class="p-4 border-t text-sm">
+                            <ul class="space-y-2">
+                                <li><strong>Public Intoxication (49.02):</strong> Appearing intoxicated in public</li>
+                                <li><strong>Disorderly Conduct (42.01):</strong> Unreasonable noise, fighting, etc.</li>
+                                <li><strong>Criminal Trespass (30.05):</strong> Entering/remaining on property without consent</li>
+                                <li><strong>Resisting Arrest (38.03):</strong> Preventing arrest or detention</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <!-- Section 4: Elements of Crimes -->
+            <section id="elements" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">4. Elements of Crimes</h2>
+                
+                <div class="space-y-4">
+                    <details class="border border-slate-200 rounded-lg">
+                        <summary class="bg-slate-50 p-4 font-semibold">Mental States (Culpability)</summary>
+                        <div class="p-4 border-t text-sm">
+                            <ul class="space-y-2">
+                                <li><strong>Intentionally:</strong> Conscious objective to cause the result</li>
+                                <li><strong>Knowingly:</strong> Aware that conduct will cause the result</li>
+                                <li><strong>Recklessly:</strong> Consciously disregards substantial risk</li>
+                                <li><strong>Criminal Negligence:</strong> Fails to perceive substantial risk</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="border border-slate-200 rounded-lg">
+                        <summary class="bg-slate-50 p-4 font-semibold">Proof Requirements</summary>
+                        <div class="p-4 border-t text-sm">
+                            <ul class="space-y-2">
+                                <li><strong>Actus Reus:</strong> The guilty act - what the defendant did</li>
+                                <li><strong>Mens Rea:</strong> The guilty mind - defendant's mental state</li>
+                                <li><strong>Causation:</strong> Connection between act and result</li>
+                                <li><strong>Concurrence:</strong> Mental state and act occurred together</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <!-- Section 5: Defenses -->
+            <section id="defenses" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">5. Defenses</h2>
+                
+                <div class="space-y-4">
+                    <details class="border border-slate-200 rounded-lg">
+                        <summary class="bg-slate-50 p-4 font-semibold">Justification Defenses</summary>
+                        <div class="p-4 border-t text-sm">
+                            <ul class="space-y-2">
+                                <li><strong>Self-Defense (9.32):</strong> Defense of person</li>
+                                <li><strong>Defense of Others (9.33):</strong> Protection of third persons</li>
+                                <li><strong>Defense of Property (9.41):</strong> Protection of property</li>
+                                <li><strong>Law Enforcement (9.51):</strong> Police use of force</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="border border-slate-200 rounded-lg">
+                        <summary class="bg-slate-50 p-4 font-semibold">Excuse Defenses</summary>
+                        <div class="p-4 border-t text-sm">
+                            <ul class="space-y-2">
+                                <li><strong>Insanity (8.01):</strong> Mental disease or defect</li>
+                                <li><strong>Intoxication (8.04):</strong> Voluntary or involuntary intoxication</li>
+                                <li><strong>Duress (8.05):</strong> Threat of imminent harm</li>
+                                <li><strong>Mistake of Fact (8.02):</strong> Reasonable mistake negating mental state</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <!-- Interactive Quiz Section -->
+            <section id="interactive-quiz" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">Interactive Quiz: Texas Penal Code</h2>
+                <p class="mb-6 text-slate-600">Test your knowledge of Texas Penal Code classifications, elements, and key offenses.</p>
+                
+                <div id="quiz-container" class="space-y-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="text-sm text-slate-600">
+                            Question <span id="current-question">1</span> of <span id="total-questions">10</span>
+                        </div>
+                        <div class="text-sm text-slate-600">
+                            Score: <span id="current-score">0</span>/<span id="questions-answered">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full bg-slate-200 rounded-full h-2 mb-6">
+                        <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    
+                    <div id="question-container" class="p-6 bg-slate-50 rounded-lg">
+                        <!-- Questions will be populated by JavaScript -->
+                    </div>
+                    
+                    <div id="explanation-container" class="hidden p-4 rounded-lg">
+                        <!-- Explanations will be shown after each answer -->
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <button id="prev-btn" class="px-4 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Previous
+                        </button>
+                        <button id="next-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Next Question
+                        </button>
+                    </div>
+                    
+                    <div id="quiz-results" class="hidden p-6 bg-slate-50 rounded-lg text-center">
+                        <h3 class="text-xl font-bold mb-4">Quiz Complete!</h3>
+                        <div id="final-score" class="text-3xl font-bold text-blue-600 mb-4"></div>
+                        <div id="performance-message" class="text-slate-600 mb-4"></div>
+                        <button id="restart-quiz" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            Retake Quiz
+                        </button>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
-<script>
-const contentDiv = document.getElementById('main-content');
-const navLinks = document.querySelectorAll('.nav-link');
-
-const data = {
-    foundations: {
-        title: "Foundations of the Penal Code",
-        description: "This section covers the fundamental principles of the Texas Penal Code, including the elements of an offense, the different levels of criminal culpability (mental states), and the types of legal defenses available.",
-        content: `
-            <div class="space-y-6">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Civil vs. Criminal Law</h3>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div class="p-4 bg-slate-50 rounded-lg">
-                            <h4 class="font-semibold text-slate-800">Civil Law</h4>
-                            <p class="text-sm mt-1">Defines personal & property rights of individuals. It addresses private injuries or wrongs (torts) where a person seeks redress. Any action other than criminal proceedings.</p>
-                            <p class="text-xs mt-2 text-slate-500">Examples: Divorce, child custody, protective orders, debt, personal damages.</p>
-                        </div>
-                        <div class="p-4 bg-slate-50 rounded-lg">
-                            <h4 class="font-semibold text-slate-800">Criminal Law</h4>
-                            <p class="text-sm mt-1">Law created to prevent harm to society. It declares what conduct is criminal and prescribes the punishment for such conduct. It is commonly codified into a Penal Code.</p>
-                            <p class="text-xs mt-2 text-slate-500">Examples: Criminal trespass, murder, assault, theft.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Elements of an Offense (Corpus Delicti)</h3>
-                    <p class="mb-4">For an act to be a crime, the prosecution must prove each "element of the offense" beyond a reasonable doubt. This is also known as the <span class="font-semibold">corpus delicti</span>, or "body of the crime."</p>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div class="p-4 bg-amber-50 border-l-4 border-amber-400"><strong>1. The Forbidden Conduct:</strong> The specific act or omission prohibited by the law (e.g., causing injury, taking property).</div>
-                        <div class="p-4 bg-amber-50 border-l-4 border-amber-400"><strong>2. The Required Culpability:</strong> The specific mental state required for the offense (Intentionally, Knowingly, Recklessly, or with Criminal Negligence).</div>
-                        <div class="p-4 bg-amber-50 border-l-4 border-amber-400"><strong>3. Any Required Result:</strong> The outcome of the conduct (e.g., a death in a homicide, a specific monetary loss in a theft).</div>
-                        <div class="p-4 bg-amber-50 border-l-4 border-amber-400"><strong>4. The Negation of Any Exception:</strong> The prosecution must prove that the defendant's conduct does not fall within a legal exception to the offense.</div>
-                    </div>
-                </div>
-                
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Voluntary Act & Culpability Requirement (Sec 6.01, 6.02)</h3>
-                    <p class="mb-2">Two core principles underpin all criminal offenses:</p>
-                     <ul class="list-disc list-inside space-y-2 text-sm">
-                        <li><strong>Voluntary Act:</strong> A person commits an offense only if they voluntarily engage in conduct (an act, omission, or possession). Possession is voluntary if the person knowingly obtains the item or is aware of control long enough to terminate it. An omission (failure to act) is only an offense if a law imposes a duty to act.</li>
-                        <li><strong>Culpability Requirement:</strong> A person does not commit an offense unless they act with a specific mental state (Intentionally, Knowingly, Recklessly, or with Criminal Negligence) as required by the definition of the offense. If a law doesn't specify a mental state, one is still required unless the law "plainly dispenses" with it. If not specified, Recklessness is the minimum required mental state.</li>
-                    </ul>
-                </div>
-
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Culpable Mental States Defined (Sec 6.03)</h3>
-                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr>
-                                    <th class="border-b-2 p-3 bg-slate-100">Mental State</th>
-                                    <th class="border-b-2 p-3 bg-slate-100">Definition</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td class="border-b p-3"><strong>Intentionally</strong></td><td class="border-b p-3">A person's conscious objective or desire to engage in the conduct or cause the result.</td></tr>
-                                <tr><td class="border-b p-3"><strong>Knowingly</strong></td><td class="border-b p-3">A person is aware of the nature of their conduct or that circumstances exist. They are aware their conduct is <span class="font-semibold">reasonably certain</span> to cause the result.</td></tr>
-                                <tr><td class="border-b p-3"><strong>Recklessly</strong></td><td class="border-b p-3">A person is aware of but <span class="font-semibold">consciously disregards</span> a substantial and unjustifiable risk. This disregard is a <span class="font-semibold">gross deviation</span> from the standard of care of an ordinary person.</td></tr>
-                                <tr><td class="p-3"><strong>Criminal Negligence</strong></td><td class="p-3">A person <span class="font-semibold">ought to be aware</span> of a substantial and unjustifiable risk. The failure to perceive it is a <span class="font-semibold">gross deviation</span> from the standard of care of an ordinary person.</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Burden of Proof & Defenses</h3>
-                    <p class="mb-4">In the criminal justice system, the burden of proof lies with the prosecution. All persons are presumed innocent until proven guilty.</p>
-                    <div class="space-y-4">
-                        <details class="p-4 bg-slate-50 rounded-lg">
-                           <summary class="font-semibold">Proof Beyond a Reasonable Doubt (Sec 2.01)</summary>
-                           <div class="mt-2 text-sm">
-                             <p>This is the highest legal standard of proof. The prosecution must prove every element of the offense to this standard. It is not a mere possible doubt, but a real doubt based on reason and common sense after considering all evidence. An arrest or indictment is not an inference of guilt.</p>
-                           </div>
-                        </details>
-                        <details class="p-4 bg-slate-50 rounded-lg">
-                           <summary class="font-semibold">Exception (Sec 2.02)</summary>
-                           <div class="mt-2 text-sm">
-                             <p>An exception is a condition defined in the law (e.g., "It is an exception to the application of...").</p>
-                             <ul class="list-disc list-inside mt-2">
-                               <li><strong>Burden on Prosecution:</strong> The prosecutor must negate the existence of the exception in the accusation and prove beyond a reasonable doubt that the defendant's conduct does not fall within it.</li>
-                             </ul>
-                           </div>
-                        </details>
-                        <details class="p-4 bg-slate-50 rounded-lg">
-                           <summary class="font-semibold">Defense (Sec 2.03)</summary>
-                           <div class="mt-2 text-sm">
-                             <p>A defense is a legal reason why the defendant should not be held liable (e.g., "It is a defense to prosecution...").</p>
-                              <ul class="list-disc list-inside mt-2">
-                               <li><strong>Burden on Defense (to raise):</strong> The defense must admit evidence to support the claim.</li>
-                               <li><strong>Burden on Prosecution (to disprove):</strong> If the defense is submitted to the jury, the court will charge that a reasonable doubt on the issue requires the defendant be acquitted. The prosecution must disprove the defense beyond a reasonable doubt.</li>
-                             </ul>
-                           </div>
-                        </details>
-                         <details class="p-4 bg-slate-50 rounded-lg">
-                           <summary class="font-semibold">Affirmative Defense (Sec 2.04)</summary>
-                           <div class="mt-2 text-sm">
-                              <p>An affirmative defense is one where the defendant admits to the conduct but offers a reason to be excused from guilt (e.g., "It is an affirmative defense to prosecution..."). Examples include Insanity and Duress.</p>
-                              <ul class="list-disc list-inside mt-2">
-                               <li><strong>Burden on Defense:</strong> The defense must not only raise the issue but also prove it by a <span class="font-bold">preponderance of the evidence</span> (meaning it is more likely than not to be true). The prosecution does not have to negate it.</li>
-                             </ul>
-                           </div>
-                        </details>
-                    </div>
-                </div>
-            </div>
-        `
-    },
-    'general-provisions': {
-        title: "General Provisions (Title 1)",
-        description: "This section covers the overarching rules that govern the Penal Code, including its objectives, where it applies (jurisdiction), definitions of key terms, and rules for handling multiple offenses.",
-        content: `
-             <div class="space-y-6">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Objectives & Effect of the Code (Sec 1.02, 1.03)</h3>
-                    <p>The Penal Code aims to ensure public safety by establishing prohibitions and penalties that deter criminal behavior and rehabilitate offenders. It provides fair warning of what conduct is criminal and seeks to prevent arbitrary or oppressive treatment. Conduct is not an offense unless defined by statute, ordinance, or authorized rule.</p>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Territorial Jurisdiction (Sec 1.04)</h3>
-                    <p class="mb-2">Texas has jurisdiction over an offense if:</p>
-                    <ul class="list-disc list-inside space-y-1">
-                        <li>The conduct or a result of the conduct occurs within the state.</li>
-                        <li>Conduct outside the state is an attempt to commit an offense inside the state.</li>
-                        <li>Conduct outside the state is a conspiracy to commit an offense in the state, and an act in furtherance of the conspiracy occurs in the state.</li>
-                    </ul>
-                    <p class="text-sm mt-2">For homicide, a "result" can be the physical impact or the death itself. If a body is found in Texas, it's presumed the death occurred here.</p>
-                </div>
-                 <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Key Legal Definitions (Sec 1.07)</h3>
-                    <p class="mb-4">The Penal Code defines many terms. Click on a term to see its official definition.</p>
-                    <div class="space-y-2">
-                        <details><summary class="font-semibold p-2 rounded hover:bg-slate-100">Person, Actor, Individual</summary><div class="p-3 bg-slate-50 rounded-b-lg text-sm border-l-2 border-slate-300 ml-2"><strong>Person:</strong> An individual, corporation, or association. <strong>Actor:</strong> The person whose criminal responsibility is at issue (the suspect). <strong>Individual:</strong> A human being who is alive, including an unborn child.</div></details>
-                        <details><summary class="font-semibold p-2 rounded hover:bg-slate-100">Conduct, Act, Omission</summary><div class="p-3 bg-slate-50 rounded-b-lg text-sm border-l-2 border-slate-300 ml-2"><strong>Conduct:</strong> An act or omission and its accompanying mental state. <strong>Act:</strong> A bodily movement, whether voluntary or involuntary, and includes speech. <strong>Omission:</strong> A failure to act.</div></details>
-                        <details><summary class="font-semibold p-2 rounded hover:bg-slate-100">Bodily Injury & Serious Bodily Injury</summary><div class="p-3 bg-slate-50 rounded-b-lg text-sm border-l-2 border-slate-300 ml-2"><strong>Bodily Injury (BI):</strong> Pain, illness, or any impairment of physical condition. <strong>Serious Bodily Injury (SBI):</strong> Bodily injury that creates a substantial risk of death, causes death, serious permanent disfigurement, or protracted loss or impairment of any bodily member or organ.</div></details>
-                        <details><summary class="font-semibold p-2 rounded hover:bg-slate-100">Consent & Effective Consent</summary><div class="p-3 bg-slate-50 rounded-b-lg text-sm border-l-2 border-slate-300 ml-2"><strong>Consent:</strong> Assent in fact, whether express or apparent. <strong>Effective Consent:</strong> Consent by a person legally authorized to act for the owner. Consent is NOT effective if induced by force, threat, or fraud; given by someone known to be unable to make reasonable decisions (due to youth, mental defect, or intoxication); or given by someone without legal authority.</div></details>
-                        <details><summary class="font-semibold p-2 rounded hover:bg-slate-100">Possession & Public Place</summary><div class="p-3 bg-slate-50 rounded-b-lg text-sm border-l-2 border-slate-300 ml-2"><strong>Possession:</strong> Actual care, custody, control, or management. <strong>Public Place:</strong> Any place the public or a substantial group of the public has access to, including streets, highways, and common areas of schools, hospitals, apartments, etc.</div></details>
-                        <details><summary class="font-semibold p-2 rounded hover:bg-slate-100">Public Servant</summary><div class="p-3 bg-slate-50 rounded-b-lg text-sm border-l-2 border-slate-300 ml-2">An officer, employee, or agent of government; a juror; an arbitrator; an attorney or notary performing a government function; or a candidate for public office.</div></details>
-                         <details><summary class="font-semibold p-2 rounded hover:bg-slate-100">Pecuniary</summary><div class="p-3 bg-slate-50 rounded-b-lg text-sm border-l-2 border-slate-300 ml-2">Related to a dollar amount or value of money. Used in property offenses.</div></details>
-                    </div>
-                 </div>
-                 <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Multiple Prosecutions (Chapter 3)</h3>
-                    <p class="mb-2">This chapter outlines how the state can handle cases where a defendant has committed multiple offenses.</p>
-                     <ul class="list-disc list-inside space-y-2 text-sm">
-                        <li><strong>Criminal Episode (Sec 3.01):</strong> The commission of two or more offenses that are part of the same transaction or a common scheme or plan.</li>
-                        <li><strong>Consolidation and Joinder (Sec 3.02):</strong> A defendant may be prosecuted for all offenses arising from the same criminal episode in a single trial.</li>
-                        <li><strong>Sentencing (Sec 3.03):</strong> If found guilty of multiple offenses in a single trial, sentences for each offense are pronounced. Generally, sentences run concurrently (at the same time), but there are exceptions.</li>
-                        <li><strong>Severance (Sec 3.04):</strong> A defendant has a right to request that joined offenses be tried separately (severance). If granted, sentences may run concurrently or consecutively (one after the other) at the court's discretion.</li>
-                    </ul>
-                </div>
-            </div>
-        `
-    },
-    'criminal-responsibility': {
-        title: "Criminal Responsibility",
-        description: "This section explains how the law assigns criminal responsibility, including situations where a person is responsible for another's conduct (parties to an offense) and the general defenses that can negate responsibility.",
-        content: `
-             <div class="space-y-6">
-                 <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Responsibility for Conduct of Another (Chapter 7)</h3>
-                    <p class="mb-4">A person can be held criminally responsible for an offense committed by another person. This is known as being a "party" to the offense.</p>
-                    <div class="space-y-3">
-                        <h4 class="font-semibold">A person is a party to an offense if they (Sec 7.02):</h4>
-                        <ul class="list-disc list-inside space-y-2 text-sm">
-                            <li>Act with the required culpability and cause or aid an innocent person to commit the offense.</li>
-                            <li>Act with intent to promote or assist the offense and solicit, encourage, direct, aid, or attempt to aid the other person to commit it.</li>
-                            <li>Have a legal duty to prevent the offense, but fail to make a reasonable effort to do so with the intent to promote or assist its commission.</li>
-                        </ul>
-                        <div class="p-3 bg-amber-100 border-l-4 border-amber-500 text-amber-800 rounded-r-lg">
-                            <p><strong>Conspiracy Rule:</strong> If, during an attempt to carry out a conspiracy to commit one felony, another felony is committed by one of the conspirators, all conspirators are guilty of the second felony if it was committed in furtherance of the unlawful purpose and was a result that should have been anticipated.</p>
-                        </div>
-                        <h4 class="font-semibold mt-4">Defenses Excluded (Sec 7.03):</h4>
-                        <p class="text-sm">It is NOT a defense to being a party to an offense that the other person (the primary actor) has been acquitted, has not been prosecuted, or has been convicted of a different offense.</p>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">General Defenses to Criminal Responsibility (Chapter 8)</h3>
-                    <p class="mb-4">This section details specific defenses and affirmative defenses. Remember the difference: a 'defense' must be disproven by the prosecution, while an 'affirmative defense' must be proven by the defense.</p>
-                     <div class="space-y-2">
-                        <details><summary class="font-semibold p-2 rounded hover:bg-slate-100">Insanity (Affirmative Defense, Sec 8.01)</summary><div class="p-3 bg-slate-50 rounded-b-lg text-sm border-l-2 border-slate-300 ml-2">It is an affirmative defense that, at the time of the conduct, the actor, as a result of a <span class="font-semibold">severe mental disease or defect</span>, did not know that their conduct was wrong. This does not include an abnormality manifested only by repeated criminal or antisocial conduct.</div></details>
-                        <details><summary class="font-semibold p-2 rounded hover:bg-slate-100">Mistake of Fact (Defense, Sec 8.02)</summary><div class="p-3 bg-slate-50 rounded-b-lg text-sm border-l-2 border-slate-300 ml-2">It is a defense that the actor, through mistake, formed a reasonable belief about a matter of fact, if this mistaken belief negated the required culpability for the offense. However, they may be convicted of any lesser included offense for which they would be guilty if the fact were as they believed.</div></details>
-                        <details><summary class="font-semibold p-2 rounded hover:bg-slate-100">Mistake of Law (Affirmative Defense, Sec 8.03)</summary><div class="p-3 bg-slate-50 rounded-b-lg text-sm border-l-2 border-slate-300 ml-2">Ignorance of the law is NOT a defense. However, it is an affirmative defense if the actor reasonably believed the conduct was not a crime because they acted in reasonable reliance on an official written statement of the law (e.g., from a court or administrative agency).</div></details>
-                        <details><summary class="font-semibold p-2 rounded hover:bg-slate-100">Intoxication (Sec 8.04)</summary><div class="p-3 bg-slate-50 rounded-b-lg text-sm border-l-2 border-slate-300 ml-2"><span class="font-semibold">Voluntary intoxication is NOT a defense</span> to the commission of a crime. Evidence of temporary insanity caused by intoxication may be introduced only in the <span class="font-semibold">mitigation of the penalty</span> (punishment phase).</div></details>
-                        <details><summary class="font-semibold p-2 rounded hover:bg-slate-100">Duress (Affirmative Defense, Sec 8.05)</summary><div class="p-3 bg-slate-50 rounded-b-lg text-sm border-l-2 border-slate-300 ml-2">It is an affirmative defense that the actor engaged in the conduct because they were <span class="font-semibold">compelled to do so by threat of imminent death or SBI</span> to themselves or another. The threat must be one that a person of reasonable firmness would be unable to resist. This defense is unavailable if the actor intentionally, knowingly, or recklessly placed themselves in that situation.</div></details>
-                        <details><summary class="font-semibold p-2 rounded hover:bg-slate-100">Entrapment (Defense, Sec 8.06)</summary><div class="p-3 bg-slate-50 rounded-b-lg text-sm border-l-2 border-slate-300 ml-2">It is a defense that the actor committed the offense because they were <span class="font-semibold">induced to do so by a law enforcement agent</span> using persuasion or other means likely to cause a person to commit the offense. Merely affording an opportunity to commit an offense does not constitute entrapment.</div></details>
-                     </div>
-                </div>
-                 <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Age Affecting Criminal Responsibility (Sec 8.07)</h3>
-                    <p class="mb-2">Age determines when a person can be held criminally responsible as an adult.</p>
-                     <ul class="list-disc list-inside space-y-2 text-sm">
-                        <li><strong>Under 15:</strong> A person cannot be prosecuted for an offense committed when younger than 15, with specific exceptions (e.g., perjury, certain traffic violations, or serious felonies where the juvenile court waives jurisdiction for a 14-year-old).</li>
-                        <li><strong>10 to 14:</strong> For fine-only offenses, a child in this age range is presumed incapable of committing the offense unless the prosecution proves by a preponderance of the evidence that the child had sufficient capacity to know the conduct was wrong.</li>
-                        <li><strong>Under 17:</strong> A person cannot be prosecuted for an offense committed before age 17 unless the juvenile court waives jurisdiction and certifies them as an adult.</li>
-                        <li><strong>Under 18:</strong> No person can be punished by death for an offense committed while younger than 18.</li>
-                     </ul>
-                </div>
-            </div>
-        `
-    },
-    'offenses-persons': {
-        title: "Offenses Against Persons",
-        description: "This section details crimes committed directly against another individual, focusing on assaultive offenses and robbery. These offenses often involve physical harm or the threat of harm.",
-        content: `
-            <div class="space-y-6">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Assault (Sec. 22.01)</h3>
-                    <div class="grid md:grid-cols-3 gap-4">
-                        <div class="p-4 bg-slate-100 rounded-lg">
-                            <h4 class="font-bold">Assault Causing Bodily Injury (BI)</h4>
-                            <p>I/K/R causes bodily injury.</p>
-                            <p class="font-bold text-red-600 mt-2">Class A Misdemeanor</p>
-                        </div>
-                        <div class="p-4 bg-slate-100 rounded-lg">
-                            <h4 class="font-bold">Assault by Threat</h4>
-                            <p>I/K threatens imminent BI.</p>
-                            <p class="font-bold text-orange-600 mt-2">Class C Misdemeanor</p>
-                        </div>
-                        <div class="p-4 bg-slate-100 rounded-lg">
-                            <h4 class="font-bold">Assault by Contact</h4>
-                            <p>I/K causes offensive contact.</p>
-                            <p class="font-bold text-orange-600 mt-2">Class C Misdemeanor</p>
-                        </div>
-                    </div>
-                    <h4 class="text-lg font-bold mt-6 mb-3">Key Assault Enhancements</h4>
-                    <ul class="list-disc list-inside space-y-2">
-                        <li><strong>Assault w/ BI becomes a 3rd Degree Felony if:</strong>
-                            <ul class="list-['-_'] list-inside ml-4">
-                                <li>Against a Public Servant on duty.</li>
-                                <li>Family Violence + Prior FV Conviction.</li>
-                                <li>Family Violence + Impeding Breathing (choking). <span class="font-semibold">(Becomes 2nd Degree with prior FV).</span></li>
-                                <li>Against EMS, correctional, or security personnel on duty.</li>
-                            </ul>
-                        </li>
-                        <li><strong>Assault by Contact becomes a Class A Misdemeanor if:</strong> Committed against an Elderly Individual (65+).</li>
-                        <li><strong>Assault by Threat/Contact becomes a Class B Misdemeanor if:</strong> Committed by a non-participant against a sports participant (e.g., referee).</li>
-                    </ul>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">The Robbery Equation</h3>
-                    <div class="space-y-4">
-                        <div class="p-4 border border-slate-300 rounded-lg">
-                            <p><span class="font-bold text-xl">Robbery</span> <span class="text-slate-500">(2nd Degree Felony)</span></p>
-                            <div class="flex items-center mt-2 flex-wrap gap-2">
-                                <div class="p-2 bg-slate-200 rounded-md">Theft</div>
-                                <div class="font-bold text-2xl">+</div>
-                                <div class="p-2 bg-red-100 rounded-md">Causing BI</div>
-                                <div class="font-bold text-xl">OR</div>
-                                <div class="p-2 bg-orange-100 rounded-md">Threat of Imminent BI</div>
-                            </div>
-                        </div>
-                        <div class="p-4 border border-red-400 bg-red-50 rounded-lg">
-                            <p><span class="font-bold text-xl">Aggravated Robbery</span> <span class="text-slate-500">(1st Degree Felony)</span></p>
-                            <div class="flex items-center mt-2 flex-wrap gap-2">
-                                <div class="p-2 bg-slate-200 rounded-md">Robbery</div>
-                                <div class="font-bold text-2xl">+</div>
-                                <div class="p-2 bg-red-200 rounded-md">Causing SBI</div>
-                                <div class="font-bold text-xl">OR</div>
-                                <div class="p-2 bg-red-200 rounded-md">Display of Deadly Weapon</div>
-                                <div class="font-bold text-xl">OR</div>
-                                <div class="p-2 bg-red-200 rounded-md">Victim is Elderly/Disabled</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">The Self Defense Test</h3>
-                    <p class="mb-2">Force is justified if it meets these four requirements:</p>
-                    <ol class="list-decimal list-inside space-y-1 mb-4">
-                        <li>The force is <strong>Immediately Necessary</strong>.</li>
-                        <li>The actor <strong>Knows</strong> the suspect is unlawfully entering/removing from an occupied habitation, vehicle, or workplace; OR is committing a major violent felony (agg. kidnapping, murder, sexual assault).</li>
-                        <li>The actor <strong>did not provoke</strong> the person.</li>
-                        <li>The actor was <strong>not engaged in criminal activity</strong> (other than a Class C offense).</li>
-                    </ol>
-                    <h4 class="font-semibold text-red-700">Force is NOT Justified When:</h4>
-                    <ul class="list-disc list-inside space-y-1 mt-2">
-                        <li>Used against verbal provocation alone.</li>
-                        <li>Resisting a lawful arrest or search by a peace officer.</li>
-                        <li>The actor consented to the exact force used.</li>
-                        <li>The actor provoked the other's use of force (unless they clearly abandon the encounter).</li>
-                    </ul>
-                </div>
-            </div>
-        `
-    },
-    'offenses-property': {
-        title: "Offenses Against Property",
-        description: "This module explores crimes where the primary target is property. The severity of these offenses, such as Theft and Criminal Mischief, is most often determined by the monetary value of the property stolen or damaged.",
-        content: `
-            <div class="space-y-6">
-                 <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Theft Offense Levels</h3>
-                    <p class="mb-4">Theft is graded by the value of the property stolen. This chart shows the value thresholds that escalate the offense level.</p>
-                    <div class="chart-container"><canvas id="theftChart"></canvas></div>
-                    <div class="mt-4 p-3 bg-slate-100 rounded-lg text-sm">
-                        <p><strong>State Jail Felony Enhancements:</strong> The offense is automatically a State Jail Felony, regardless of value, if the item stolen is a Firearm, taken from a corpse/grave, or from the person of another.</p>
-                    </div>
-                </div>
-                 <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Criminal Mischief Levels</h3>
-                    <p class="mb-4">Criminal Mischief is graded by the pecuniary (monetary) loss caused. Note the special circumstances that can enhance the charge.</p>
-                    <div class="chart-container"><canvas id="mischiefChart"></canvas></div>
-                     <div class="mt-4 p-3 bg-slate-100 rounded-lg text-sm">
-                        <p><strong>State Jail Felony Enhancements:</strong> The offense is enhanced if damage (loss > $750) is to a place of worship, burial site, school, or community center, or if a habitation is damaged by a firearm/explosive weapon.</p>
-                    </div>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Arson & Other Property Damage</h3>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div>
-                            <h4 class="font-bold text-lg">Arson</h4>
-                            <ul class="list-disc list-inside mt-2 space-y-1">
-                                <li><strong>Act:</strong> Intentionally starts fire/explosion to destroy/damage property.</li>
-                                <li><strong>Culpability:</strong> Can also be Reckless if it endangers life/property.</li>
-                                <li><strong>Enhancements:</strong> Higher penalty if it's a habitation or place of worship, or if BI/death occurs.</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg">Graffiti</h4>
-                             <ul class="list-disc list-inside mt-2 space-y-1">
-                                <li><strong>Act:</strong> Intentionally/knowingly makes markings (paint, marker, etching) on property without consent.</li>
-                                <li><strong>Penalty:</strong> Graded similarly to Criminal Mischief based on damage amount.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `
-    },
-    'public-order': {
-        title: "Public Order & Safety",
-        description: "These laws are designed to maintain public peace, safety, and order. This section covers offenses like Disorderly Conduct, DWI, and illegal weapon use, which disrupt the community.",
-        content: `
-             <div class="space-y-6">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Disorderly Conduct (Sec. 42.01)</h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead><tr><th class="p-3 bg-slate-100 border-b-2">Act</th><th class="p-3 bg-slate-100 border-b-2">Breach Type</th><th class="p-3 bg-slate-100 border-b-2">Offense Level</th></tr></thead>
-                            <tbody>
-                                <tr><td class="p-3 border-b">Abusive/Threatening Language</td><td class="p-3 border-b">Incites immediate breach of peace</td><td class="p-3 border-b">Class C</td></tr>
-                                <tr><td class="p-3 border-b">Offensive Gesture/Display</td><td class="p-3 border-b">Incites immediate breach of peace</td><td class="p-3 border-b">Class C</td></tr>
-                                <tr><td class="p-3 border-b">Unreasonable Noise</td><td class="p-3 border-b">>85 decibels with notice</td><td class="p-3 border-b">Class C</td></tr>
-                                <tr><td class="p-3 border-b">Fighting</td><td class="p-3 border-b">In public</td><td class="p-3 border-b">Class C</td></tr>
-                                <tr><td class="p-3 border-b">Discharging Firearm</td><td class="p-3 border-b">In public (not road/range)</td><td class="p-3 border-b">Class B</td></tr>
-                                <tr><td class="p-3 border-b">Displaying Deadly Weapon</td><td class="p-3 border-b">To cause alarm</td><td class="p-3 border-b">Class B</td></tr>
-                                <tr><td class="p-3">Exposing Anus/Genitals</td><td class="p-3">Recklessly offends/alarms</td><td class="p-3">Class C</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Interactive Unlawful Carry (UCW) Flowcharts</h3>
-                    <p class="mb-4">Click through the nodes to determine if carrying a handgun is lawful under two common scenarios. Your selections will highlight the logical path.</p>
-                    <div class="grid lg:grid-cols-2 gap-8">
-                        <!-- UCW Flowchart 1: Public Carry -->
-                        <div id="ucw-public-flowchart" class="p-4 bg-slate-100 rounded-lg space-y-2">
-                             <h4 class="font-bold text-center mb-2">UCW Flowchart 1: Public Carry</h4>
-                             <div data-ucw-pub="start" class="flowchart-node p-3 bg-white rounded-lg border-2 border-slate-400 shadow text-center">Person with handgun in public</div>
-                             <div class="flowchart-connector h-4"></div>
-                             <div class="flowchart-choice text-center" data-ucw-pub-q="age">
-                                <p class="text-sm font-semibold mb-1">Are they 21 or older?</p>
-                                <div class="flex justify-center gap-4">
-                                    <div data-ucw-pub-a="yes" class="p-2 bg-white rounded-md border-2 border-slate-400">Yes</div>
-                                    <div data-ucw-pub-a="no" class="p-2 bg-white rounded-md border-2 border-slate-400">No</div>
-                                </div>
-                             </div>
-                             <div class="flowchart-connector h-4" data-ucw-pub-c="premises"></div>
-                             <div class="flowchart-choice text-center hidden" data-ucw-pub-q="premises">
-                                <p class="text-sm font-semibold mb-1">Own premises/vehicle?</p>
-                                <div class="flex justify-center gap-4">
-                                    <div data-ucw-pub-a="yes" class="p-2 bg-white rounded-md border-2 border-slate-400">Yes</div>
-                                    <div data-ucw-pub-a="no" class="p-2 bg-white rounded-md border-2 border-slate-400">No</div>
-                                </div>
-                             </div>
-                             <div class="flowchart-connector h-4" data-ucw-pub-c="conviction"></div>
-                             <div class="flowchart-choice text-center hidden" data-ucw-pub-q="conviction">
-                                <p class="text-sm font-semibold mb-1">Assaultive conviction in last 5 yrs?</p>
-                                <div class="flex justify-center gap-4">
-                                    <div data-ucw-pub-a="yes" class="p-2 bg-white rounded-md border-2 border-slate-400">Yes</div>
-                                    <div data-ucw-pub-a="no" class="p-2 bg-white rounded-md border-2 border-slate-400">No</div>
-                                </div>
-                             </div>
-                              <div class="flowchart-connector h-4" data-ucw-pub-c="holster"></div>
-                             <div class="flowchart-choice text-center hidden" data-ucw-pub-q="holster">
-                                <p class="text-sm font-semibold mb-1">Displayed to public (not in holster)?</p>
-                                <div class="flex justify-center gap-4">
-                                    <div data-ucw-pub-a="yes" class="p-2 bg-white rounded-md border-2 border-slate-400">Yes</div>
-                                    <div data-ucw-pub-a="no" class="p-2 bg-white rounded-md border-2 border-slate-400">No</div>
-                                </div>
-                             </div>
-                             <div id="ucw-public-result" class="mt-4 p-3 bg-amber-100 rounded-lg text-center font-semibold hidden"></div>
-                        </div>
-                        <!-- UCW Flowchart 2: Vehicle Carry -->
-                        <div id="ucw-vehicle-flowchart" class="p-4 bg-slate-100 rounded-lg space-y-2">
-                             <h4 class="font-bold text-center mb-2">UCW Flowchart 2: Vehicle Carry</h4>
-                             <div data-ucw-veh="start" class="flowchart-node p-3 bg-white rounded-lg border-2 border-slate-400 shadow text-center">Handgun in vehicle/boat</div>
-                              <div class="flowchart-connector h-4"></div>
-                             <div class="flowchart-choice text-center" data-ucw-veh-q="prohibited">
-                                <p class="text-sm font-semibold mb-1">Prohibited by law from possessing?</p>
-                                <div class="flex justify-center gap-4">
-                                    <div data-ucw-veh-a="yes" class="p-2 bg-white rounded-md border-2 border-slate-400">Yes</div>
-                                    <div data-ucw-veh-a="no" class="p-2 bg-white rounded-md border-2 border-slate-400">No</div>
-                                </div>
-                             </div>
-                             <div class="flowchart-connector h-4" data-ucw-veh-c="crime"></div>
-                             <div class="flowchart-choice text-center hidden" data-ucw-veh-q="crime">
-                                <p class="text-sm font-semibold mb-1">Committing crime (> Class C traffic)?</p>
-                                <div class="flex justify-center gap-4">
-                                    <div data-ucw-veh-a="yes" class="p-2 bg-white rounded-md border-2 border-slate-400">Yes</div>
-                                    <div data-ucw-veh-a="no" class="p-2 bg-white rounded-md border-2 border-slate-400">No</div>
-                                </div>
-                             </div>
-                              <div class="flowchart-connector h-4" data-ucw-veh-c="view"></div>
-                             <div class="flowchart-choice text-center hidden" data-ucw-veh-q="view">
-                                <p class="text-sm font-semibold mb-1">Handgun in plain view?</p>
-                                <div class="flex justify-center gap-4">
-                                    <div data-ucw-veh-a="yes" class="p-2 bg-white rounded-md border-2 border-slate-400">Yes</div>
-                                    <div data-ucw-veh-a="no" class="p-2 bg-white rounded-md border-2 border-slate-400">No</div>
-                                </div>
-                             </div>
-                             <div class="flowchart-connector h-4" data-ucw-veh-c="holster"></div>
-                             <div class="flowchart-choice text-center hidden" data-ucw-veh-q="holster">
-                                <p class="text-sm font-semibold mb-1">Handgun in a holster?</p>
-                                <div class="flex justify-center gap-4">
-                                    <div data-ucw-veh-a="yes" class="p-2 bg-white rounded-md border-2 border-slate-400">Yes</div>
-                                    <div data-ucw-veh-a="no" class="p-2 bg-white rounded-md border-2 border-slate-400">No</div>
-                                </div>
-                             </div>
-                             <div id="ucw-vehicle-result" class="mt-4 p-3 bg-amber-100 rounded-lg text-center font-semibold hidden"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Interactive DWI Flowchart</h3>
-                    <p class="mb-4">Click through the nodes to follow the path of a DWI charge. The path you select will highlight, showing how different factors enhance the offense.</p>
-                    <div id="dwi-flowchart" class="p-4 bg-slate-100 rounded-lg space-y-4">
-                        <div data-step="1" class="flowchart-node p-4 bg-white rounded-lg border-2 border-slate-400 shadow text-center">Operating a motor vehicle in a public place... While Intoxicated</div>
-                        <div id="dwi-step-2" class="hidden text-center space-y-4">
-                            <div class="flex justify-center"><div class="w-px h-8 bg-slate-400"></div></div>
-                            <div class="flowchart-node p-4 bg-white rounded-lg border-2 border-red-500 shadow text-center font-semibold" data-step="2" data-base="true">Driving While Intoxicated</div>
-                            <div class="grid md:grid-cols-3 gap-4 items-start pt-4">
-                                <!-- Enhancements -->
-                                <div class="space-y-4">
-                                     <div class="flex justify-center"><div class="flowchart-connector h-8"></div></div>
-                                     <div data-step="2" data-path="bac" class="flowchart-node p-2 bg-white rounded-lg border-2 border-slate-400 shadow">BAC of 0.15 or Greater &rarr; Class A</div>
-                                     <div class="flex justify-center"><div class="flowchart-connector h-8"></div></div>
-                                     <div data-step="2" data-path="open" class="flowchart-node p-2 bg-white rounded-lg border-2 border-slate-400 shadow">Open Container &rarr; Class B (min 6 days)</div>
-                                     <div class="flex justify-center"><div class="flowchart-connector h-8"></div></div>
-                                     <div data-step="2" data-path="child" class="flowchart-node p-2 bg-white rounded-lg border-2 border-slate-400 shadow">Child Passenger (<15yo) &rarr; State Jail Felony</div>
-                                </div>
-                                <!-- Priors -->
-                                <div class="space-y-4">
-                                     <div class="flex justify-center"><div class="flowchart-connector h-8"></div></div>
-                                     <div data-step="2" data-path="priors" class="flowchart-node p-2 bg-white rounded-lg border-2 border-slate-400 shadow">Prior Convictions</div>
-                                     <div id="dwi-priors-options" class="hidden space-y-2 pl-4 border-l-2 mt-4">
-                                        <div data-step="3" data-path="prior-1" class="flowchart-node p-2 bg-white rounded-lg border-2 border-slate-400 shadow">1 Prior &rarr; Class A</div>
-                                        <div data-step="3" data-path="prior-2" class="flowchart-node p-2 bg-white rounded-lg border-2 border-slate-400 shadow">2+ Priors &rarr; 3rd Degree</div>
-                                     </div>
-                                </div>
-                                <!-- Injury/Death -->
-                                <div class="space-y-4">
-                                    <div class="flex justify-center"><div class="flowchart-connector h-8"></div></div>
-                                    <div data-step="2" data-path="injury" class="flowchart-node p-2 bg-white rounded-lg border-2 border-slate-400 shadow">Causes SBI &rarr; Intox. Assault (3rd Degree)</div>
-                                    <div class="flex justify-center"><div class="flowchart-connector h-8"></div></div>
-                                    <div data-step="2" data-path="death" class="flowchart-node p-2 bg-white rounded-lg border-2 border-slate-400 shadow">Causes Death &rarr; Intox. Manslaughter (2nd Degree)</div>
-                                </div>
-                            </div>
-                             <div id="dwi-result" class="mt-4 p-3 bg-amber-100 rounded-lg text-center font-semibold hidden"></div>
-                        </div>
-                    </div>
-                </div>
-                 <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Interference Offenses</h3>
-                     <div class="grid md:grid-cols-2 gap-4">
-                        <div class="p-4 bg-slate-50 rounded-lg"><strong>Resisting Arrest/Search/Transport:</strong> Intentionally using force to prevent LE. (Class A / 3rd Degree if DW used).</div>
-                        <div class="p-4 bg-slate-50 rounded-lg"><strong>Evading Arrest/Detention:</strong> Intentionally fleeing from LE. (Class A / State Jail+ for priors/vehicle).</div>
-                        <div class="p-4 bg-slate-50 rounded-lg"><strong>Hindering Apprehension:</strong> Harboring, concealing, or warning a fugitive. (Class A / 3rd Degree for felony fugitive).</div>
-                        <div class="p-4 bg-slate-50 rounded-lg"><strong>Interference with Public Duties:</strong> With criminal negligence, impeding a public servant. (Class B).</div>
-                    </div>
-                 </div>
-             </div>
-        `
-    },
-    'offenses-children': {
-        title: "Offenses Involving Children",
-        description: "This module consolidates offenses where the age of a child is a critical element, either defining the crime or enhancing its penalty. These laws provide special protections for minors.",
-        content: `
-             <div class="space-y-6">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Age Application in Key Offenses</h3>
-                    <p class="mb-4">Many offenses are defined or enhanced based on the victim's age. This table provides a quick reference.</p>
-                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead><tr><th class="p-3 bg-slate-100 border-b-2">Offense</th><th class="p-3 bg-slate-100 border-b-2">Applicable Child Age</th></tr></thead>
-                             <tbody>
-                                <tr><td class="p-3 border-b">Capital Murder</td><td class="p-3 border-b">Victim is 9 or under</td></tr>
-                                <tr><td class="p-3 border-b">Injury to a Child / Abandoning Child</td><td class="p-3 border-b">14 or under</td></tr>
-                                <tr><td class="p-3 border-b">DWI with Child Passenger</td><td class="p-3 border-b">Under 15</td></tr>
-                                <tr><td class="p-3 border-b">Indecency with a Child / Sexual Abuse</td><td class="p-3 border-b">16 or under</td></tr>
-                                <tr><td class="p-3 border-b">Making Firearm Accessible to a Child</td><td class="p-3 border-b">16 or under</td></tr>
-                                <tr><td class="p-3 border-b">Sexual Performance by a Child / Child Pornography</td><td class="p-3 border-b">17 or under</td></tr>
-                             </tbody>
-                        </table>
-                     </div>
-                </div>
-                 <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Pornography & Obscenity Offenses</h3>
-                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead><tr><th class="p-3 bg-slate-100 border-b-2">Offense</th><th class="p-3 bg-slate-100 border-b-2">Elements</th><th class="p-3 bg-slate-100 border-b-2">Offense Level</th></tr></thead>
-                            <tbody>
-                                <tr>
-                                    <td class="p-3 border-b">Obscenity</td><td class="p-3 border-b">Promoting or possessing obscene material.</td><td class="p-3 border-b">Starts at Class A, up to 2nd Degree.</td>
-                                </tr>
-                                 <tr>
-                                    <td class="p-3 border-b">Sexual Performance by a Child</td><td class="p-3 border-b">Involving a child in a sexual performance.</td><td class="p-3 border-b">3rd/2nd Degree, enhanced if child < 14.</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-3 border-b">Possession/Promotion of Child Pornography</td><td class="p-3 border-b">Possessing, viewing, or promoting material of a child in sexual conduct.</td><td class="p-3 border-b">Possession: 3rd Degree. Promotion: 2nd Degree.</td>
-                                </tr>
-                                 <tr>
-                                    <td class="p-3">Unlawful Disclosure of Intimate Visual Material</td><td class="p-3">"Revenge porn" - disclosing private images without consent.</td><td class="p-3">State Jail Felony.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                     </div>
-                </div>
-             </div>
-        `
-    },
-    'punishments': {
-        title: "Punishments & Enhancements",
-        description: "This section details the classification of offenses and the standard punishments. It also covers the various ways penalties can be enhanced based on prior convictions or specific circumstances of the offense.",
-        content: `
-             <div class="space-y-6">
-                 <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Classification of Offenses (Chapter 12)</h3>
-                    <div class="grid md:grid-cols-2 gap-4 text-sm">
-                        <div><h4 class="font-semibold mb-1">Misdemeanors (Sec 12.03)</h4><p>Classified as Class A, B, or C. An offense designated a misdemeanor without a specific category is a Class C. A Class C conviction imposes no legal disability.</p></div>
-                        <div><h4 class="font-semibold mb-1">Felonies (Sec 12.04)</h4><p>Classified as Capital, 1st Degree, 2nd Degree, 3rd Degree, or State Jail Felony. An offense designated a felony without a specific category is a State Jail Felony.</p></div>
-                    </div>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Ordinary Punishments</h3>
-                     <p class="mb-4">This chart visually represents the confinement ranges for different offense levels. Longer bars indicate more severe penalties.</p>
-                     <div class="chart-container"><canvas id="punishmentChart"></canvas></div>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Penalties for Repeat & Habitual Offenders (Sec 12.42, 12.425, 12.43)</h3>
-                    <p class="mb-4">Punishments are often increased for defendants with prior convictions. Here are some key "One-Up" rules:</p>
-                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                        <div class="p-4 bg-amber-50 rounded-lg"><strong>3rd Degree Felony &rarr; 2nd Degree</strong><p class="mt-1">If a defendant on trial for a 3rd Degree Felony has a prior felony conviction (other than SJF), they are punished at the 2nd Degree level.</p></div>
-                        <div class="p-4 bg-amber-50 rounded-lg"><strong>2nd Degree Felony &rarr; 1st Degree</strong><p class="mt-1">If a defendant on trial for a 2nd Degree Felony has a prior felony conviction (other than SJF), they are punished at the 1st Degree level.</p></div>
-                        <div class="p-4 bg-amber-50 rounded-lg"><strong>1st Degree Felony &rarr; Enhanced 1st Degree</strong><p class="mt-1">If a defendant on trial for a 1st Degree Felony has a prior felony conviction, the minimum prison term increases from 5 to 15 years.</p></div>
-                        <div class="p-4 bg-slate-50 rounded-lg"><strong>Habitual Offender (25 to Life)</strong><p class="mt-1">If a defendant has 2 prior sequential felony convictions, they face 25 to 99 years or life.</p></div>
-                        <div class="p-4 bg-slate-50 rounded-lg"><strong>State Jail Felony Enhancements</strong><p class="mt-1">A SJF can be enhanced to a 3rd Degree Felony (with 2 prior SJF convictions) or a 2nd Degree Felony (with 2 prior non-SJF felony convictions).</p></div>
-                        <div class="p-4 bg-slate-50 rounded-lg"><strong>Misdemeanor Enhancements</strong><p class="mt-1">Class A or B misdemeanors can have their minimum jail time increased with prior convictions of the same or higher level.</p></div>
-                    </div>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-3 text-slate-700">Other Penalty Enhancements</h3>
-                    <p class="mb-4">The law provides for increased punishments under certain special circumstances.</p>
-                     <div class="grid md:grid-cols-2 gap-4 text-sm">
-                        <div class="p-4 bg-slate-50 rounded-lg"><strong>Offenses in a Disaster Area (Sec 12.50)</strong><p class="mt-1">Punishment for certain offenses (like Assault, Robbery, Burglary, Theft) is increased to the next highest category if committed in a declared disaster area or an area under an evacuation order.</p></div>
-                        <div class="p-4 bg-slate-50 rounded-lg"><strong>Retaliation Against a Public Servant (Sec 12.501)</strong><p class="mt-1">Punishment for certain offenses is increased to the next highest category if committed against a public servant (or their family/property) in retaliation for or on account of their service.</p></div>
-                         <div class="p-4 bg-slate-50 rounded-lg"><strong>Use of Controlled Substance to Commit Offense (Sec 12.49)</strong><p class="mt-1">If a controlled substance was used to facilitate certain offenses (like Robbery or offenses in Title 5), the punishment is increased to the next highest category.</p></div>
-                         <div class="p-4 bg-slate-50 rounded-lg"><strong>Reduction of State Jail Felony (Sec 12.44)</strong><p class="mt-1">A court can choose to punish a State Jail Felony as a Class A Misdemeanor if it finds that doing so would best serve the ends of justice.</p></div>
-                    </div>
-                </div>
-            </div>
-        `
-    },
-    quiz: {
-        title: "Interactive Quiz: Texas Penal Code",
-        description: "Test your understanding of the Texas Penal Code concepts covered in this study guide. This comprehensive quiz covers all major topics from offense elements to punishment levels.",
-        content: `
-            <div class="space-y-6">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <div id="quiz-container" class="space-y-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <div class="text-sm text-slate-600">
-                                Question <span id="current-question">1</span> of <span id="total-questions">15</span>
-                            </div>
-                            <div class="text-sm text-slate-600">
-                                Score: <span id="current-score">0</span>/<span id="questions-answered">0</span>
-                            </div>
-                        </div>
-                        
-                        <div class="w-full bg-slate-200 rounded-full h-2 mb-6">
-                            <div id="progress-bar" class="bg-amber-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
-                        </div>
-                        
-                        <div id="question-container" class="p-6 bg-slate-50 rounded-lg">
-                            <!-- Questions will be populated by JavaScript -->
-                        </div>
-                        
-                        <div id="explanation-container" class="hidden p-4 rounded-lg">
-                            <!-- Explanations will be shown after each answer -->
-                        </div>
-                        
-                        <div class="flex justify-between">
-                            <button id="prev-btn" class="px-4 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                                Previous
-                            </button>
-                            <button id="next-btn" class="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                                Next Question
-                            </button>
-                        </div>
-                        
-                        <div id="quiz-results" class="hidden p-6 bg-slate-50 rounded-lg text-center">
-                            <h3 class="text-xl font-bold mb-4">Quiz Complete!</h3>
-                            <div id="final-score" class="text-3xl font-bold text-amber-600 mb-4"></div>
-                            <div id="performance-message" class="text-slate-600 mb-4"></div>
-                            <button id="restart-quiz" class="px-6 py-3 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors">
-                                Retake Quiz
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `
-    }
-};
-
-function renderContent(hash) {
-    const key = hash.substring(1);
-    const pageData = data[key] || data['foundations'];
-    
-    contentDiv.innerHTML = `
-        <h2 class="text-3xl font-bold mb-2 text-slate-900">${pageData.title}</h2>
-        <p class="mb-8 text-slate-600 max-w-3xl">${pageData.description}</p>
-        ${pageData.content}
-    `;
-
-    navLinks.forEach(link => {
-        if (link.getAttribute('href') === hash) {
-            link.classList.add('active');
-        } else {
-            link.classList.remove('active');
-        }
-    });
-
-    if (key === 'foundations' || key === 'punishments') {
-        renderPunishmentChart();
-    }
-    if (key === 'offenses-property') {
-        renderTheftChart();
-        renderMischiefChart();
-    }
-    if (key === 'public-order') {
-        initDwiFlowchart();
-        initUcwFlowcharts();
-    }
-}
-
-function renderPunishmentChart() {
-    const canvas = document.getElementById('punishmentChart');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Class C', 'Class B', 'Class A', 'State Jail', '3rd Degree', '2nd Degree', '1st Degree'],
-            datasets: [{
-                label: 'Max Confinement (Years)',
-                data: [0, 0.5, 1, 2, 10, 20, 99],
-                backgroundColor: ['#fde68a', '#fcd34d', '#fbbF24', '#f59e0b', '#d97706', '#b45309', '#78350f'],
-                borderColor: '#fbbf24',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const val = context.raw;
-                            if (val === 0) return 'Fine Only';
-                            if (val === 0.5) return 'Up to 180 Days';
-                            if (val === 1) return 'Up to 1 Year';
-                            return `Up to ${val} Years`;
-                        }
-                    }
-                }
+    <script>
+        // Quiz Data for Texas Penal Code
+        const penalCodeQuizData = [
+            {
+                question: "What is the punishment range for a First Degree Felony?",
+                options: [
+                    "2-20 years and fine up to $10,000",
+                    "Life imprisonment or 5-99 years and fine up to $10,000",
+                    "2-10 years and fine up to $10,000",
+                    "180 days to 2 years and fine up to $10,000"
+                ],
+                correct: 1,
+                explanation: "A First Degree Felony is punishable by life imprisonment or 5-99 years and a fine up to $10,000."
             },
-            scales: {
-                x: { title: { display: true, text: 'Maximum Years of Confinement' } }
-            }
-        }
-    });
-}
-
-function createValueChart(canvasId, chartData, chartLabel) {
-    const canvas = document.getElementById(canvasId);
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: chartData.map(d => d.level),
-            datasets: [{
-                label: chartLabel,
-                data: chartData.map(d => d.value),
-                backgroundColor: ['#d1fae5', '#a7f3d0', '#6ee7b7', '#34d399', '#10b981', '#059669', '#047857'],
-                borderColor: '#059669',
-                borderWidth: 1,
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    type: 'logarithmic',
-                    title: { display: true, text: 'Max Value ($) - Logarithmic Scale' }
-                }
+            {
+                question: "What mental state requires conscious objective to cause the result?",
+                options: [
+                    "Knowingly",
+                    "Recklessly", 
+                    "Intentionally",
+                    "Criminal Negligence"
+                ],
+                correct: 2,
+                explanation: "Intentionally means the person has a conscious objective or desire to engage in the conduct or cause the result."
             },
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const value = context.raw;
-                            return `Up to $${value.toLocaleString()}`;
-                        }
-                    }
-                }
+            {
+                question: "Which offense involves entering a building without consent with intent to commit a felony?",
+                options: [
+                    "Theft",
+                    "Burglary",
+                    "Robbery", 
+                    "Criminal Trespass"
+                ],
+                correct: 1,
+                explanation: "Burglary (PC 30.02) involves entering a habitation or building without consent with intent to commit a felony, theft, or assault."
+            },
+            {
+                question: "What is the maximum fine for a Class A Misdemeanor?",
+                options: [
+                    "$500",
+                    "$2,000",
+                    "$4,000",
+                    "$10,000"
+                ],
+                correct: 2,
+                explanation: "A Class A Misdemeanor is punishable by up to 1 year in jail and a fine up to $4,000."
+            },
+            {
+                question: "Which defense allows protection of third persons?",
+                options: [
+                    "Self-Defense",
+                    "Defense of Others",
+                    "Defense of Property",
+                    "Law Enforcement"
+                ],
+                correct: 1,
+                explanation: "Defense of Others (PC 9.33) allows a person to use force to protect another person under certain circumstances."
+            },
+            {
+                question: "What distinguishes Aggravated Assault from simple Assault?",
+                options: [
+                    "The location where it occurs",
+                    "The time of day",
+                    "Serious bodily injury or use of deadly weapon",
+                    "The relationship between parties"
+                ],
+                correct: 2,
+                explanation: "Aggravated Assault (PC 22.02) involves causing serious bodily injury or using or exhibiting a deadly weapon during the assault."
+            },
+            {
+                question: "What mental state involves failing to perceive substantial risk?",
+                options: [
+                    "Intentionally",
+                    "Knowingly",
+                    "Recklessly",
+                    "Criminal Negligence"
+                ],
+                correct: 3,
+                explanation: "Criminal Negligence occurs when a person fails to perceive a substantial and unjustifiable risk."
+            },
+            {
+                question: "Which is the least serious classification of misdemeanor?",
+                options: [
+                    "Class A Misdemeanor",
+                    "Class B Misdemeanor", 
+                    "Class C Misdemeanor",
+                    "State Jail Felony"
+                ],
+                correct: 2,
+                explanation: "Class C Misdemeanor is the least serious, punishable only by a fine up to $500 with no jail time."
+            },
+            {
+                question: "What type of offense is Public Intoxication?",
+                options: [
+                    "Class A Misdemeanor",
+                    "Class B Misdemeanor",
+                    "Class C Misdemeanor", 
+                    "State Jail Felony"
+                ],
+                correct: 2,
+                explanation: "Public Intoxication (PC 49.02) is a Class C Misdemeanor, punishable by fine only up to $500."
+            },
+            {
+                question: "Which title of the Penal Code covers Offenses Against the Person?",
+                options: [
+                    "Title 4",
+                    "Title 5",
+                    "Title 6",
+                    "Title 7"
+                ],
+                correct: 1,
+                explanation: "Title 5 of the Texas Penal Code covers Offenses Against the Person, including assault, murder, and sexual offenses."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = [];
+
+        function initQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            userAnswers = [];
+            document.getElementById('current-question').textContent = '1';
+            document.getElementById('total-questions').textContent = penalCodeQuizData.length;
+            document.getElementById('current-score').textContent = '0';
+            document.getElementById('questions-answered').textContent = '0';
+            document.getElementById('progress-bar').style.width = '0%';
+            document.getElementById('quiz-results').classList.add('hidden');
+            document.getElementById('explanation-container').classList.add('hidden');
+            document.getElementById('next-btn').disabled = true;
+            document.getElementById('prev-btn').disabled = true;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = penalCodeQuizData[currentQuestion];
+            const container = document.getElementById('question-container');
+            
+            container.innerHTML = `
+                <h3 class="text-lg font-semibold mb-4">${question.question}</h3>
+                <div class="space-y-2">
+                    ${question.options.map((option, index) => `
+                        <label class="flex items-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer">
+                            <input type="radio" name="answer" value="${index}" class="mr-3" onchange="selectAnswer(${index})">
+                            <span>${option}</span>
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+            
+            document.getElementById('current-question').textContent = currentQuestion + 1;
+            document.getElementById('prev-btn').disabled = currentQuestion === 0;
+            
+            // Restore previous answer if exists
+            if (userAnswers[currentQuestion] !== undefined) {
+                const radio = document.querySelector(`input[value="${userAnswers[currentQuestion]}"]`);
+                if (radio) radio.checked = true;
+                document.getElementById('next-btn').disabled = false;
             }
         }
-    });
-}
 
-function renderTheftChart() {
-    const theftData = [
-        { level: 'Class C', value: 100 }, { level: 'Class B', value: 750 }, { level: 'Class A', value: 2500 }, { level: 'State Jail', value: 30000 }, { level: '3rd Degree', value: 150000 }, { level: '2nd Degree', value: 300000 }, { level: '1st Degree', value: 1000000 }
-    ];
-    createValueChart('theftChart', theftData, 'Theft Value Threshold');
-}
-
-function renderMischiefChart() {
-     const mischiefData = [
-        { level: 'Class C', value: 100 }, { level: 'Class B', value: 750 }, { level: 'Class A', value: 2500 }, { level: 'State Jail', value: 30000 }, { level: '3rd Degree', value: 150000 }, { level: '2nd Degree', value: 300000 }, { level: '1st Degree', value: 1000000 }
-    ];
-    createValueChart('mischiefChart', mischiefData, 'Criminal Mischief Loss Threshold');
-}
-
-function initDwiFlowchart() {
-    const flowchart = document.getElementById('dwi-flowchart');
-    if (!flowchart) return;
-    const nodes = flowchart.querySelectorAll('.flowchart-node');
-    const step2Div = document.getElementById('dwi-step-2');
-    const priorsOptions = document.getElementById('dwi-priors-options');
-    const resultDiv = document.getElementById('dwi-result');
-
-    function resetFlowchart() {
-        nodes.forEach(n => n.classList.remove('active-path'));
-        step2Div.classList.add('hidden');
-        priorsOptions.classList.add('hidden');
-        resultDiv.classList.add('hidden');
-    }
-
-    nodes.forEach(node => {
-        node.addEventListener('click', () => {
-            const step = parseInt(node.dataset.step);
+        function selectAnswer(answerIndex) {
+            userAnswers[currentQuestion] = answerIndex;
+            document.getElementById('next-btn').disabled = false;
             
-            if (step === 1) {
-                resetFlowchart();
-                node.classList.add('active-path');
-                step2Div.classList.remove('hidden');
-                return;
-            }
-
-            if (step === 2) {
-                flowchart.querySelectorAll('[data-step="2"], [data-step="3"]').forEach(n => n.classList.remove('active-path'));
-                node.classList.add('active-path');
-                const pathType = node.dataset.path;
-                priorsOptions.classList.add('hidden');
-                
-                if(node.dataset.base) {
-                    resultDiv.textContent = 'Base Offense: Class B Misdemeanor';
-                    resultDiv.classList.remove('hidden');
-                    return;
-                }
-                
-                if (pathType === 'priors') {
-                    priorsOptions.classList.remove('hidden');
-                    resultDiv.classList.add('hidden');
-                } else {
-                    let text = '';
-                    switch (pathType) {
-                        case 'bac': text = 'Enhancement: Class A Misdemeanor'; break;
-                        case 'open': text = 'Enhancement: Class B Misd. (min 6 days)'; break;
-                        case 'child': text = 'Enhancement: State Jail Felony'; break;
-                        case 'injury': text = 'Result: Intox. Assault (3rd Degree)'; break;
-                        case 'death': text = 'Result: Intox. Manslaughter (2nd Degree)'; break;
-                    }
-                    resultDiv.textContent = text;
-                    resultDiv.classList.remove('hidden');
-                }
-            }
-
-            if (step === 3) {
-                 flowchart.querySelectorAll('[data-step="3"]').forEach(n => n.classList.remove('active-path'));
-                 node.classList.add('active-path');
-                 let text = '';
-                 switch (node.dataset.path) {
-                    case 'prior-1': text = 'Enhancement: Class A Misdemeanor'; break;
-                    case 'prior-2': text = 'Enhancement: 3rd Degree Felony'; break;
-                 }
-                 resultDiv.textContent = text;
-                 resultDiv.classList.remove('hidden');
-            }
-        });
-    });
-}
-
-function initUcwFlowcharts() {
-    const pubFc = document.getElementById('ucw-public-flowchart');
-    if (!pubFc) return;
-    const pubStart = pubFc.querySelector('[data-ucw-pub="start"]');
-    const pubResult = document.getElementById('ucw-public-result');
-    
-    function resetPublicFc() {
-        pubFc.querySelectorAll('.flowchart-choice, .flowchart-connector').forEach(el => {
-            el.classList.add('hidden');
-            if (el.dataset.ucwPubC) el.style.display = 'none';
-        });
-        pubFc.querySelectorAll('[data-ucw-pub-q], [data-ucw-pub-a]').forEach(el => el.classList.remove('active-path'));
-        pubFc.querySelector('[data-ucw-pub-q="age"]').classList.remove('hidden');
-        pubResult.classList.add('hidden');
-    }
-
-    pubStart.addEventListener('click', resetPublicFc);
-
-    pubFc.querySelectorAll('[data-ucw-pub-a]').forEach(choice => {
-        choice.addEventListener('click', () => {
-            const questionDiv = choice.closest('.flowchart-choice');
-            const question = questionDiv.dataset.ucwPubQ;
-            const answer = choice.dataset.ucwPubA;
+            // Show explanation
+            const question = penalCodeQuizData[currentQuestion];
+            const isCorrect = answerIndex === question.correct;
+            const explanationContainer = document.getElementById('explanation-container');
             
-            questionDiv.querySelectorAll('div').forEach(el => el.classList.remove('active-path'));
-            choice.classList.add('active-path');
-            
-            const allQuestions = Array.from(pubFc.querySelectorAll('[data-ucw-pub-q]'));
-            const currentIdx = allQuestions.findIndex(el => el === questionDiv);
-            for(let i = currentIdx + 1; i < allQuestions.length; i++) {
-                allQuestions[i].classList.add('hidden');
-                const conn = pubFc.querySelector(`[data-ucw-pub-c="${allQuestions[i].dataset.ucwPubQ}"]`);
-                if (conn) conn.style.display = 'none';
-            }
-            pubResult.classList.add('hidden');
-
-            const showNext = (nextQ) => {
-                pubFc.querySelector(`[data-ucw-pub-q="${nextQ}"]`).classList.remove('hidden');
-                const conn = pubFc.querySelector(`[data-ucw-pub-c="${nextQ}"]`);
-                if (conn) conn.style.display = 'block';
-            };
-            
-            const showResult = (text) => {
-                 pubResult.textContent = text;
-                 pubResult.classList.remove('hidden');
-            }
-
-            if (question === 'age') {
-                if (answer === 'no') { showResult('Result: UCW'); } else { showNext('premises'); }
-            } else if (question === 'premises') {
-                if (answer === 'yes') { showResult('Result: Not UCW'); } else { showNext('conviction'); }
-            } else if (question === 'conviction') {
-                if (answer === 'yes') { showResult('Result: UCW'); } else { showNext('holster'); }
-            } else if (question === 'holster') {
-                showResult(answer === 'yes' ? 'Result: UCW' : 'Result: Not UCW');
-            }
-        });
-    });
-
-    const vehFc = document.getElementById('ucw-vehicle-flowchart');
-    if (!vehFc) return;
-    const vehStart = vehFc.querySelector('[data-ucw-veh="start"]');
-    const vehResult = document.getElementById('ucw-vehicle-result');
-    
-    function resetVehicleFc() {
-        vehFc.querySelectorAll('.flowchart-choice, .flowchart-connector').forEach(el => {
-             el.classList.add('hidden');
-             if (el.dataset.ucwVehC) el.style.display = 'none';
-        });
-        vehFc.querySelectorAll('[data-ucw-veh-q], [data-ucw-veh-a]').forEach(el => el.classList.remove('active-path'));
-        vehFc.querySelector('[data-ucw-veh-q="prohibited"]').classList.remove('hidden');
-        vehResult.classList.add('hidden');
-    }
-
-    vehStart.addEventListener('click', resetVehicleFc);
-
-    vehFc.querySelectorAll('[data-ucw-veh-a]').forEach(choice => {
-        choice.addEventListener('click', () => {
-            const questionDiv = choice.closest('.flowchart-choice');
-            const question = questionDiv.dataset.ucwVehQ;
-            const answer = choice.dataset.ucwVehA;
-
-            questionDiv.querySelectorAll('div').forEach(el => el.classList.remove('active-path'));
-            choice.classList.add('active-path');
-
-            const allQuestions = Array.from(vehFc.querySelectorAll('[data-ucw-veh-q]'));
-            const currentIdx = allQuestions.findIndex(el => el === questionDiv);
-            for(let i = currentIdx + 1; i < allQuestions.length; i++) {
-                allQuestions[i].classList.add('hidden');
-                const conn = vehFc.querySelector(`[data-ucw-veh-c="${allQuestions[i].dataset.ucwVehQ}"]`);
-                if (conn) conn.style.display = 'none';
-            }
-            vehResult.classList.add('hidden');
-
-            const showNext = (nextQ) => {
-                vehFc.querySelector(`[data-ucw-veh-q="${nextQ}"]`).classList.remove('hidden');
-                const conn = vehFc.querySelector(`[data-ucw-veh-c="${nextQ}"]`);
-                if (conn) conn.style.display = 'block';
-            };
-            const showResult = (text) => {
-                 vehResult.textContent = text;
-                 vehResult.classList.remove('hidden');
-            }
-            
-            if (question === 'prohibited') {
-                if (answer === 'yes') { showResult('Result: UCW'); } else { showNext('crime'); }
-            } else if (question === 'crime') {
-                if (answer === 'yes') { showResult('Result: UCW'); } else { showNext('view'); }
-            } else if (question === 'view') {
-                if (answer === 'no') { showResult('Result: Not UCW'); } else { showNext('holster'); }
-            } else if (question === 'holster') {
-                showResult(answer === 'yes' ? 'Result: Not UCW' : 'Result: UCW');
-            }
-        });
-    });
-}
-
-// Quiz Functionality
-const penalCodeQuizData = [
-    {
-        question: "What are the four elements that must be proven for any criminal offense (corpus delicti)?",
-        options: [
-            "Intent, action, harm, punishment",
-            "Forbidden conduct, required culpability, required result, negation of exception",
-            "Mental state, physical act, victim, evidence",
-            "Motive, opportunity, means, modus operandi"
-        ],
-        correct: 1,
-        explanation: "For any crime, the prosecution must prove: (1) The forbidden conduct, (2) The required culpability (mental state), (3) Any required result, and (4) The negation of any exception. This is the corpus delicti or 'body of the crime.'"
-    },
-    {
-        question: "Which mental state requires that a person is aware that their conduct is reasonably certain to cause the result?",
-        options: [
-            "Intentionally",
-            "Knowingly", 
-            "Recklessly",
-            "Criminal Negligence"
-        ],
-        correct: 1,
-        explanation: "Knowingly means the person is aware that their conduct is reasonably certain to cause the result. This is different from 'intentionally' where the person's conscious objective is to cause the result."
-    },
-    {
-        question: "What is the punishment range for a Class A Misdemeanor?",
-        options: [
-            "Up to $500 fine only",
-            "Up to 180 days in jail and/or up to $2,000 fine",
-            "Up to 1 year in jail and/or up to $4,000 fine",
-            "Up to 2 years in state jail"
-        ],
-        correct: 2,
-        explanation: "A Class A Misdemeanor is punishable by up to 1 year in jail and/or a fine up to $4,000. This is the most serious level of misdemeanor offense."
-    },
-    {
-        question: "For theft to be a felony, what is the minimum value of property that must be stolen?",
-        options: [
-            "$100",
-            "$750",
-            "$2,500",
-            "$5,000"
-        ],
-        correct: 2,
-        explanation: "Theft becomes a State Jail Felony when the value is $2,500 or more but less than $30,000. Below $2,500, theft is classified as a misdemeanor."
-    },
-    {
-        question: "Which of the following is NOT one of the three types of assault under Texas Penal Code Section 22.01?",
-        options: [
-            "Intentionally or knowingly causing bodily injury",
-            "Intentionally or knowingly threatening imminent bodily injury",
-            "Intentionally or knowingly causing someone to fear for their life",
-            "Intentionally or knowingly causing offensive or provocative physical contact"
-        ],
-        correct: 2,
-        explanation: "The three types of assault are: (1) causing bodily injury, (2) threatening imminent bodily injury, and (3) causing offensive/provocative physical contact. 'Causing fear for life' is not one of the statutory definitions."
-    },
-    {
-        question: "When does criminal trespass become a felony?",
-        options: [
-            "When it involves a habitation or shelter center",
-            "When it's committed at night",
-            "When the person is armed",
-            "Criminal trespass is always a misdemeanor"
-        ],
-        correct: 0,
-        explanation: "Criminal Trespass becomes a State Jail Felony when it involves a habitation (like a house) or a shelter center, rather than just any building or property."
-    },
-    {
-        question: "What defense justifies the use of force to protect property?",
-        options: [
-            "Self-defense",
-            "Defense of third person",
-            "Protection of property",
-            "Necessity"
-        ],
-        correct: 2,
-        explanation: "Protection of Property (Sec 9.41-9.44) is a specific defense that can justify the use of force to protect one's property, including land and tangible movable property."
-    },
-    {
-        question: "Under the Castle Doctrine, when can deadly force be presumed justified?",
-        options: [
-            "Anytime someone enters your property",
-            "When someone unlawfully enters your habitation, vehicle, or place of business",
-            "Only when someone threatens you with a weapon",
-            "Only during nighttime hours"
-        ],
-        correct: 1,
-        explanation: "The Castle Doctrine creates a presumption that deadly force was reasonable when someone unlawfully and with force enters your habitation, vehicle, or place of business/employment."
-    },
-    {
-        question: "What is the difference between burglary and criminal trespass?",
-        options: [
-            "Burglary requires breaking and entering, trespass does not",
-            "Burglary requires intent to commit a felony, theft, or assault; trespass does not",
-            "Burglary only applies to homes, trespass applies to any property",
-            "There is no difference"
-        ],
-        correct: 1,
-        explanation: "Burglary requires entering a habitation or building with intent to commit a felony, theft, or assault. Criminal trespass is simply entering or remaining on property without consent, regardless of intent to commit another crime."
-    },
-    {
-        question: "When is consent NOT a defense to assault?",
-        options: [
-            "In sports activities",
-            "When serious bodily injury occurs",
-            "In medical procedures",
-            "Between married couples"
-        ],
-        correct: 1,
-        explanation: "Consent is generally a defense to assault, but it is NOT a defense when serious bodily injury is caused to another. You cannot consent to serious bodily injury being inflicted upon you."
-    },
-    {
-        question: "What mental state is required for murder?",
-        options: [
-            "Intentionally or knowingly",
-            "Recklessly",
-            "With criminal negligence",
-            "Any mental state"
-        ],
-        correct: 0,
-        explanation: "Murder requires that a person intentionally or knowingly causes the death of another individual. This is the highest level of mental culpability required."
-    },
-    {
-        question: "In public intoxication, what must be proven beyond just being intoxicated?",
-        options: [
-            "The person was driving",
-            "The person was dangerous to themselves or others",
-            "The person was under 21",
-            "The person was in a school zone"
-        ],
-        correct: 1,
-        explanation: "Public Intoxication requires proof that the person appeared in a public place while intoxicated AND was dangerous to themselves or others. Simply being intoxicated in public is not enough."
-    },
-    {
-        question: "What is the punishment enhancement for a habitual offender with two prior felony convictions?",
-        options: [
-            "Double the normal punishment",
-            "Life imprisonment only",
-            "25 years to life imprisonment",
-            "Enhancement depends on the current offense level"
-        ],
-        correct: 2,
-        explanation: "Under the habitual offender statute, if someone has two prior felony convictions and commits another felony, they face enhanced punishment of 25 years to life imprisonment."
-    },
-    {
-        question: "When can a peace officer arrest without a warrant for a misdemeanor?",
-        options: [
-            "Never - warrants are always required for misdemeanors",
-            "Only if committed in the officer's presence",
-            "If committed in presence OR if it involves violence/family violence",
-            "Anytime within 24 hours of the offense"
-        ],
-        correct: 2,
-        explanation: "Peace officers can arrest without a warrant for misdemeanors committed in their presence, or for certain specific misdemeanors like those involving violence, family violence, or other exceptions listed in the Code of Criminal Procedure."
-    },
-    {
-        question: "What is required for a valid search incident to arrest?",
-        options: [
-            "A warrant must always be obtained first",
-            "The arrest must be lawful and the search must be reasonable in scope",
-            "The person must consent to the search",
-            "The search must occur within one hour of arrest"
-        ],
-        correct: 1,
-        explanation: "A search incident to arrest requires: (1) a lawful arrest, and (2) the search must be reasonable in scope and timing. This allows officers to search for weapons and evidence related to the arrest."
-    }
-];
-
-let currentQuizQuestion = 0;
-let quizScore = 0;
-let quizAnswered = 0;
-let selectedQuizAnswer = null;
-
-function initializePenalCodeQuiz() {
-    if (window.location.hash !== '#quiz') return;
-    
-    currentQuizQuestion = 0;
-    quizScore = 0;
-    quizAnswered = 0;
-    selectedQuizAnswer = null;
-    
-    document.getElementById('total-questions').textContent = penalCodeQuizData.length;
-    document.getElementById('quiz-results').classList.add('hidden');
-    document.getElementById('quiz-container').classList.remove('hidden');
-    
-    showPenalCodeQuestion();
-    updatePenalCodeQuizUI();
-    
-    // Add event listeners
-    document.getElementById('next-btn').addEventListener('click', nextPenalCodeQuestion);
-    document.getElementById('prev-btn').addEventListener('click', prevPenalCodeQuestion);
-    document.getElementById('restart-quiz').addEventListener('click', initializePenalCodeQuiz);
-}
-
-function showPenalCodeQuestion() {
-    const question = penalCodeQuizData[currentQuizQuestion];
-    selectedQuizAnswer = null;
-    
-    const questionContainer = document.getElementById('question-container');
-    questionContainer.innerHTML = `
-        <h3 class="text-lg font-semibold mb-4">${question.question}</h3>
-        <div class="space-y-3">
-            ${question.options.map((option, index) => `
-                <button class="quiz-option-btn w-full text-left p-3 rounded-lg border border-slate-300 hover:bg-amber-50 hover:border-amber-300 transition-colors" 
-                        data-index="${index}">
-                    ${String.fromCharCode(65 + index)}. ${option}
-                </button>
-            `).join('')}
-        </div>
-    `;
-
-    // Add click listeners to options
-    document.querySelectorAll('.quiz-option-btn').forEach(btn => {
-        btn.addEventListener('click', selectPenalCodeAnswer);
-    });
-
-    document.getElementById('explanation-container').classList.add('hidden');
-    document.getElementById('next-btn').disabled = true;
-    document.getElementById('next-btn').textContent = currentQuizQuestion === penalCodeQuizData.length - 1 ? 'Finish Quiz' : 'Next Question';
-}
-
-function selectPenalCodeAnswer(e) {
-    selectedQuizAnswer = parseInt(e.target.dataset.index);
-    
-    // Remove previous selections
-    document.querySelectorAll('.quiz-option-btn').forEach(btn => {
-        btn.classList.remove('bg-amber-100', 'border-amber-500', 'bg-green-100', 'border-green-500', 'bg-red-100', 'border-red-500');
-    });
-
-    // Mark selected answer
-    e.target.classList.add('bg-amber-100', 'border-amber-500');
-    
-    // Show correct/incorrect styling
-    const question = penalCodeQuizData[currentQuizQuestion];
-    document.querySelectorAll('.quiz-option-btn').forEach((btn, index) => {
-        if (index === question.correct) {
-            btn.classList.add('bg-green-100', 'border-green-500');
-        } else if (index === selectedQuizAnswer && selectedQuizAnswer !== question.correct) {
-            btn.classList.add('bg-red-100', 'border-red-500');
+            explanationContainer.innerHTML = `
+                <div class="p-4 rounded-lg ${isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} border">
+                    <p class="font-semibold ${isCorrect ? 'text-green-800' : 'text-red-800'}">${isCorrect ? 'Correct!' : 'Incorrect'}</p>
+                    <p class="text-sm mt-1">${question.explanation}</p>
+                </div>
+            `;
+            explanationContainer.classList.remove('hidden');
         }
-        btn.disabled = true;
-    });
 
-    // Update score
-    if (selectedQuizAnswer === question.correct) {
-        quizScore++;
-    }
-    quizAnswered++;
+        function nextQuestion() {
+            if (currentQuestion < penalCodeQuizData.length - 1) {
+                currentQuestion++;
+                document.getElementById('explanation-container').classList.add('hidden');
+                document.getElementById('next-btn').disabled = true;
+                showQuestion();
+                updateProgress();
+            } else {
+                finishQuiz();
+            }
+        }
 
-    // Show explanation
-    const explanationContainer = document.getElementById('explanation-container');
-    explanationContainer.innerHTML = `
-        <div class="p-4 ${selectedQuizAnswer === question.correct ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} border rounded-lg">
-            <h4 class="font-semibold ${selectedQuizAnswer === question.correct ? 'text-green-800' : 'text-red-800'} mb-2">
-                ${selectedQuizAnswer === question.correct ? 'Correct!' : 'Incorrect'}
-            </h4>
-            <p class="text-sm text-slate-700">${question.explanation}</p>
-        </div>
-    `;
-    explanationContainer.classList.remove('hidden');
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                document.getElementById('explanation-container').classList.add('hidden');
+                document.getElementById('next-btn').disabled = userAnswers[currentQuestion] === undefined;
+                showQuestion();
+                updateProgress();
+            }
+        }
 
-    document.getElementById('next-btn').disabled = false;
-    updatePenalCodeQuizUI();
-}
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / penalCodeQuizData.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+        }
 
-function nextPenalCodeQuestion() {
-    if (currentQuizQuestion < penalCodeQuizData.length - 1) {
-        currentQuizQuestion++;
-        showPenalCodeQuestion();
-    } else {
-        showPenalCodeQuizResults();
-    }
-    updatePenalCodeQuizUI();
-}
+        function finishQuiz() {
+            // Calculate score
+            score = 0;
+            penalCodeQuizData.forEach((question, index) => {
+                if (userAnswers[index] === question.correct) {
+                    score++;
+                }
+            });
+            
+            // Show results
+            document.getElementById('question-container').style.display = 'none';
+            document.getElementById('explanation-container').style.display = 'none';
+            document.querySelector('.flex.justify-between').style.display = 'none';
+            
+            const percentage = Math.round((score / penalCodeQuizData.length) * 100);
+            document.getElementById('final-score').textContent = `${score}/${penalCodeQuizData.length} (${percentage}%)`;
+            
+            let message = '';
+            if (percentage >= 90) {
+                message = 'Excellent! You have a strong understanding of the Texas Penal Code.';
+            } else if (percentage >= 80) {
+                message = 'Good job! You have a solid grasp of the material.';
+            } else if (percentage >= 70) {
+                message = 'Not bad! Consider reviewing the material for better understanding.';
+            } else {
+                message = 'Keep studying! Review the material and try again.';
+            }
+            
+            document.getElementById('performance-message').textContent = message;
+            document.getElementById('quiz-results').classList.remove('hidden');
+            
+            // Update progress bar to 100%
+            document.getElementById('progress-bar').style.width = '100%';
+            document.getElementById('current-score').textContent = score;
+            document.getElementById('questions-answered').textContent = penalCodeQuizData.length;
+        }
 
-function prevPenalCodeQuestion() {
-    if (currentQuizQuestion > 0) {
-        currentQuizQuestion--;
-        showPenalCodeQuestion();
-    }
-    updatePenalCodeQuizUI();
-}
+        function restartQuiz() {
+            document.getElementById('question-container').style.display = 'block';
+            document.querySelector('.flex.justify-between').style.display = 'flex';
+            initQuiz();
+        }
 
-function updatePenalCodeQuizUI() {
-    document.getElementById('current-question').textContent = currentQuizQuestion + 1;
-    document.getElementById('current-score').textContent = quizScore;
-    document.getElementById('questions-answered').textContent = quizAnswered;
-    
-    const progress = ((currentQuizQuestion + 1) / penalCodeQuizData.length) * 100;
-    document.getElementById('progress-bar').style.width = `${progress}%`;
-    
-    document.getElementById('prev-btn').disabled = currentQuizQuestion === 0;
-}
+        // Event listeners
+        document.getElementById('next-btn').addEventListener('click', nextQuestion);
+        document.getElementById('prev-btn').addEventListener('click', prevQuestion);
+        document.getElementById('restart-quiz').addEventListener('click', restartQuiz);
 
-function showPenalCodeQuizResults() {
-    document.getElementById('quiz-container').classList.add('hidden');
-    document.getElementById('quiz-results').classList.remove('hidden');
-    
-    const percentage = Math.round((quizScore / penalCodeQuizData.length) * 100);
-    document.getElementById('final-score').textContent = `${quizScore}/${penalCodeQuizData.length} (${percentage}%)`;
-    
-    let message = '';
-    if (percentage >= 90) {
-        message = 'Excellent! You have a strong understanding of Texas Penal Code concepts.';
-    } else if (percentage >= 80) {
-        message = 'Good job! You understand most of the key legal concepts.';
-    } else if (percentage >= 70) {
-        message = 'Fair performance. Consider reviewing the material and retaking the quiz.';
-    } else {
-        message = 'Please review the training material carefully and retake the quiz.';
-    }
-    
-    document.getElementById('performance-message').textContent = message;
-}
-
-window.addEventListener('hashchange', () => renderContent(window.location.hash));
-window.addEventListener('DOMContentLoaded', () => {
-    if (!window.location.hash) {
-        window.location.hash = '#foundations';
-    }
-    renderContent(window.location.hash);
-    
-    // Initialize quiz if we're on the quiz page
-    if (window.location.hash === '#quiz') {
-        setTimeout(initializePenalCodeQuiz, 100);
-    }
-});
-
-// Also initialize quiz when navigating to quiz section
-const originalRenderContent = renderContent;
-renderContent = function(hash) {
-    originalRenderContent(hash);
-    if (hash === '#quiz') {
-        setTimeout(initializePenalCodeQuiz, 100);
-    }
-};
-
-</script>
-
+        // Initialize quiz on page load
+        initQuiz();
+    </script>
 </body>
 </html>

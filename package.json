@@ -1,0 +1,17 @@
+{
+  "name": "bpoc-topics",
+  "version": "1.0.0",
+  "description": "Basic Peace Officer Course Topics",
+  "main": "index.html",
+  "scripts": {
+    "build-css": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch",
+    "build-css-prod": "tailwindcss -i ./src/input.css -o ./dist/output.css --minify",
+    "serve": "python -m http.server 8000"
+  },
+  "keywords": ["police", "training", "education"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.3.6"
+  }
+}

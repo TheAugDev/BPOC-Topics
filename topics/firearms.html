@@ -4,16 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Firearms Study Guide</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../dist/output.css">
     <!-- Chosen Palette: Slate & Red -->
-    <!-- Application Structure Plan: A single-page application focused on firearms principles and safety. The structure is thematic and hierarchical, starting with universal safety rules, then moving to marksmanship fundamentals, weapon handling, tactics, and concluding with qualification standards and an interactive review. This logical progression is ideal for learning. Key interactions include prominent cards for safety rules, collapsible sections for detailed techniques to avoid information overload, and a quiz-style section for the review questions to promote active learning. -->
-    <!-- Visualization & Content Choices: 
-        - General Safety Rules: Report Info -> A list of four core rules. Goal -> Emphasize critical safety principles. Viz -> Four distinct, heavily styled cards using a red accent color to denote importance. Justification -> High-visibility cards ensure these foundational rules are seen and remembered first.
-        - Marksmanship/Manipulations/Tactics: Report Info -> Detailed text descriptions of various techniques. Goal -> Instruct on practical skills. Viz -> Collapsible 'details' sections for each topic (Stance, Grip, Reloads, Use of Cover, etc.). Justification -> This organizes a large amount of technical information into a clean, manageable interface, allowing users to focus on one topic at a time.
-        - TCOLE Qualification Standards: Report Info -> Text describing requirements. Goal -> Inform on official standards. Viz -> A clear, easy-to-read HTML table. Justification -> A table is the most effective way to present structured data like weapon types, round counts, distances, and required scores.
-        - Review Questions: Report Info -> Lists of questions and a word scramble. Goal -> Test knowledge. Viz -> An interactive quiz section where each question is on a card with a 'Reveal Answer' button. Interaction -> The user actively attempts to answer before seeing the correct response. Justification -> This active recall method is a highly effective study technique compared to passive reading.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body { font-family: 'Inter', sans-serif; }
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -29,16 +21,6 @@
         }
         details[open] > summary {
             background-color: #f1f5f9;
-        }
-        .review-answer {
-            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
-        }
-        .review-answer.visible {
-            max-height: 500px;
-            opacity: 1;
         }
         .safety-rule-card {
             border-left: 5px solid #ef4444;
@@ -72,8 +54,8 @@
             }
             
             /* Better spacing for mobile */
-            .space-y-12 > * + * {
-                margin-top: 2rem !important;
+            .space-y-8 > * + * {
+                margin-top: 1.5rem !important;
             }
             
             .space-y-6 > * + * {
@@ -99,41 +81,9 @@
                 gap: 1rem !important;
             }
             
-            /* Navigation adjustments */
-            nav {
-                flex-direction: column !important;
-                gap: 0.5rem !important;
-            }
-            
-            nav a {
-                text-align: center;
-                padding: 0.75rem 1rem !important;
-            }
-            
-            /* Table improvements for mobile */
-            .overflow-x-auto {
-                font-size: 0.85rem;
-            }
-            
-            table th, table td {
-                padding: 0.5rem !important;
-                min-width: 80px;
-            }
-            
-            /* Button improvements */
-            button {
-                min-height: 44px;
-                padding: 0.75rem 1rem;
-                font-size: 0.9rem;
-            }
-            
             /* Card adjustments */
             .bg-white {
                 padding: 1rem !important;
-            }
-            
-            .safety-rule-card {
-                margin-bottom: 1rem;
             }
         }
         
@@ -151,441 +101,223 @@
                 margin: 0 !important;
                 border-radius: 0.5rem;
             }
-            
-            nav {
-                flex-wrap: wrap;
-            }
-            
-            nav a {
-                flex: 1;
-                min-width: 120px;
-                font-size: 0.85rem;
-            }
-            
-            table {
-                font-size: 0.75rem;
-            }
-            
-            table th, table td {
-                padding: 0.375rem !important;
-                min-width: 70px;
-            }
-        }
-        
-        /* Landscape mobile orientation */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .container {
-                padding: 0.5rem !important;
-            }
-            
-            h1 {
-                font-size: 1.5rem !important;
-            }
-            
-            .space-y-12 > * + * {
-                margin-top: 1.5rem !important;
-            }
         }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800">
-
     <div class="container mx-auto p-4 md:p-8 max-w-4xl">
-        <header class="text-center mb-10">
+        <header class="text-center mb-8">
             <div class="mb-4">
                 <a href="../index.html" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
                     <span class="mr-2">←</span> Back to Main
                 </a>
             </div>
-            <h1 class="text-4xl font-bold text-slate-800">Firearms Principles & Tactics</h1>
-            <p class="text-slate-600 mt-2">An Interactive Guide for Law Enforcement</p>
+            <h1 class="text-4xl font-bold text-slate-800">Firearms Training Guide</h1>
+            <p class="text-slate-600 mt-2">Denton Police Training Academy</p>
         </header>
 
-        <nav class="flex justify-center mb-10 bg-white p-2 rounded-lg shadow-sm">
-            <a href="#safety" class="px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 rounded-md">Safety</a>
-            <a href="#marksmanship" class="px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 rounded-md">Marksmanship</a>
-            <a href="#manipulations" class="px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 rounded-md">Manipulations</a>
-            <a href="#tactics" class="px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 rounded-md">Tactics</a>
-            <a href="#qualifications" class="px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 rounded-md">Qualifications</a>
-            <a href="#review" class="px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 rounded-md">Review</a>
-        </nav>
-
-        <main class="space-y-12">
-            <!-- Section 1: General Firearms Safety -->
-            <section id="safety">
-                <h2 class="text-3xl font-bold mb-6 text-slate-700 border-b-2 border-slate-300 pb-2">General Firearms Safety</h2>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="safety-rule-card bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="font-bold text-lg text-red-700">Rule 1: All guns are always loaded.</h3>
-                        <p class="text-sm mt-2">Treat every firearm as if it is loaded, even if you believe it is unloaded.</p>
+        <main class="space-y-8">
+            <!-- Section 1: Safety Rules -->
+            <section id="safety-rules" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-6 text-slate-700">1. Universal Firearms Safety Rules</h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="safety-rule-card bg-red-50 p-4 rounded-lg">
+                        <div class="flex items-center mb-2">
+                            <span class="bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">1</span>
+                            <h3 class="font-bold text-red-800">Treat Every Firearm as if it is Loaded</h3>
+                        </div>
+                        <p class="text-sm text-slate-700">Never assume a firearm is unloaded. Always check the chamber and magazine.</p>
                     </div>
-                    <div class="safety-rule-card bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="font-bold text-lg text-red-700">Rule 2: Never point the muzzle at anything you are not willing to destroy.</h3>
-                        <p class="text-sm mt-2">Be constantly aware of where your weapon is pointed. This is the primary safety rule that prevents unintended injury or death.</p>
+                    <div class="safety-rule-card bg-red-50 p-4 rounded-lg">
+                        <div class="flex items-center mb-2">
+                            <span class="bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">2</span>
+                            <h3 class="font-bold text-red-800">Never Point the Muzzle at Anything You Don't Want to Destroy</h3>
+                        </div>
+                        <p class="text-sm text-slate-700">Control muzzle direction at all times. Be aware of what is beyond your target.</p>
                     </div>
-                    <div class="safety-rule-card bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="font-bold text-lg text-red-700">Rule 3: Keep your finger OFF the trigger until your sights are on the target and you have decided to fire.</h3>
-                        <p class="text-sm mt-2">Your finger should rest outside the trigger guard until you are ready to shoot.</p>
+                    <div class="safety-rule-card bg-red-50 p-4 rounded-lg">
+                        <div class="flex items-center mb-2">
+                            <span class="bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">3</span>
+                            <h3 class="font-bold text-red-800">Keep Your Finger Off the Trigger</h3>
+                        </div>
+                        <p class="text-sm text-slate-700">Until you are ready to shoot. Keep your finger along the frame or trigger guard.</p>
                     </div>
-                    <div class="safety-rule-card bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="font-bold text-lg text-red-700">Rule 4: Be sure of your target and what is beyond it.</h3>
-                        <p class="text-sm mt-2">Identify your target and be aware of the backstop and anything that could be hit if you miss or the bullet penetrates the target.</p>
+                    <div class="safety-rule-card bg-red-50 p-4 rounded-lg">
+                        <div class="flex items-center mb-2">
+                            <span class="bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">4</span>
+                            <h3 class="font-bold text-red-800">Be Sure of Your Target and What's Beyond</h3>
+                        </div>
+                        <p class="text-sm text-slate-700">Identify your target and be aware of what is behind it before firing.</p>
                     </div>
                 </div>
             </section>
 
-            <!-- Section 2: Fundamentals of Marksmanship -->
-            <section id="marksmanship">
-                <h2 class="text-3xl font-bold mb-6 text-slate-700 border-b-2 border-slate-300 pb-2">Fundamentals of Marksmanship</h2>
-                <div class="space-y-4">
-                    <details class="bg-white p-4 rounded-lg shadow-sm"><summary>Stance</summary><div class="pt-3 mt-3 border-t text-sm"><p>Body should be "square" to the target with an aggressive forward lean and bent knees. It's an athletic stance with arms at or near full extension.</p></div></details>
-                    <details class="bg-white p-4 rounded-lg shadow-sm"><summary>Grip</summary><div class="pt-3 mt-3 border-t text-sm"><p>Grip should be high on the backstrap of the gun and as firm as possible without shaking. The support hand should cover as much of the exposed frame as possible, with the support thumb pointed at the target.</p></div></details>
-                    <details class="bg-white p-4 rounded-lg shadow-sm"><summary>Sight Alignment & Sight Picture</summary><div class="pt-3 mt-3 border-t text-sm"><p><strong>Sight Alignment:</strong> The relationship of the sights to each other. The front sight should be perfectly centered in the rear sight notch with equal height across the top. The focus should be sharply on the front sight. <br><strong>Sight Picture:</strong> The placement of the aligned sights on the target, typically center mass.</p></div></details>
-                    <details class="bg-white p-4 rounded-lg shadow-sm"><summary>Trigger Control</summary><div class="pt-3 mt-3 border-t text-sm"><p>The trigger should be prepped (taken to the "wall") as soon as sights are on target. The press should be smooth, continuous, and straight to the rear without disturbing sight alignment.</p></div></details>
-                    <details class="bg-white p-4 rounded-lg shadow-sm"><summary>Follow Through & Breathing</summary><div class="pt-3 mt-3 border-t text-sm"><p><strong>Follow Through:</strong> After a shot, reset the trigger just past the reset point, reacquire a sight picture, and be prepared to fire again. <br><strong>Breathing:</strong> Generally not a factor in handgun shooting. Simply stop breathing momentarily as you press the trigger.</p></div></details>
+            <!-- Section 2: Marksmanship Fundamentals -->
+            <section id="marksmanship" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">2. Marksmanship Fundamentals</h2>
+                <div class="space-y-2">
+                    <details>
+                        <summary>Stance</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p><strong>Isosceles Stance:</strong> Square to the target, feet shoulder-width apart, both arms extended equally.</p>
+                            <p class="mt-2"><strong>Weaver Stance:</strong> Bladed to the target, strong-side foot back, strong arm extended, support arm bent and pulling.</p>
+                            <p class="mt-2"><strong>Modified Weaver:</strong> Combination of both, allowing for natural body mechanics.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Grip</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>High on the backstrap, consistent pressure from both hands. Support hand fills the void, thumbs forward technique recommended for semi-automatics.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Sight Alignment</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>Front sight post centered in the rear sight notch with equal amounts of light on both sides. Top of front sight level with top of rear sight.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Sight Picture</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>Proper sight alignment placed on the target. Focus on the front sight, not the target or rear sight.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Trigger Control</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>Straight back pressure with the pad of the index finger. Smooth, consistent squeeze without disturbing sight alignment.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Follow Through</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>Maintain sight picture and grip through the shot. Call your shots based on where the sights were when the gun fired.</p>
+                        </div>
+                    </details>
                 </div>
             </section>
 
-            <!-- Section 3: Handgun Manipulations -->
-            <section id="manipulations">
-                 <h2 class="text-3xl font-bold mb-6 text-slate-700 border-b-2 border-slate-300 pb-2">Handgun Manipulations</h2>
-                <div class="space-y-4">
-                    <details class="bg-white p-4 rounded-lg shadow-sm"><summary>Loading & Unloading</summary><div class="pt-3 mt-3 border-t text-sm"><p><strong>Unload:</strong> Remove magazine, lock slide to the rear, visually and physically inspect the chamber and magwell to ensure clear. <br><strong>Load:</strong> Lock slide to the rear, ensure clear, insert a loaded magazine, and depress the slide stop to chamber a round.</p></div></details>
-                    <details class="bg-white p-4 rounded-lg shadow-sm"><summary>The Draw</summary><div class="pt-3 mt-3 border-t text-sm"><p>An efficient, fast motion. Lift the gun straight up, bring the muzzle level as soon as it clears the holster, join hands at the bottom of the ribcage, and push the gun up and out to get sights into your eye line as quickly as possible.</p></div></details>
-                    <details class="bg-white p-4 rounded-lg shadow-sm"><summary>Reloads</summary><div class="pt-3 mt-3 border-t text-sm"><p><strong>Immediate Action (Speed) Reload:</strong> Done when the slide locks back on an empty magazine. Drop the empty magazine while retrieving a fresh one. Insert the new magazine and use the slide stop to chamber a round. <br><strong>Tactical Reload:</strong> Done from cover when there is a lull in the fight. Exchange a partially empty magazine for a full one without dropping the original magazine, retaining it for later use.</p></div></details>
-                    <details class="bg-white p-4 rounded-lg shadow-sm"><summary>Stoppage Clearance</summary><div class="pt-3 mt-3 border-t text-sm"><p>The most common solution is "Tap, Rack". Tap the bottom of the magazine firmly and then rack the slide hard to the rear. If this fails (a complex stoppage), rip the magazine out, lock the slide, ensure clear, and reload the gun from the beginning.</p></div></details>
+            <!-- Section 3: Weapon Handling -->
+            <section id="weapon-handling" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">3. Weapon Handling & Manipulations</h2>
+                <div class="space-y-2">
+                    <details>
+                        <summary>Loading</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>Insert loaded magazine, rack the slide to chamber a round. Ensure the weapon is pointed in a safe direction throughout the process.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Unloading</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>Remove magazine first, then rack the slide to eject chambered round. Visually and physically inspect the chamber.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Immediate Action (Type 1 Malfunction)</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p><strong>TAP-RACK-ASSESS:</strong> Tap the magazine to ensure it's seated, rack the slide to clear any malfunction, assess the situation.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Remedial Action (Type 2 Malfunction)</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p><strong>LOCK-RIP-RACK-ASSESS:</strong> Lock the slide back, rip out the magazine, rack the slide multiple times, assess and reload if necessary.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Tactical Reload</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>Reload when you have time and cover, retaining the partially used magazine for later use.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Emergency Reload</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>Reload when the weapon is empty during a threat situation. Speed is priority, drop the empty magazine.</p>
+                        </div>
+                    </details>
                 </div>
             </section>
-            
-            <!-- Section 4: Tactics & Techniques -->
-            <section id="tactics">
-                 <h2 class="text-3xl font-bold mb-6 text-slate-700 border-b-2 border-slate-300 pb-2">Tactics & Techniques</h2>
-                <div class="space-y-4">
-                    <details class="bg-white p-4 rounded-lg shadow-sm"><summary>Standard & Non-Standard Response</summary><div class="pt-3 mt-3 border-t text-sm"><p><strong>Standard:</strong> Two to four rounds to the center mass of the body, then transition sights to the head. If the threat continues, fire to the head. <br><strong>Non-Standard:</strong> In certain situations, shots to the pelvis may be effective to stop a threat. If a suspect is behind cover, shoot whatever part of the threat is visible.</p></div></details>
-                    <details class="bg-white p-4 rounded-lg shadow-sm"><summary>Use of Cover vs. Concealment</summary><div class="pt-3 mt-3 border-t text-sm"><p><strong>Cover:</strong> Anything that will stop incoming rounds (e.g., engine block, concrete wall). <br><strong>Concealment:</strong> Anything that hides you from view but will not stop rounds (e.g., a bush, drywall). Always prioritize cover over concealment. Stay back from cover when possible, only attaching to it for precision shots.</p></div></details>
-                    <details class="bg-white p-4 rounded-lg shadow-sm"><summary>Movement</summary><div class="pt-3 mt-3 border-t text-sm"><p>Move quickly from one point of cover to another. Keep your head up and scan for threats while moving. Step off the line of attack during your draw to force the suspect to re-aim. When shooting while moving, flex your knees, accept sight wobble, and press the trigger smoothly.</p></div></details>
-                    <details class="bg-white p-4 rounded-lg shadow-sm"><summary>Low Light & Weapon Mounted Lights (WML)</summary><div class="pt-3 mt-3 border-t text-sm"><p><strong>Handheld Light:</strong> Use techniques like the Temple Index for shooting, which illuminates your sights. Never "marry" the light to the gun when searching. <br><strong>WML:</strong> An excellent tool, but do not use it for general searching. Use your support hand thumb for intermittent activation. Only use your trigger finger to activate the light in an emergency (e.g., one-handed operation).</p></div></details>
+
+            <!-- Section 4: Tactical Considerations -->
+            <section id="tactics" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">4. Tactical Considerations</h2>
+                <div class="space-y-2">
+                    <details>
+                        <summary>Use of Cover vs. Concealment</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p><strong>Cover:</strong> Protection from enemy fire (concrete walls, engine blocks, large trees).</p>
+                            <p class="mt-2"><strong>Concealment:</strong> Hides you from view but offers no ballistic protection (bushes, car doors, drywall).</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Shooting Positions</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p><strong>Standing:</strong> Fastest to assume, least stable. <strong>Kneeling:</strong> More stable than standing, good compromise. <strong>Prone:</strong> Most stable, longest to assume.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Low Light Shooting</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>Use of weapon-mounted lights or handheld lights. Master the light, don't let it master you. Identify target before shooting.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Multiple Target Engagement</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>Engage closest threat first, or most dangerous threat. Use proper target transitions without over-swinging.</p>
+                        </div>
+                    </details>
                 </div>
             </section>
-            
-            <!-- Section 5: TCOLE Qualifications -->
-            <section id="qualifications">
-                 <h2 class="text-3xl font-bold mb-6 text-slate-700 border-b-2 border-slate-300 pb-2">TCOLE Qualification Requirements</h2>
-                <p class="mb-4">All Texas peace officers in an agency with at least one officer must meet annual firearms proficiency requirements to maintain their license.</p>
-                <div class="overflow-x-auto bg-white p-4 rounded-lg shadow-md">
-                    <table class="w-full text-sm text-left">
+
+            <!-- Section 5: TCOLE Qualification Standards -->
+            <section id="qualification" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">5. TCOLE Qualification Standards</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm border-collapse border border-slate-400">
                         <thead class="bg-slate-100">
-                            <tr><th class="p-2">Weapon</th><th class="p-2">Rounds</th><th class="p-2">Distance</th><th class="p-2">Minimum Score</th></tr>
+                            <tr>
+                                <th class="border border-slate-300 p-2">Weapon Type</th>
+                                <th class="border border-slate-300 p-2">Distance</th>
+                                <th class="border border-slate-300 p-2">Rounds</th>
+                                <th class="border border-slate-300 p-2">Qualifying Score</th>
+                            </tr>
                         </thead>
                         <tbody>
-                            <tr class="border-b"><td class="p-2 font-semibold">Handgun</td><td class="p-2">50</td><td class="p-2">Point-blank to 25 yards</td><td class="p-2">70%</td></tr>
-                            <tr class="border-b"><td class="p-2 font-semibold">Shotgun</td><td class="p-2">5 (buckshot/slug)</td><td class="p-2">At least 15 yards</td><td class="p-2">70%</td></tr>
-                            <tr class="border-b"><td class="p-2 font-semibold">Patrol Rifle</td><td class="p-2">30</td><td class="p-2">At least 50 yards</td><td class="p-2">90%</td></tr>
-                            <tr class="border-b"><td class="p-2 font-semibold">Precision Rifle</td><td class="p-2">20</td><td class="p-2">At least 100 yards</td><td class="p-2">90%</td></tr>
-                             <tr><td class="p-2 font-semibold">Fully Automatic Weapon</td><td class="p-2">30</td><td class="p-2">7 to 10 yards</td><td class="p-2">70%</td></tr>
+                            <tr>
+                                <td class="border border-slate-300 p-2">Handgun</td>
+                                <td class="border border-slate-300 p-2">3, 7, 15, 25 yards</td>
+                                <td class="border border-slate-300 p-2">50</td>
+                                <td class="border border-slate-300 p-2">70%</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-300 p-2">Shotgun</td>
+                                <td class="border border-slate-300 p-2">7, 15, 25 yards</td>
+                                <td class="border border-slate-300 p-2">25</td>
+                                <td class="border border-slate-300 p-2">70%</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-300 p-2">Rifle</td>
+                                <td class="border border-slate-300 p-2">50, 100 yards</td>
+                                <td class="border border-slate-300 p-2">40</td>
+                                <td class="border border-slate-300 p-2">70%</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
-            </section>
-            
-            <!-- Section 6: Review Questions -->
-            <section id="review">
-                <h2 class="text-3xl font-bold mb-6 text-slate-700 border-b-2 border-slate-300 pb-2">Interactive Review</h2>
-                <p class="mb-4">Test your knowledge with these review questions. Click the button to reveal the answer.</p>
-                <div id="review-questions" class="space-y-4">
-                    <!-- Questions will be dynamically inserted here -->
+                <div class="mt-4 p-4 bg-amber-50 border-l-4 border-amber-500">
+                    <h4 class="font-bold text-amber-800">Important Notes:</h4>
+                    <ul class="list-disc list-inside text-sm mt-2 space-y-1">
+                        <li>Officers must qualify annually with their duty weapon</li>
+                        <li>Qualification must be conducted by certified instructors</li>
+                        <li>Failure to qualify results in duty restriction until requalification</li>
+                        <li>Some departments may have higher standards than TCOLE minimums</li>
+                    </ul>
                 </div>
             </section>
-            
-            <!-- Section 7: Comprehensive Quiz -->
-            <section id="comprehensive-quiz">
-                <h2 class="text-3xl font-bold mb-6 text-slate-700 border-b-2 border-slate-300 pb-2">Firearms Knowledge Quiz</h2>
-                <p class="mb-6 text-sm">Test your understanding of firearms safety, marksmanship, tactics, and TCOLE requirements. Select your answer, then reveal the correct response and explanation.</p>
-                
-                <div id="firearms-quiz-container" class="space-y-6">
-                    <!-- Quiz questions will be populated by JavaScript -->
-                </div>
-                
-                <div class="mt-6 p-4 bg-red-50 border-l-4 border-red-500">
-                    <div class="flex justify-between items-center">
-                        <span class="font-semibold text-red-800">Quiz Progress:</span>
-                        <span id="firearms-quiz-score" class="text-red-800">0/0 answered</span>
-                    </div>
-                    <div class="mt-2 bg-red-200 rounded-full h-2">
-                        <div id="firearms-quiz-progress-bar" class="bg-red-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
-                    </div>
-                </div>
-            </section>
-
         </main>
     </div>
-
-<script>
-    // Firearms Quiz Questions
-    const firearmsQuizQuestions = [
-        {
-            question: "What is the #1 firearms safety rule?",
-            options: [
-                "Keep your finger off the trigger until ready to fire",
-                "All guns are always loaded",
-                "Never point the muzzle at anything you don't want to destroy",
-                "Be sure of your target and what is beyond it"
-            ],
-            correct: 1,
-            explanation: "Rule 1 is 'All guns are always loaded.' This fundamental rule ensures you treat every firearm as if it contains ammunition, preventing most accidents."
-        },
-        {
-            question: "What is the most important fundamental of marksmanship?",
-            options: [
-                "Stance",
-                "Grip",
-                "Sight alignment",
-                "Trigger control"
-            ],
-            correct: 3,
-            explanation: "Trigger control is the #1 shooting fundamental. You can have perfect stance, grip, and sight alignment, but poor trigger control will ruin the shot."
-        },
-        {
-            question: "During sight alignment, what should be in sharp focus?",
-            options: [
-                "The target",
-                "The rear sight",
-                "The front sight",
-                "All three equally"
-            ],
-            correct: 2,
-            explanation: "The front sight should be in sharp focus. The target and rear sight will appear slightly blurry, but this is correct for proper sight alignment."
-        },
-        {
-            question: "What is the minimum passing score for TCOLE handgun qualification?",
-            options: [
-                "60%",
-                "70%",
-                "80%",
-                "90%"
-            ],
-            correct: 1,
-            explanation: "The minimum passing score for handgun qualification is 70%. Patrol rifles and precision rifles require 90%."
-        },
-        {
-            question: "According to the 'Plain Feel' doctrine (Minnesota v. Dickerson), when can an officer seize contraband during a frisk?",
-            options: [
-                "Anytime contraband is felt",
-                "Only when its identity is immediately apparent without further manipulation",
-                "After obtaining a search warrant",
-                "Only with the suspect's consent"
-            ],
-            correct: 1,
-            explanation: "The Plain Feel doctrine allows seizure of contraband only if its identity is immediately apparent from touch without further manipulation. You cannot squeeze or manipulate an object to determine if it's contraband."
-        },
-        {
-            question: "What is the difference between cover and concealment?",
-            options: [
-                "There is no difference - they're the same thing",
-                "Cover hides you; concealment stops bullets",
-                "Cover stops bullets; concealment only hides you",
-                "Cover is natural; concealment is man-made"
-            ],
-            correct: 2,
-            explanation: "Cover stops bullets (engine block, concrete wall), while concealment only hides you from view but won't stop rounds (bush, drywall). Always prioritize cover over concealment."
-        },
-        {
-            question: "During an Immediate Action (Speed) Reload, when should you perform this technique?",
-            options: [
-                "When you have fired half your ammunition",
-                "When the slide locks back on an empty magazine",
-                "During any lull in shooting",
-                "Only when ordered by a supervisor"
-            ],
-            correct: 1,
-            explanation: "An Immediate Action Reload is performed when the slide locks back on an empty magazine. You drop the empty magazine while retrieving a fresh one."
-        },
-        {
-            question: "What is the first step in clearing a handgun stoppage?",
-            options: [
-                "Lock the slide to the rear",
-                "Remove the magazine",
-                "Tap the magazine and rack the slide",
-                "Point the gun in a safe direction"
-            ],
-            correct: 2,
-            explanation: "The most common stoppage clearance is 'Tap, Rack' - tap the bottom of the magazine firmly, then rack the slide hard to the rear."
-        },
-        {
-            question: "When using a weapon-mounted light (WML), how should you activate it?",
-            options: [
-                "Keep it on constantly during searches",
-                "Use your trigger finger to activate it",
-                "Use your support hand thumb for intermittent activation",
-                "Only use it for precision shots"
-            ],
-            correct: 2,
-            explanation: "Use your support hand thumb for intermittent activation of a WML. Only use your trigger finger to activate it in emergencies (one-handed operation)."
-        },
-        {
-            question: "What court case established the 'objective reasonableness' standard for use of force?",
-            options: [
-                "Tennessee v. Garner",
-                "Graham v. Connor",
-                "Terry v. Ohio",
-                "Miranda v. Arizona"
-            ],
-            correct: 1,
-            explanation: "Graham v. Connor established the 'objective reasonableness' standard for all uses of force, evaluating force from the perspective of a reasonable officer at the scene."
-        },
-        {
-            question: "How many rounds are required for TCOLE patrol rifle qualification?",
-            options: [
-                "20 rounds",
-                "30 rounds",
-                "40 rounds",
-                "50 rounds"
-            ],
-            correct: 1,
-            explanation: "TCOLE patrol rifle qualification requires 30 rounds fired at a distance of at least 50 yards with a minimum score of 90%."
-        },
-        {
-            question: "What is the proper stance for handgun shooting?",
-            options: [
-                "Feet together, body upright",
-                "Wide stance, leaning backwards",
-                "Square to target with aggressive forward lean and bent knees",
-                "Sideways stance like old Western movies"
-            ],
-            correct: 2,
-            explanation: "The proper stance is square to the target with an aggressive forward lean and bent knees - an athletic stance with arms at or near full extension."
-        }
-    ];
-
-    let firearmsQuizAnswers = {};
-    let firearmsQuestionsAnswered = 0;
-
-    function initializeFirearmsQuiz() {
-        const container = document.getElementById('firearms-quiz-container');
-        
-        firearmsQuizQuestions.forEach((q, index) => {
-            const questionDiv = document.createElement('div');
-            questionDiv.className = 'quiz-question bg-white p-4 rounded-lg shadow-sm';
-            questionDiv.innerHTML = `
-                <h4 class="font-semibold mb-3">${index + 1}. ${q.question}</h4>
-                <div class="space-y-2 mb-3">
-                    ${q.options.map((option, optIndex) => `
-                        <label class="flex items-center cursor-pointer p-2 rounded hover:bg-slate-100 transition-colors">
-                            <input type="radio" name="fq${index}" value="${optIndex}" class="mr-3" onchange="selectFirearmsAnswer(${index}, ${optIndex})">
-                            <span class="text-sm">${option}</span>
-                        </label>
-                    `).join('')}
-                </div>
-                <button onclick="revealFirearmsAnswer(${index})" class="reveal-btn bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 transition-colors" disabled>
-                    Reveal Answer
-                </button>
-                <div id="firearms-answer-${index}" class="answer-explanation mt-3 p-3 rounded-lg hidden">
-                    <div class="font-semibold mb-2"></div>
-                    <div class="text-sm"></div>
-                </div>
-            `;
-            container.appendChild(questionDiv);
-        });
-        
-        updateFirearmsQuizProgress();
-    }
-
-    function selectFirearmsAnswer(questionIndex, selectedOption) {
-        firearmsQuizAnswers[questionIndex] = selectedOption;
-        
-        // Enable reveal button
-        const revealBtn = document.querySelector(`#firearms-quiz-container .quiz-question:nth-child(${questionIndex + 1}) .reveal-btn`);
-        revealBtn.disabled = false;
-        
-        updateFirearmsQuizProgress();
-    }
-
-    function revealFirearmsAnswer(questionIndex) {
-        const question = firearmsQuizQuestions[questionIndex];
-        const userAnswer = firearmsQuizAnswers[questionIndex];
-        const isCorrect = userAnswer === question.correct;
-        
-        const answerDiv = document.getElementById(`firearms-answer-${questionIndex}`);
-        const correctOption = question.options[question.correct];
-        const userOption = question.options[userAnswer];
-        
-        answerDiv.innerHTML = `
-            <div class="font-semibold mb-2 ${isCorrect ? 'text-green-700' : 'text-red-700'}">
-                ${isCorrect ? '✓ Correct!' : '✗ Incorrect'}
-            </div>
-            ${!isCorrect ? `<div class="text-sm mb-2"><strong>Your answer:</strong> ${userOption}</div>` : ''}
-            <div class="text-sm mb-2"><strong>Correct answer:</strong> ${correctOption}</div>
-            <div class="text-sm text-slate-600">${question.explanation}</div>
-        `;
-        
-        answerDiv.className = `answer-explanation mt-3 p-3 rounded-lg ${isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`;
-        answerDiv.classList.remove('hidden');
-        
-        // Disable reveal button
-        const revealBtn = document.querySelector(`#firearms-quiz-container .quiz-question:nth-child(${questionIndex + 1}) .reveal-btn`);
-        revealBtn.disabled = true;
-        revealBtn.textContent = 'Answer Revealed';
-        
-        if (!firearmsQuestionsAnswered || Object.keys(firearmsQuizAnswers).length > firearmsQuestionsAnswered) {
-            firearmsQuestionsAnswered = Object.keys(firearmsQuizAnswers).length;
-            updateFirearmsQuizProgress();
-        }
-    }
-
-    function updateFirearmsQuizProgress() {
-        const totalQuestions = firearmsQuizQuestions.length;
-        const answeredQuestions = Object.keys(firearmsQuizAnswers).length;
-        const progressPercentage = (answeredQuestions / totalQuestions) * 100;
-        
-        document.getElementById('firearms-quiz-score').textContent = `${answeredQuestions}/${totalQuestions} answered`;
-        document.getElementById('firearms-quiz-progress-bar').style.width = `${progressPercentage}%`;
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const reviewContainer = document.getElementById('review-questions');
-        const reviewQuestions = [
-            { q: "What is the #1 firearms safety rule?", a: "All guns are always loaded." },
-            { q: "What is the #1 shooting fundamental?", a: "Trigger Control." },
-            { q: "What should always be in sharp focus for a proper sight picture?", a: "The front sight." },
-            { q: "What should you do immediately if your handgun runs out of ammunition in a fight?", a: "Perform an Immediate Action Reload (Speed Reload)." },
-            { q: "What is the minimum passing score for handgun qualification?", a: "70%" },
-            { q: "What court case deals with the use of deadly force on a fleeing felon?", a: "Tennessee v. Garner." },
-            { q: "What is the difference between cover and concealment?", a: "Cover stops bullets; concealment only hides you." },
-            { q: "An officer's duty to intervene and stop another officer from using excessive force is sometimes called what?", a: "Affirmative duty." },
-            { q: "Force that is intended or known by the actor to cause, or in any manner of its use is capable of causing, death or SBI is called...?", a: "Deadly Force." },
-            { q: "What is the minimum amount of lawful aggression sufficient to achieve a legitimate law enforcement objective?", a: "Necessary Force." }
-        ];
-
-        if (reviewContainer) {
-            reviewQuestions.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'bg-white p-4 rounded-lg shadow-sm review-item';
-                div.innerHTML = `
-                    <p class="font-semibold">${item.q}</p>
-                    <button class="toggle-answer bg-slate-600 text-white px-3 py-1 rounded-md text-xs mt-2">Reveal Answer</button>
-                    <div class="review-answer mt-3 p-3 bg-slate-100 rounded-lg text-sm font-semibold text-green-700">${item.a}</div>
-                `;
-                reviewContainer.appendChild(div);
-            });
-
-            reviewContainer.addEventListener('click', (e) => {
-                if (e.target.classList.contains('toggle-answer')) {
-                    const answer = e.target.nextElementSibling;
-                    const button = e.target;
-                    answer.classList.toggle('visible');
-                    if (answer.classList.contains('visible')) {
-                        button.textContent = 'Hide Answer';
-                    } else {
-                        button.textContent = 'Reveal Answer';
-                    }
-                }
-            });
-        }
-        
-        // Initialize firearms quiz
-        initializeFirearmsQuiz();
-    });
-</script>
-
 </body>
 </html>

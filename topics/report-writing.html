@@ -4,176 +4,283 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Police Report Writing Interactive Guide</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../dist/output.css">
+    <!-- Chosen Palette: Blue & Gray with Amber accents -->
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
+        body { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        details > summary { 
+            cursor: pointer;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+            font-weight: 600;
         }
-        .tab-content {
-            display: none;
+        details > summary:hover {
+            background-color: #f8fafc;
         }
-        .tab-content.active {
-            display: block;
+        details[open] > summary {
+            background-color: #f1f5f9;
         }
-        .card-flip {
-            perspective: 1000px;
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem !important;
+            }
+            
+            h1 {
+                font-size: 2rem !important;
+            }
+            
+            h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            h3 {
+                font-size: 1.25rem !important;
+            }
+            
+            /* Improve touch targets for mobile */
+            details > summary {
+                padding: 1rem;
+                font-size: 1.1rem;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+            }
+            
+            /* Better spacing for mobile */
+            .space-y-8 > * + * {
+                margin-top: 1.5rem !important;
+            }
+            
+            .space-y-6 > * + * {
+                margin-top: 1.25rem !important;
+            }
+            
+            .space-y-4 > * + * {
+                margin-top: 1rem !important;
+            }
+            
+            /* Improve readability on mobile */
+            p, li {
+                line-height: 1.6;
+            }
+            
+            .text-sm {
+                font-size: 0.9rem !important;
+            }
+            
+            /* Grid adjustments for mobile */
+            .grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            /* Card adjustments */
+            .bg-white {
+                padding: 1rem !important;
+            }
         }
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-        }
-        .card-flip.flipped .card-inner {
-            transform: rotateY(180deg);
-        }
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            text-align: center;
-        }
-        .card-back {
-            transform: rotateY(180deg);
-        }
-        .details-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-out;
+        
+        /* Very small screens */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.5rem !important;
+            }
+            
+            h1 {
+                font-size: 1.75rem !important;
+            }
+            
+            .bg-white {
+                margin: 0 !important;
+                border-radius: 0.5rem;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200">
-
-    <div class="container mx-auto p-4 md:p-8">
+<body class="bg-slate-100 text-slate-800">
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
         <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-white">Police Report Writing</h1>
-            <p class="text-lg text-gray-400 mt-2">Interactive Study Guide</p>
+            <div class="mb-4">
+                <a href="../index.html" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                    <span class="mr-2">←</span> Back to Main
+                </a>
+            </div>
+            <h1 class="text-4xl font-bold text-slate-800">Police Report Writing</h1>
+            <p class="text-slate-600 mt-2">Denton Police Training Academy</p>
         </header>
 
-        <!-- Tabs -->
-        <div class="mb-8">
-            <div class="flex flex-wrap justify-center border-b border-gray-700">
-                <button class="tab-btn py-2 px-4 text-gray-300 border-b-2 border-transparent hover:border-blue-500 hover:text-blue-400 focus:outline-none active" onclick="openTab(event, 'definitions')">1. Definitions & Uses</button>
-                <button class="tab-btn py-2 px-4 text-gray-300 border-b-2 border-transparent hover:border-blue-500 hover:text-blue-400 focus:outline-none" onclick="openTab(event, 'criteria')">2. The 8 Criteria & Skills</button>
-                <button class="tab-btn py-2 px-4 text-gray-300 border-b-2 border-transparent hover:border-blue-500 hover:text-blue-400 focus:outline-none" onclick="openTab(event, 'structure')">3. Structure & Content</button>
-                <button class="tab-btn py-2 px-4 text-gray-300 border-b-2 border-transparent hover:border-blue-500 hover:text-blue-400 focus:outline-none" onclick="openTab(event, 'scenarios')">4. Models & Scenarios</button>
-            </div>
-        </div>
+        <main class="space-y-8">
+            <!-- Section 1: Definitions & Uses -->
+            <section id="definitions" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">1. Definitions & Uses</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="p-4 bg-blue-50 border-l-4 border-blue-500">
+                        <h4 class="font-bold text-blue-800">Key Terms</h4>
+                        <ul class="list-disc list-inside text-sm mt-2 space-y-1">
+                            <li><strong>Complainant:</strong> Person requesting an investigation or action</li>
+                            <li><strong>Victim:</strong> Person injured by a crime</li>
+                            <li><strong>Suspect:</strong> Person considered to be connected with a crime</li>
+                            <li><strong>Witness:</strong> Person who saw the crime or has relevant info</li>
+                            <li><strong>Statement:</strong> Legal narrative description of events related to a crime</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-amber-50 border-l-4 border-amber-500">
+                        <h4 class="font-bold text-amber-700">Official Uses of Police Reports</h4>
+                        <ul class="list-disc list-inside text-sm mt-2 space-y-1">
+                            <li>Permanent record of facts</li>
+                            <li>Coordination of follow-up</li>
+                            <li>Basis for prosecution and defense</li>
+                            <li>Performance evaluations of officer</li>
+                            <li>Statistical data</li>
+                            <li>Reference material</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <details>
+                        <summary>Common Types of Police Reports</summary>
+                        <div class="p-4 border-t text-sm">
+                            <ul class="list-disc list-inside space-y-1">
+                                <li>Arrest reports</li>
+                                <li>Incident/Information reports</li>
+                                <li>Offense reports</li>
+                                <li>Crash reports</li>
+                                <li>Supplemental reports</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+            </section>
 
-        <!-- Tab Content -->
-        <div id="definitions" class="tab-content active">
-            <h2 class="text-2xl font-bold mb-6 text-center text-blue-400">Definitions & Uses</h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                <div class="card-flip h-48" onclick="this.classList.toggle('flipped')"><div class="card-inner"><div class="card-front bg-gray-800"><h3 class="text-xl font-semibold">Complainant<p class="text-sm font-normal text-gray-400 mt-2">(Click)</p></h3></div><div class="card-back bg-blue-600"><p>Person requesting an investigation or action.</p></div></div></div>
-                <div class="card-flip h-48" onclick="this.classList.toggle('flipped')"><div class="card-inner"><div class="card-front bg-gray-800"><h3 class="text-xl font-semibold">Victim<p class="text-sm font-normal text-gray-400 mt-2">(Click)</p></h3></div><div class="card-back bg-blue-600"><p>Person injured by a crime.</p></div></div></div>
-                <div class="card-flip h-48" onclick="this.classList.toggle('flipped')"><div class="card-inner"><div class="card-front bg-gray-800"><h3 class="text-xl font-semibold">Suspect<p class="text-sm font-normal text-gray-400 mt-2">(Click)</p></h3></div><div class="card-back bg-blue-600"><p>Person considered to be connected with a crime.</p></div></div></div>
-                <div class="card-flip h-48" onclick="this.classList.toggle('flipped')"><div class="card-inner"><div class="card-front bg-gray-800"><h3 class="text-xl font-semibold">Witness<p class="text-sm font-normal text-gray-400 mt-2">(Click)</p></h3></div><div class="card-back bg-blue-600"><p>Person who saw the crime or has relevant info.</p></div></div></div>
-                <div class="card-flip h-48" onclick="this.classList.toggle('flipped')"><div class="card-inner"><div class="card-front bg-gray-800"><h3 class="text-xl font-semibold">Statement<p class="text-sm font-normal text-gray-400 mt-2">(Click)</p></h3></div><div class="card-back bg-blue-600"><p>Legal narrative description of events related to a crime.</p></div></div></div>
-            </div>
-             <div class="mt-8 space-y-4">
-                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>Official Uses of a Police Report</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300"><ul class="list-disc list-inside space-y-2 mt-2"><li>Permanent record of facts</li><li>Coordination of follow-up</li><li>Basis for prosecution and defense</li><li>Performance evaluations of officer</li><li>Statistical data</li><li>Reference material</li></ul></div></div>
-                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>Common Types of Police Reports</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300"><ul class="list-disc list-inside space-y-2 mt-2"><li>Arrest reports</li><li>Incident/Information reports</li><li>Offense reports</li><li>Crash reports</li><li>Supplemental reports</li></ul></div></div>
-            </div>
-        </div>
+            <!-- Section 2: The 8 Criteria -->
+            <section id="criteria" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">2. The 8 Criteria & Writing Skills</h2>
+                <div class="space-y-2">
+                    <details>
+                        <summary>1. Accurate</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>Exact conformity to truth. Errors cause false facts to become "legal truth." Be fair and report all sides and accounts, even if they contradict. Document facts that might explain contradictions.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>2. Concise</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>No unnecessary details or wordiness. Avoid "play-by-play" reports of normal routines or unimportant actions. However, do not sacrifice clarity, completeness, or accuracy just to be brief. Some situations (deception, use of force) require more context.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>3. Complete</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>All relevant facts included and all form fields filled. Good contact info is crucial for follow-ups. Detail any aliases used and use proper codes for suspects, victims, etc.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>4. Clear</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>Only one interpretation is possible. The goal is to inform, not entertain. Typically written in first person, past tense. Use last names, not role terms like "Suspect 1," unless multiple people share a last name.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>5. Legible</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>Must be readable by others, whether handwritten or typed.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>6. Objective</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>Report facts without bias, distortion, or personal opinions. Describe facts, don't translate them. Any opinions MUST be labeled as such. Lead the reader to a conclusion with facts; don't state the conclusion for them.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>7. Grammatically Correct</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>Follows rules of grammar for clarity and professionalism.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>8. Correct Spelling</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p>Proper spelling is essential for professionalism and clarity.</p>
+                        </div>
+                    </details>
+                </div>
+            </section>
 
-        <div id="criteria" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6 text-center text-blue-400">The 8 Criteria & Writing Skills</h2>
-            <div class="space-y-4">
-                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>1. Accurate</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300"><p class="mt-2">Exact conformity to truth. Errors cause false facts to become "legal truth." Be fair and report all sides and accounts, even if they contradict. Document facts that might explain contradictions.</p></div></div>
-                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>2. Concise</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300"><p class="mt-2">No unnecessary details or wordiness. Avoid "play-by-play" reports of normal routines or unimportant actions. However, do not sacrifice clarity, completeness, or accuracy just to be brief. Some situations (deception, use of force) require more context.</p></div></div>
-                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>3. Complete</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300"><p class="mt-2">All relevant facts included and all form fields filled. Good contact info is crucial for follow-ups. Detail any aliases used and use proper codes for suspects, victims, etc.</p></div></div>
-                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>4. Clear</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300"><p class="mt-2">Only one interpretation is possible. The goal is to inform, not entertain. Typically written in first person, past tense. Use last names, not role terms like "Suspect 1," unless multiple people share a last name.</p></div></div>
-                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>5. Legible</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300"><p class="mt-2">Must be readable by others, whether handwritten or typed.</p></div></div>
-                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>6. Objective</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300"><p class="mt-2">Report facts without bias, distortion, or personal opinions. Describe facts, don't translate them. Any opinions MUST be labeled as such. Lead the reader to a conclusion with facts; don't state the conclusion for them.</p></div></div>
-                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>7. Grammatically Correct</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300"><p class="mt-2">Follows rules of grammar for clarity and professionalism.</p></div></div>
-                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>8. Correct Spelling</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300"><p class="mt-2">Proper spelling is essential for professionalism and clarity.</p></div></div>
-                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>Describing with "Articulable Facts"</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300">
-                    <p class="mt-2">Instead of using shortcut words or conclusions, describe the specific actions and facts that led you to that conclusion.</p>
-                    <ul class="list-disc list-inside space-y-2 mt-2">
-                        <li><strong>Instead of "Injury":</strong> Describe the cut, red mark, scrape, burn, stab/gunshot wound.</li>
-                        <li><strong>Instead of "Nervous":</strong> Describe the pacing, running hands through hair, avoiding eye contact, trembling voice.</li>
-                        <li><strong>Instead of "Signs of a struggle":</strong> Describe the knocked over chair, picture askew, scuff marks on the wall, broken lamp, torn clothing.</li>
-                        <li><strong>Instead of "Suspicious":</strong> Describe the specific actions that were suspicious. "When I saw him, it was 99 degrees outside, and he was running from the scene, wearing a ski mask and socks on his hands."</li>
-                    </ul>
-                </div></div>
-                 <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>Observation & Descriptive Skills</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300">
-                    <p class="mt-2">An officer's ability to be descriptive is based on their observation skills, using all five senses. This is a perishable skill that must be practiced.</p>
-                    <ul class="list-disc list-inside space-y-2 mt-2">
-                        <li><strong>Describing People:</strong> Be systematic (head-to-toe). Note race, sex, age, and any unique features (scars, tattoos, manner of walking/speaking).</li>
-                        <li><strong>Describing Places:</strong> Be systematic (left-to-right or top-to-bottom). Paint a picture with words.</li>
-                        <li><strong>Describing Things:</strong> Look for distinguishing marks, color, size, shape, texture, location, and type. Note damage or after-market enhancements on vehicles.</li>
-                    </ul>
-                </div></div>
-            </div>
-        </div>
-        
-        <div id="structure" class="tab-content">
-             <h2 class="text-2xl font-bold mb-6 text-center text-blue-400">Report Structure & Content</h2>
-             <div class="space-y-4">
-                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>Chronological vs. Categorical Ordering</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300"><p class="mt-2"><strong>Chronological:</strong> Arrangement of information in order of occurrence. Easiest to write and understand.</p><p class="mt-2"><strong>Categorical:</strong> Arrangement of information by category (e.g., witnesses, suspects, evidence).</p></div></div>
-                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>Three Kinds of Necessary Information</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300"><ul class="list-decimal list-inside space-y-2 mt-2"><li>Identification of the involved persons, vehicles, etc.</li><li>Narrative description of the offense or incident.</li><li>Elements of the offense or probable cause.</li></ul></div></div>
-                <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>Three General Sections of a Report</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300">
-                    <p class="mt-2"><strong>1. Synopsis:</strong> A brief summary of the case. Should include the when/where/how of police involvement, what crime occurred, and the case disposition.</p>
-                    <p class="mt-2"><strong>2. Narrative:</strong> The detailed story of what happened, told in chronological order. Set the stage and stick to the main storyline.</p>
-                    <p class="mt-2"><strong>3. Supplemental:</strong> For extra details that would distract from the narrative, such as evidence packaging, procedural matters, or statements proving culpability.</p>
-                </div></div>
-                 <div class="bg-gray-800 rounded-lg"><button class="w-full text-left p-4 font-semibold text-lg hover:bg-gray-700 focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>Confidentiality of Sex Offense Victims (CCP 58)</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 pb-4 text-gray-300"><p class="mt-2">A victim of a sexual offense, stalking, trafficking, family violence, or child abduction may choose a pseudonym to designate their identity in all public files. Agency policy dictates how this is documented. Releasing the info is a Class C Misdemeanor.</p></div></div>
-             </div>
-        </div>
+            <!-- Section 3: Descriptive Writing -->
+            <section id="descriptive" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">3. Descriptive Writing & Articulable Facts</h2>
+                <div class="p-4 bg-green-50 border-l-4 border-green-500 mb-4">
+                    <h4 class="font-bold text-green-800">Use Articulable Facts Instead of Conclusions</h4>
+                    <p class="text-sm mt-2">Instead of using shortcut words or conclusions, describe the specific actions and facts that led you to that conclusion.</p>
+                </div>
+                <div class="space-y-2">
+                    <details>
+                        <summary>Describing Injuries</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p><strong>Instead of "Injury":</strong> Describe the cut, red mark, scrape, burn, stab/gunshot wound.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Describing Behavior</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p><strong>Instead of "Nervous":</strong> Describe the pacing, running hands through hair, avoiding eye contact, trembling voice.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Describing Scenes</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p><strong>Instead of "Signs of a struggle":</strong> Describe the knocked over chair, picture askew, scuff marks on the wall, broken lamp, torn clothing.</p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Describing Suspicious Activity</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p><strong>Instead of "Suspicious":</strong> Describe the specific actions that were suspicious. "When I saw him, it was 99 degrees outside, and he was running from the scene, wearing a ski mask and socks on his hands."</p>
+                        </div>
+                    </details>
+                </div>
+            </section>
 
-        <div id="scenarios" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6 text-center text-blue-400">Report Models & Scenarios</h2>
-            <div class="space-y-6">
-                <div class="bg-gray-800 rounded-lg p-6"><h3 class="font-bold text-xl">Report Writing Models</h3><div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4"><div><h4 class="font-semibold text-lg text-blue-400">1. Detective Model</h4><ul class="list-disc list-inside text-sm mt-2"><li>Written as you experienced the call.</li><li>Works well for simple cases.</li><li>Can be hard to follow in cases with multiple, coherent witness accounts.</li></ul></div><div><h4 class="font-semibold text-lg text-blue-400">2. Time-Line Model</h4><ul class="list-disc list-inside text-sm mt-2"><li>Events are organized on a time-line first.</li><li>Report is written chronologically from that time-line.</li><li>Clearer in cases with conflicting or multiple witness accounts.</li></ul></div></div></div>
-                <div class="bg-gray-800 rounded-lg p-6"><h3 class="font-bold text-xl">Practice Scenario 1: Domestic Violence</h3><p class="mt-2 text-gray-400 text-sm">At 1630 you are dispatched to a domestic disturbance at 2315 Georgetown Drive. At 1636, you make contact.</p><div class="mt-4"><button class="w-full text-left p-3 font-semibold text-md bg-gray-700 hover:bg-gray-600 rounded-lg focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>Read Juvenile Witness (Timmy's) Statement</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 py-2 text-gray-300"><p>"...Dad was really mad and started screaming at me... Mom stepped in between us. Dad pushed her against the wall... Mom's head hit the wall and the picture fell. Dad then grabbed her arm and threw her in the chair and knocked over the yellow lamp. Mom told me to run... Dad slapped her in the face with his left hand..."</p></div></div></div>
-                <div class="bg-gray-800 rounded-lg p-6"><h3 class="font-bold text-xl">Practice Scenario 2: Homicide</h3><p class="mt-2 text-gray-400 text-sm">At 1006hrs, you are dispatched to 2217 Montague Rd (Carriage House Apts) for a female screaming near the mailboxes. As you arrive, a second caller from the Shell gas station across the street reports seeing a man punching a woman in the grassy area near the road.</p><div class="mt-4"><button class="w-full text-left p-3 font-semibold text-md bg-gray-700 hover:bg-gray-600 rounded-lg focus:outline-none flex justify-between items-center" onclick="toggleDetails(this)"><span>Scene Details & Task</span><span class="transform transition-transform duration-300">&#9662;</span></button><div class="details-content px-4 py-2 text-gray-300"><p>You arrive and find a deceased white female with multiple stab wounds in the grassy area. While attending to her, dispatch advises the second caller saw the suspect run across the street between the house at 2220 Montague Rd and the trees.</p><p class="mt-2"><strong>Your Task:</strong> How would you write the synopsis for this report? What key details must be in the opening of your narrative?</p></div></div></div>
-            </div>
-        </div>
-
+            <!-- Section 4: Report Structure -->
+            <section id="structure" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-slate-700">4. Report Structure & Content</h2>
+                <div class="grid md:grid-cols-2 gap-4 mb-6">
+                    <div class="p-4 bg-blue-50 border border-blue-300 rounded-lg">
+                        <h3 class="font-bold text-lg text-blue-800">Chronological Order</h3>
+                        <p class="text-sm mt-2">Arrangement of information in order of occurrence. Easiest to write and understand.</p>
+                    </div>
+                    <div class="p-4 bg-amber-50 border border-amber-300 rounded-lg">
+                        <h3 class="font-bold text-lg text-amber-800">Categorical Order</h3>
+                        <p class="text-sm mt-2">Arrangement of information by category (e.g., witnesses, suspects, evidence).</p>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <details>
+                        <summary>Three Kinds of Necessary Information</summary>
+                        <div class="p-4 border-t text-sm">
+                            <ol class="list-decimal list-inside space-y-1">
+                                <li>Identification of the involved persons, vehicles, etc.</li>
+                                <li>Narrative description of the offense or incident.</li>
+                                <li>Elements of the offense or probable cause.</li>
+                            </ol>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Three General Sections of a Report</summary>
+                        <div class="p-4 border-t text-sm">
+                            <p><strong>1. Synopsis:</strong> A brief summary of the case. Should include the when/where/how of police involvement, what crime occurred, and the case disposition.</p>
+                            <p class="mt-2"><strong>2. Details:</strong> The narrative portion with all relevant facts and circumstances.</p>
+                            <p class="mt-2"><strong>3. Disposition:</strong> What action was taken and what follow-up is needed.</p>
+                        </div>
+                    </details>
+                </div>
+            </section>
+        </main>
     </div>
-
-    <script>
-        function openTab(evt, tabName) {
-            let i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tab-content");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
-            tablinks = document.getElementsByClassName("tab-btn");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].classList.remove("active", "border-blue-500", "text-blue-400");
-                tablinks[i].classList.add("border-transparent", "text-gray-300");
-            }
-            document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.classList.add("active", "border-blue-500", "text-blue-400");
-            evt.currentTarget.classList.remove("border-transparent", "text-gray-300");
-        }
-        document.addEventListener('DOMContentLoaded', (event) => {
-            document.querySelector('.tab-btn').click();
-        });
-        function toggleDetails(button) {
-            const detailsContent = button.nextElementSibling;
-            const arrow = button.querySelector('span:last-child');
-            if (detailsContent.style.maxHeight) {
-                detailsContent.style.maxHeight = null;
-                arrow.style.transform = 'rotate(0deg)';
-            } else {
-                detailsContent.style.maxHeight = detailsContent.scrollHeight + "px";
-                arrow.style.transform = 'rotate(180deg)';
-            }
-        }
-    </script>
-
 </body>
 </html>

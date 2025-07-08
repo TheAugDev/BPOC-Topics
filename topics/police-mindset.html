@@ -4,16 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Police Mindset & Tactics Interactive Guide</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../dist/output.css">
     <!-- Chosen Palette: Blue & Gray with Amber accents -->
-    <!-- Application Structure Plan: A single-page application focused on the cognitive and tactical aspects of policing. The structure is thematic, starting with the learning mindset, moving to decision-making models (WIN), exploring the psychology of performance (Imagery), and concluding with practical awareness tactics (SAFE model, Field Interviews). This progression helps build a strong conceptual foundation before moving to application. Key interactions include collapsible sections for detailed explanations and side-by-side comparisons for concepts like the two operational mindsets. -->
-    <!-- Visualization & Content Choices: 
-        - The Learning Circle: Report Info -> A diagram about growth. Goal -> Explain the learning process. Viz -> A descriptive text block. Justification -> The concept is philosophical and best explained textually.
-        - Critical Decision-Making Model (CDM): Report Info -> A spinning model diagram. Goal -> Instruct on a decision-making process. Viz -> A collapsible section breaking down the CDM's core and steps. Justification -> Allows for a focused explanation of this central model.
-        - Officer Mindsets (Verbal Persuasion vs. Recognize-React): Report Info -> A comparison diagram. Goal -> Contrast two operational modes. Viz -> Two distinct, styled cards with bullet points. Justification -> Visually separates the two modes and the SAFE acronym, making the concept clear and easy to memorize.
-        - The 4 Risk Zones: Report Info -> A diagram showing scan areas. Goal -> Teach situational awareness. Viz -> A descriptive list. Justification -> A simple, clear list is effective for memorizing the four key areas to scan.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body { font-family: 'Inter', sans-serif; }
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -48,6 +40,67 @@
             h3 {
                 font-size: 1.25rem !important;
             }
+            
+            /* Improve touch targets for mobile */
+            details > summary {
+                padding: 1rem;
+                font-size: 1.1rem;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+            }
+            
+            /* Better spacing for mobile */
+            .space-y-8 > * + * {
+                margin-top: 1.5rem !important;
+            }
+            
+            .space-y-6 > * + * {
+                margin-top: 1.25rem !important;
+            }
+            
+            .space-y-4 > * + * {
+                margin-top: 1rem !important;
+            }
+            
+            /* Improve readability on mobile */
+            p, li {
+                line-height: 1.6;
+            }
+            
+            .text-sm {
+                font-size: 0.9rem !important;
+            }
+            
+            /* Grid adjustments for mobile */
+            .grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            /* Card adjustments */
+            .bg-white {
+                padding: 1rem !important;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.5rem !important;
+            }
+            
+            h1 {
+                font-size: 1.75rem !important;
+            }
+            
+            .bg-white {
+                margin: 0 !important;
+                border-radius: 0.5rem;
+            }
+        }
+    </style>
+</head>
             
             /* Improve touch targets for mobile */
             details > summary {
